@@ -1,0 +1,27 @@
+# 系統暫存檔
+Thumbs.db
+ehthumbs.db
+desktop.ini
+.DS_Store
+._*
+
+# 編輯器設定
+.vscode/
+.idea/
+*.swp
+*~
+
+# 金鑰與環境設定（公開 repo，絕不可推上去）
+.env
+.env.*
+*.key
+*.pem
+firebase-debug.log
+.firebaserc
+serviceAccount*.json
+
+# 備份與草稿
+*.bak
+*.tmp
+*_備份*
+_舊版/
