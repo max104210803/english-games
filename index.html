@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>英文小遊戲站</title>
+<meta name="description" content="國小英文單字小遊戲，手機、平板、電腦都能玩">
+<style>
+  :root {
+    --bg-top: #1a2744;
+    --bg-bot: #070b14;
+    --panel: rgba(22,32,51,.85);
+    --ink: #f7f1e5;
+    --muted: #a8b4c8;
+    --amber: #ffb703;
+    --gold: #ffd27a;
+  }
+  * { box-sizing: border-box; }
+  html, body {
+    margin: 0; min-height: 100%;
+    background: linear-gradient(180deg, var(--bg-top) 0%, var(--bg-bot) 100%);
+    color: var(--ink);
+    font-family: "Microsoft JhengHei", "PingFang TC", "Noto Sans TC", sans-serif;
+    overflow-x: hidden;
+  }
+  main { max-width: 760px; margin: 0 auto; padding: 32px 16px 48px; }
+  h1 {
+    margin: 0; text-align: center; color: var(--amber);
+    font-size: clamp(28px, 6vw, 40px); font-weight: 900;
+    text-shadow: 0 0 12px rgba(255,183,3,.4);
+  }
+  .lead { text-align: center; color: var(--muted); margin: 8px 0 28px; line-height: 1.6; }
+  .games { display: grid; gap: 16px; }
+  .game {
+    display: flex; gap: 16px; align-items: center;
+    background: var(--panel); border: 1px solid rgba(126,200,255,.15); border-radius: 18px;
+    padding: 16px; color: inherit; text-decoration: none;
+    box-shadow: 0 12px 36px rgba(0,0,0,.35);
+    transition: transform .15s, border-color .15s;
+  }
+  .game:hover, .game:focus-visible { transform: translateY(-2px); border-color: var(--amber); outline: none; }
+  .game svg { flex-shrink: 0; width: 84px; height: 84px; }
+  .game h2 { margin: 0 0 4px; font-size: 20px; color: var(--gold); }
+  .game p { margin: 0; color: var(--muted); font-size: 15px; line-height: 1.6; }
+  .tag {
+    display: inline-block; margin-top: 8px; padding: 2px 10px; border-radius: 999px;
+    background: rgba(255,183,3,.15); color: var(--gold); font-size: 13px; font-weight: 700;
+  }
+  .tips {
+    margin-top: 28px; padding: 14px 16px; border-radius: 14px;
+    background: rgba(11,16,32,.7); border-left: 4px solid var(--amber);
+    color: var(--muted); font-size: 14px; line-height: 1.7;
+  }
+  .tips b { color: var(--ink); }
+  @media (prefers-reduced-motion: reduce) { .game { transition: none; } }
+</style>
+</head>
+<body>
+<main>
+  <h1>英文小遊戲站</h1>
+  <p class="lead">點一個遊戲開始玩。手機、平板、電腦都可以。</p>
+
+  <div class="games">
+    <a class="game" href="moon-rabbit-grill.html">
+      <svg viewBox="0 0 84 84" aria-hidden="true">
+        <circle cx="42" cy="42" r="40" fill="#7ec8ff"/>
+        <circle cx="42" cy="42" r="40" fill="url(#g)"/>
+        <defs><radialGradient id="g" cx="35%" cy="30%" r="70%"><stop offset="0%" stop-color="#fff" stop-opacity=".9"/><stop offset="100%" stop-color="#4a90c6" stop-opacity="0"/></radialGradient></defs>
+        <ellipse cx="34" cy="26" rx="6" ry="15" fill="#fff" stroke="#4a3428" stroke-width="2"/>
+        <ellipse cx="50" cy="26" rx="6" ry="15" fill="#fff" stroke="#4a3428" stroke-width="2"/>
+        <ellipse cx="34" cy="28" rx="3" ry="9" fill="#ffb3c1"/>
+        <ellipse cx="50" cy="28" rx="3" ry="9" fill="#ffb3c1"/>
+        <circle cx="42" cy="48" r="18" fill="#fffaf2" stroke="#4a3428" stroke-width="2"/>
+        <circle cx="36" cy="47" r="2.6" fill="#4a3428"/><circle cx="48" cy="47" r="2.6" fill="#4a3428"/>
+        <ellipse cx="31" cy="53" rx="3" ry="1.8" fill="#ffb3c1"/><ellipse cx="53" cy="53" rx="3" ry="1.8" fill="#ffb3c1"/>
+        <path d="M39 54q3 3 6 0" fill="none" stroke="#4a3428" stroke-width="1.8" stroke-linecap="round"/>
+      </svg>
+      <div>
+        <h2>月兔烤台 Moon Rabbit Grill</h2>
+        <p>看月兔圓圓表演，等肉烤成金色，丟出正確的英文單字。</p>
+        <span class="tag">五上 Wonders U4 · 8 個單字</span>
+      </div>
+    </a>
+  </div>
+
+  <div class="tips">
+    <b>小提醒</b><br>
+    遊戲有背景音樂和音效，按「開始玩」後才會出聲，右上角可以靜音。<br>
+    iPhone 側邊的靜音開關打開時會聽不到聲音，撥回響鈴就好。
+  </div>
+</main>
+</body>
+</html>
