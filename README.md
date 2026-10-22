@@ -4,8 +4,18 @@
 
 網站：https://max104210803.github.io/english-games/
 
+## 🎮 小遊戲（`games/`）
+
 | 遊戲 | 檔案 | 內容 |
 | :--- | :--- | :--- |
-| 月兔烤台 Moon Rabbit Grill | `moon-rabbit-grill.html` | 五上 Wonders U4 的 8 個單字（dash、holler、boast、ashamed、plenty、victory、similarities、wisdom） |
+| 月兔烤台 Moon Rabbit Grill | `games/moon-rabbit-grill.html` | 五上 Wonders U4 的 8 個單字（dash、holler、boast、ashamed、plenty、victory、similarities、wisdom） |
 
-新增遊戲：把 HTML 放進本資料夾（英文檔名），在 `index.html` 加一張卡片，再推送。
+## 📝 閱讀練習（`practice/`）
+
+| 練習 | 檔案 | 內容 |
+| :--- | :--- | :--- |
+| 上下文線索偵探社 Context Clue Detectives | `practice/context-clue-detectives.html` | 五上 Wonders U3–U4 共 10 課 126 個字；每字兩小題（猜字義、找線索）。句子皆為原創，非課本原文 |
+
+根目錄的 `moon-rabbit-grill.html` 只是轉址頁，讓舊網址繼續能用。
+
+新增內容：遊戲放 `games/`、練習放 `practice/`（英文檔名），在 `index.html` 對應的區塊加一張卡片，再推送。
