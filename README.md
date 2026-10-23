@@ -14,7 +14,17 @@
 
 | 練習 | 檔案 | 內容 |
 | :--- | :--- | :--- |
-| 上下文線索偵探社 Context Clue Detectives | `practice/context-clue-detectives.html` | 五上 Wonders U3–U4 共 10 課 126 個字；每字兩小題（猜字義、找線索）。句子皆為原創，非課本原文 |
+| 上下文線索偵探社 Context Clue Detectives | `practice/context-clue-detectives.html` | 五上 Wonders U3–U4 共 11 課 138 個字；每字兩小題（猜字義、找線索）。句子皆為原創，非課本原文 |
+
+## 🔤 國中中翻英（`translate/`）
+
+| 練習 | 檔案 | 內容 |
+| :--- | :--- | :--- |
+| 中翻英闖關 01 | `translate/g7-translation-quest-01.html` | 國一上：be 動詞、現在簡單式、問句、現在進行式、週末日記 |
+| 中翻英闖關 02 | `translate/g7-translation-quest-02.html` | 國一上：There is／are、can、祈使句與 Let's、Who／Whose／How many、介紹學校 |
+| 中翻英闖關 03 | `translate/g7-translation-quest-03.html` | 國一下：was／were、過去式、did 否定與問句、will／be going to、週記 |
+
+每份有字卡排句、中翻英（三層提示＋常見錯誤偵測）、自由寫作。句子皆為原創，非課本原文；插圖為 AI 生成。進度存在瀏覽器本機。
 
 ## ✍️ 國文練習（`chinese/`）
 
@@ -24,4 +34,4 @@
 
 根目錄的 `moon-rabbit-grill.html` 只是轉址頁，讓舊網址繼續能用。
 
-新增內容：遊戲放 `games/`、練習放 `practice/`、國文放 `chinese/`（英文檔名），在 `index.html` 對應的區塊加一張卡片，再推送。
+新增內容：遊戲放 `games/`、練習放 `practice/`、中翻英放 `translate/`、國文放 `chinese/`（英文檔名），在 `index.html` 對應的區塊加一張卡片，再推送。
