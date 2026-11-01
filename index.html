@@ -60,6 +60,8 @@
   .game.translate .tag { background: rgba(255,180,162,.15); color: #ffb4a2; }
   .game.chinese h3 { color: #b8e6a0; }
   .game.chinese .tag { background: rgba(184,230,160,.15); color: #b8e6a0; }
+  .game.math h3 { color: #9fd8ff; }
+  .game.math .tag { background: rgba(159,216,255,.15); color: #9fd8ff; }
   .sec-note { margin: -6px 0 10px; color: var(--muted); font-size: 14px; }
   .sub { margin: 14px 0 8px; font-size: 15px; color: #c9b8ff; }
   .mini { display: grid; gap: 10px; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); }
@@ -90,7 +92,7 @@
 <body>
 <main>
   <h1>學習小站</h1>
-  <p class="lead">英文、國文的小遊戲和練習。先選年級，再點一個開始。手機、平板、電腦都可以。</p>
+  <p class="lead">英文、國文、數學的小遊戲和練習。先選年級，再點一個開始。手機、平板、電腦都可以。</p>
 
   <nav class="filter" aria-label="依年級篩選">
     <button type="button" data-f="all" aria-pressed="true">全部</button>
@@ -103,6 +105,7 @@
   <section class="grp latest" id="latest">
     <h2 class="sec">🆕 最新上架</h2>
     <div class="mini">
+      <a class="mini-tile" href="math/g9-circle-quest.html"><span class="mi">⭕</span><span><b>圓・切線段與弦心距闖關</b><small>國三・數學 17 題</small></span></a>
       <a class="mini-tile" href="practice/red-watch-quest.html"><span class="mi">⌚</span><span><b>The Red Watch 閱讀闖關</b><small>小五・原創故事附朗讀</small></span></a>
       <a class="mini-tile" href="practice/new-kid-quest.html"><span class="mi">⚽</span><span><b>The New Kid 閱讀闖關</b><small>小五・原創故事附朗讀</small></span></a>
       <a class="mini-tile" href="#reading"><span class="mi">📔</span><span><b>Tim's Diary 小五日記 8 篇</b><small>小五・延伸閱讀</small></span></a>
@@ -283,6 +286,26 @@
         <h3>中翻英闖關 03：過去式和未來式</h3>
         <p>was／were、一般動詞過去式、did 否定與問句、will／be going to，最後寫一篇週記。字卡可點可拖，寫錯會告訴你錯在哪，卡住時有三層提示。</p>
         <span class="tag">國一下 · 5 關 30 題</span>
+      </div>
+    </a>
+  </div>
+  </section>
+
+  <section class="grp">
+  <h2 class="sec">📐 國中數學</h2>
+  <div class="games">
+    <a class="game math" data-grade="g9" href="math/g9-circle-quest.html">
+      <svg viewBox="0 0 84 84" aria-hidden="true">
+        <circle cx="42" cy="42" r="40" fill="#2a4f86"/>
+        <circle cx="36" cy="44" r="17" fill="#fffaf2" stroke="#1f2a37" stroke-width="2.5"/>
+        <path d="M70 44L39.7 27.4M70 44L39.7 60.6" stroke="#ffd27a" stroke-width="3.5" stroke-linecap="round"/>
+        <path d="M36 44L39.7 27.4M36 44L39.7 60.6" stroke="#2f6fbf" stroke-width="2" stroke-dasharray="3 2"/>
+        <circle cx="36" cy="44" r="2.6" fill="#1f2a37"/><circle cx="70" cy="44" r="3" fill="#1f2a37"/>
+      </svg>
+      <div>
+        <h3>圓・切線段與弦心距闖關</h3>
+        <p>點與直線和圓的位置、切線段等長、弦心距、扇形與弓形，點選作答立刻知道對錯，每題都有詳解，錯題可以只挑出來再練。</p>
+        <span class="tag">國三上 Ch.2 圓 · 4 關 17 題</span>
       </div>
     </a>
   </div>
