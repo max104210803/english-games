@@ -20,6 +20,22 @@
 | The Red Watch 閱讀闖關 | `practice/red-watch-quest.html` | 搭配五上 Wonders U5 W1 的原創平行故事（附 AI 朗讀 `practice/audio/red-watch.mp3`）；故事、題目、插圖皆原創，不含課本原文與圖片 |
 | The New Kid 閱讀闖關 | `practice/new-kid-quest.html` | 搭配五上 Wonders U5 W2 的原創平行故事（附 AI 朗讀 `practice/audio/new-kid.mp3`）；故事、題目、插圖皆原創 |
 
+## 📖 延伸閱讀（`reading/`）
+
+| 短文 | 檔案 | 內容 |
+| :--- | :--- | :--- |
+| Tim's Diary：合歡山蓋冰屋 | `reading/snow-diary.html` | 五上 Wonders U3 Ice Hotels 單字 |
+| Tim's Diary：奶奶家的停電夜 | `reading/power-out-diary.html` | 五上 Wonders U3 W3 Lighting Lives 單字 |
+| Tim's Diary：颱風夜搶救桂花 | `reading/typhoon-diary.html` | 五上 Wonders U3 W4 Tornado! 單字 |
+| Tim's Diary：合唱比賽 | `reading/chorus-diary.html` | 五上 Wonders U3 W5 They've Got the Beat! 單字 |
+| Tim's Diary：晚上十點還亮著的天空 | `reading/bright-night-diary.html` | 五上 Wonders U4 W1 Alaska 單字 |
+| Tim's Diary：野柳女王頭的脖子 | `reading/yehliu-diary.html` | 五上 Wonders U4 W2 Into the Sea 單字 |
+| Tim's Diary：回台南阿嬤家過農曆年 | `reading/lunar-new-year-diary.html` | 五上 Wonders U4 W3 Happy New Year! 單字 |
+| Where Is Buddy? | `reading/where-is-buddy.html` | 五上 Wonders U3 W4 Tornado! 單字 |
+| Sports Day: The Five-Dollar Eco-Challenge | `reading/sports-day.html` | 國三會考第 1–2 冊複習語塊與素養題 |
+
+短文皆為原創（非課本原文），附中文對照、AI 朗讀與閱讀理解題；插圖為 AI 生成。
+
 ## 🔤 國中中翻英（`translate/`）
 
 | 練習 | 檔案 | 內容 |
@@ -38,4 +54,4 @@
 
 根目錄的 `moon-rabbit-grill.html` 只是轉址頁，讓舊網址繼續能用。
 
-新增內容：遊戲放 `games/`、練習放 `practice/`、中翻英放 `translate/`、國文放 `chinese/`（英文檔名），在 `index.html` 對應的區塊加一張卡片，再推送。
+新增內容：遊戲放 `games/`、練習放 `practice/`、延伸閱讀放 `reading/`、中翻英放 `translate/`、國文放 `chinese/`（英文檔名），在 `index.html` 對應的區塊加一張卡片，再推送。

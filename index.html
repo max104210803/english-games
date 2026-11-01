@@ -60,7 +60,19 @@
   .game.translate .tag { background: rgba(255,180,162,.15); color: #ffb4a2; }
   .game.chinese h3 { color: #b8e6a0; }
   .game.chinese .tag { background: rgba(184,230,160,.15); color: #b8e6a0; }
-  @media (prefers-reduced-motion: reduce) { .game { transition: none; } }
+  .sec-note { margin: -6px 0 10px; color: var(--muted); font-size: 14px; }
+  .sub { margin: 14px 0 8px; font-size: 15px; color: #c9b8ff; }
+  .mini { display: grid; gap: 10px; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); }
+  .mini-tile {
+    display: flex; gap: 10px; align-items: center; padding: 10px 12px; border-radius: 14px;
+    background: var(--panel); border: 1px solid rgba(201,184,255,.18); color: inherit; text-decoration: none;
+    transition: transform .15s, border-color .15s;
+  }
+  .mini-tile:hover, .mini-tile:focus-visible { transform: translateY(-2px); border-color: #c9b8ff; outline: none; }
+  .mini-tile .mi { font-size: 26px; flex-shrink: 0; }
+  .mini-tile b { display: block; color: #e2d9ff; font-size: 15px; line-height: 1.4; }
+  .mini-tile small { color: var(--muted); font-size: 12.5px; }
+  @media (prefers-reduced-motion: reduce) { .game, .mini-tile { transition: none; } }
 </style>
 </head>
 <body>
@@ -161,6 +173,24 @@
         <span class="tag">搭配五上 Wonders U5 W2 · 6 關</span>
       </div>
     </a>
+  </div>
+
+  <h2 class="sec">📖 延伸閱讀</h2>
+  <p class="sec-note">原創短文，附中文對照、朗讀音檔和閱讀理解題。</p>
+  <h3 class="sub">Tim's Diary 小五日記（五上 Wonders 單字）</h3>
+  <div class="mini">
+    <a class="mini-tile" href="reading/snow-diary.html"><span class="mi">❄️</span><span><b>合歡山蓋冰屋</b><small>U3 Ice Hotels</small></span></a>
+    <a class="mini-tile" href="reading/power-out-diary.html"><span class="mi">🕯️</span><span><b>奶奶家的停電夜</b><small>U3 W3 Lighting Lives</small></span></a>
+    <a class="mini-tile" href="reading/typhoon-diary.html"><span class="mi">🌀</span><span><b>颱風夜搶救桂花</b><small>U3 W4 Tornado!</small></span></a>
+    <a class="mini-tile" href="reading/where-is-buddy.html"><span class="mi">🐶</span><span><b>Where Is Buddy?</b><small>U3 W4 Tornado!</small></span></a>
+    <a class="mini-tile" href="reading/chorus-diary.html"><span class="mi">🎵</span><span><b>合唱比賽</b><small>U3 W5 They've Got the Beat!</small></span></a>
+    <a class="mini-tile" href="reading/bright-night-diary.html"><span class="mi">🌅</span><span><b>晚上十點還亮著的天空</b><small>U4 W1 Alaska</small></span></a>
+    <a class="mini-tile" href="reading/yehliu-diary.html"><span class="mi">🌊</span><span><b>野柳女王頭的脖子</b><small>U4 W2 Into the Sea</small></span></a>
+    <a class="mini-tile" href="reading/lunar-new-year-diary.html"><span class="mi">🧧</span><span><b>回台南阿嬤家過農曆年</b><small>U4 W3 Happy New Year!</small></span></a>
+  </div>
+  <h3 class="sub">國三會考複習</h3>
+  <div class="mini">
+    <a class="mini-tile" href="reading/sports-day.html"><span class="mi">🏃</span><span><b>Sports Day: The Five-Dollar Eco-Challenge</b><small>會考第 1–2 冊語塊・素養題</small></span></a>
   </div>
 
   <h2 class="sec">🔤 國中中翻英</h2>
