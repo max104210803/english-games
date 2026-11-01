@@ -15,6 +15,10 @@
 | 練習 | 檔案 | 內容 |
 | :--- | :--- | :--- |
 | 上下文線索偵探社 Context Clue Detectives | `practice/context-clue-detectives.html` | 五上 Wonders U3–U4 共 11 課 138 個字；每字兩小題（猜字義、找線索）。句子皆為原創，非課本原文 |
+| Tornado 闖關複習 | `practice/tornado-quest.html` | 五上 Wonders U3 W4：換句話說、找線索、簡答自動檢核；題目自編，引用課本只摘短句並標頁碼，插圖為 AI 生成 |
+| They've Got the Beat! 寫作摘要闖關 | `practice/got-the-beat-quest.html` | 五上 Wonders U3 W5：13 格摘要填空、摘要自動檢核、8 題文法病句；插圖為原創圖解 |
+| The Red Watch 閱讀闖關 | `practice/red-watch-quest.html` | 搭配五上 Wonders U5 W1 的原創平行故事（附 AI 朗讀 `practice/audio/red-watch.mp3`）；故事、題目、插圖皆原創，不含課本原文與圖片 |
+| The New Kid 閱讀闖關 | `practice/new-kid-quest.html` | 搭配五上 Wonders U5 W2 的原創平行故事（附 AI 朗讀 `practice/audio/new-kid.mp3`）；故事、題目、插圖皆原創 |
 
 ## 🔤 國中中翻英（`translate/`）
 
@@ -24,7 +28,7 @@
 | 中翻英闖關 02 | `translate/g7-translation-quest-02.html` | 國一上：There is／are、can、祈使句與 Let's、Who／Whose／How many、介紹學校 |
 | 中翻英闖關 03 | `translate/g7-translation-quest-03.html` | 國一下：was／were、過去式、did 否定與問句、will／be going to、週記 |
 
-每份有字卡排句、中翻英（三層提示＋常見錯誤偵測）、自由寫作。句子皆為原創，非課本原文；插圖為 AI 生成。進度存在瀏覽器本機。
+每份有字卡排句、中翻英（三層提示＋常見錯誤偵測）、自由寫作（自動檢查句型與常見錯誤）。句子皆為原創，非課本原文；插圖為 AI 生成。進度存在瀏覽器本機。
 
 ## ✍️ 國文練習（`chinese/`）
 

@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>國一句型中翻英 01</title>
 <!-- 國一上英文 句型中翻英闖關 01（2026-10-23）：be 動詞／現在簡單式／問句／現在進行式／週末日記。
-     句子全為 Claude 自編原創句。題型：TILES 字卡排句（自動批改）、TRANS 中翻英（三層提示＋重點語塊自動檢查＋自評）、OPEN 自由寫作。
+     句子全為 Claude 自編原創句。題型：TILES 字卡排句（自動批改）、TRANS 中翻英（三層提示＋重點語塊自動檢查＋自評）、OPEN 自由寫作（自動檢核句型）。
      改題目後必跑：node 900-系統與模板/腳本/check_trans_quest.js <本檔> -->
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&family=Noto+Serif+TC:wght@700;900&display=swap" rel="stylesheet">
@@ -105,6 +105,11 @@ img.hero{display:block;width:100%;max-width:560px;height:auto;margin:10px auto 1
 textarea{width:100%;min-height:110px;border:2px solid var(--line);border-radius:12px;padding:12px;font:inherit;background:var(--paper);color:var(--ink);resize:vertical}
 textarea:focus{outline:none;border-color:var(--blue)}
 label.chk{display:block;margin:4px 0;cursor:pointer}
+.chk-auto{display:flex;align-items:flex-start;gap:8px;margin:4px 0;line-height:1.6}
+.chk-auto .mark{flex-shrink:0;width:1.4em;text-align:center}
+.chk-auto .why{display:block;font-size:13px;color:var(--red)}
+.chk-auto.ok .why{color:var(--green)}
+.chk-note{font-size:13px;color:var(--muted);margin:4px 0 8px}
 .starter{font-size:14px;color:var(--muted);margin:4px 0 8px}
 .starter code{background:var(--blue-soft);color:var(--ink);border-radius:6px;padding:1px 6px;font-family:inherit}
 table.vt{width:100%;border-collapse:collapse;font-size:15px}
@@ -589,7 +594,20 @@ var TRANS = [
 var OPEN = [
   {id:"o5", st:5, q:"寫 3 句你自己的週末（英文）。",
    st3:["Today is ___.","My ___ is ___ing.","I/We ___ every ___."],
-   chk:["有一句用了 be 動詞（am／is／are）","有一句寫「正在」：be 動詞 ＋ V-ing","有一句寫習慣（every…）；主詞是他／她時，動詞有加 s","每句第一個字母大寫，句尾有標點"],
+   chk:[
+    {t:"有一句用了 be 動詞（am／is／are）", tip:"寫一句用 am／is／are 的句子，例如 Today is Sunday.", f:function(t,raw){ return /\b(am|is|are)\b|\b(i'm|he's|she's|it's|we're|they're|you're)\b/.test(t) }},
+    {t:"有一句寫「正在」：be 動詞 ＋ V-ing", tip:"寫一句「正在做」的句子：My mom is cooking.（be 動詞＋V-ing）", f:function(t,raw){ if(/\b(am|is|are)\s+(not\s+)?[a-z]+ing\b|('m|'s|'re)\s+(not\s+)?[a-z]+ing\b/.test(t)) return true;
+        if(/\b(i|you|we|they|he|she|it|my \w+)\s+[a-z]+ing\b/.test(t)) return "「正在」要有 be 動詞：例如 My mom is cooking，不是 My mom cooking。";
+        return false }},
+    {t:"有一句寫習慣（every…）；主詞是他／她時，動詞有加 s", tip:"寫一句習慣：I play basketball every Sunday.", f:function(t,raw){ var a=sents5(t).filter(function(x){ return /\bevery\b/.test(x) });
+        if(!a.length) return false;
+        for(var i=0;i<a.length;i++){
+          var m=a[i].match(/^(he|she|it|my (?:mom|mother|dad|father|brother|sister|friend|teacher|grandma|grandpa|cat|dog|uncle|aunt))\s+(\w+)/);
+          if(m && !/^(and|or|always|usually|often|sometimes|never)$/.test(m[2]) && !/s$/.test(m[2]) && !/^(can|will|does|did|is|was|has)$/.test(m[2]))
+            return "主詞是一個人（他／她）時，動詞要加 s：「"+m[0]+"」的 "+m[2]+" 要加 s 或 es（例如 plays、goes、watches）。";
+        }
+        return true }},
+    {t:"每句第一個字母大寫，句尾有標點", tip:"每句第一個字母要大寫，句尾加句號。", f:function(t,raw){ return capsOK5(raw) }}],
    ref:"Today is Sunday. My mom is cooking lunch. My brother and I play basketball every Sunday.<br><span class='small'>只是範例，寫你自己的事就好。</span>"}
 ];
 
@@ -768,22 +786,57 @@ function renderTrans(){
 }
 
 // ---------- 自由寫作 ----------
+// ---------- 自由寫作自動檢核 ----------
+// 只檢查句型有沒有用到、幾個常見錯誤（單複數、動詞加 s、助動詞後接原形），看不出意思；規則在 OPEN 每題的 chk 裡。
+// 規則回傳 true＝通過、false＝沒用到（顯示 tip）、字串＝用到了但寫錯（顯示這段字串）。
+function sents5(s){ return (s.match(/[^.!?]+[.!?]*/g)||[]).map(function(x){ return x.trim() }).filter(function(x){ return /[A-Za-z]/.test(x) }) }
+function low5(s){ return s.toLowerCase().replace(/[’‘]/g,"'") }
+function capsOK5(raw){
+  var t=raw.trim(), a=sents5(t);
+  if(!a.length) return false;
+  var bad=a.filter(function(x){ return !/^["'(]?[A-Z]/.test(x) });
+  if(bad.length) return "這句開頭要大寫：「"+bad[0].slice(0,24)+"…」";
+  var noP=a.filter(function(x){ return !/[.!?]["']?$/.test(x) });
+  if(noP.length) return "這句後面要加句號或驚嘆號：「"+noP[0].slice(-24)+"」";
+  return true;
+}
+// 助動詞（can／will／to）後面要接原形：不能是 -s（-ss 除外）、-ing、-ed，也不能是 to
+function baseVerb5(w){ return !!w && !/^(to|is|am|are|was|were)$/.test(w) && !/(ing|ed)$/.test(w) && !(/s$/.test(w) && !/ss$/.test(w)) }
+
 function renderOpen(){
   OPEN.forEach(function(it){
     var c=el('<div class="card q"><div class="stem">'+it.q+'</div>'+
       '<div class="starter">句子開頭可以這樣寫：'+it.st3.map(function(s){return '<code>'+esc(s)+'</code>'}).join(" ")+'</div>'+
       '<textarea spellcheck="false" placeholder="Write about your weekend..."></textarea>'+
-      '<div><b class="small">寫完自己檢查：</b>'+it.chk.map(function(t,k){return '<label class="chk"><input type="checkbox" data-k="'+k+'"> '+t+'</label>'}).join("")+'</div>'+
-      '<button class="btn ghost" disabled>寫完再看範例</button><div class="reveal"><b>範例：</b><br>'+it.ref+'</div></div>');
-    var ta=c.querySelector("textarea"), btn=c.querySelector(".btn"), rv=c.querySelector(".reveal");
-    function upd(){ btn.disabled = ta.value.replace(/[^A-Za-z]/g,"").length < 30 }
-    ta.value=prog.txt[it.id]||""; upd();
-    ta.oninput=function(){ prog.txt[it.id]=ta.value; save(); upd() };
-    btn.onclick=function(){ rv.classList.add("show"); prog.rev[it.id]=true; save(); check(it.st,true) };
-    c.querySelectorAll("input[type=checkbox]").forEach(function(cb){
-      var key=it.id+"_"+cb.dataset.k; cb.checked=!!prog.chk[key];
-      cb.onchange=function(){ prog.chk[key]=cb.checked; save() };
-    });
+      '<div><b class="small">按「檢查我的句子」，電腦會看句型有沒有用到：</b>'+it.chk.map(function(r){return '<div class="chk-auto"><span class="mark">⬜</span><span>'+r.t+'<span class="why"></span></span></div>'}).join("")+
+      '<div class="chk-note">電腦只檢查句型和幾個常見錯誤，看不出意思通不通；寫完請大人或老師再幫你看一次。</div></div>'+
+      '<button class="btn chkbtn">🔍 檢查我的句子</button> <button class="btn ghost revbtn" disabled>先檢查一次，再看範例</button><div class="fb"></div>'+
+      '<div class="reveal"><b>範例：</b><br>'+it.ref+'</div></div>');
+    var ta=c.querySelector("textarea"), cb=c.querySelector(".chkbtn"), rb=c.querySelector(".revbtn"), rv=c.querySelector(".reveal"), fb=c.querySelector(".fb");
+    function run(user){
+      var raw=ta.value, t=low5(raw);
+      var res=it.chk.map(function(r){ return r.f(t,raw) });
+      c.querySelectorAll(".chk-auto").forEach(function(row,k){
+        var ok=res[k]===true;
+        row.classList.toggle("ok",ok);
+        row.querySelector(".mark").textContent=ok?"✅":"❌";
+        row.querySelector(".why").textContent=ok?"做到了！":(typeof res[k]==="string"?res[k]:it.chk[k].tip);
+      });
+      var n=res.filter(function(x){return x===true}).length, pass=n===res.length;
+      fb.className="fb show "+(pass?"ok":"no");
+      fb.textContent=pass?"✅ "+praise()+" 句型全部用到了！":"做到 "+n+" / "+res.length+" 項，看紅字提示再改改看！";
+      rb.disabled=false; rb.textContent="看範例";
+      if(!user) return;
+      prog.txt[it.id]=raw;
+      prog.chk[it.id+"_tried"]=true;
+      if(pass) prog.chk[it.id+"_ok"]=true;
+      sfx(pass?"ok":"no"); save(); check(it.st,true);
+    }
+    ta.value=prog.txt[it.id]||"";
+    ta.oninput=function(){ prog.txt[it.id]=ta.value; save() };
+    cb.onclick=function(){ if(ta.value.replace(/[^A-Za-z]/g,"").length<10){ fb.className="fb show no"; fb.textContent="先寫幾句英文，再按檢查喔！"; return } run(true) };
+    rb.onclick=function(){ rv.classList.add("show"); prog.rev[it.id]=true; save() };
+    if(prog.chk[it.id+"_tried"] && ta.value) run(false);
     if(prog.rev[it.id]) rv.classList.add("show");
     $("open"+it.st).appendChild(c);
   });
@@ -801,7 +854,7 @@ function renderRetry(){
 // ---------- 過關判定 ----------
 function check(st,user){
   var tl=TILES.filter(function(t){return t.st===st}), tr=TRANS.filter(function(t){return t.st===st}), op=OPEN.filter(function(t){return t.st===st});
-  var fin=tl.filter(function(t){return prog.tile[t.id]}).length + tr.filter(function(t){return prog.self[t.id]}).length + op.filter(function(t){return prog.rev[t.id]}).length,
+  var fin=tl.filter(function(t){return prog.tile[t.id]}).length + tr.filter(function(t){return prog.self[t.id]}).length + op.filter(function(t){return prog.chk[t.id+"_ok"]}).length,
       tot=tl.length+tr.length+op.length, was=!!prog.done[st], half=Math.ceil(tot/2);
   var ok=fin===tot;
   var pb=$("pb"+st); if(pb){ pb.querySelector("i").style.width=Math.round(fin/tot*100)+"%"; pb.querySelector("span").textContent="本關進度 "+fin+" / "+tot+(ok?"　⭐ 完成":"") }
