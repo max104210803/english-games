@@ -3,8 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>英文小遊戲站</title>
-<meta name="description" content="國小英文單字小遊戲與國中中翻英練習，手機、平板、電腦都能玩">
+<title>學習小站</title>
+<meta name="description" content="小五到國三的英文、國文小遊戲、閱讀練習和延伸閱讀，手機、平板、電腦都能玩">
 <style>
   :root {
     --bg-top: #1a2744;
@@ -72,17 +72,49 @@
   .mini-tile .mi { font-size: 26px; flex-shrink: 0; }
   .mini-tile b { display: block; color: #e2d9ff; font-size: 15px; line-height: 1.4; }
   .mini-tile small { color: var(--muted); font-size: 12.5px; }
+  .filter { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; margin: -12px 0 24px; }
+  .filter button {
+    font: inherit; font-size: 15px; font-weight: 700; padding: 6px 16px; border-radius: 999px; cursor: pointer;
+    background: rgba(22,32,51,.85); color: var(--muted); border: 1px solid rgba(126,200,255,.25);
+  }
+  .filter button[aria-pressed="true"] { background: var(--amber); color: #1a2744; border-color: var(--amber); }
+  .filter button:focus-visible { outline: 2px solid var(--gold); outline-offset: 2px; }
+  .grp + .grp { margin-top: 30px; }
+  .filter button { padding: 6px 14px; }
+  .grp[hidden], .subgrp[hidden], [data-grade][hidden] { display: none !important; }
+  .latest .mini-tile { border-color: rgba(255,210,122,.3); }
+  .latest .mini-tile b { color: var(--gold); }
   @media (prefers-reduced-motion: reduce) { .game, .mini-tile { transition: none; } }
 </style>
 </head>
 <body>
 <main>
-  <h1>英文小遊戲站</h1>
-  <p class="lead">點一個開始玩。手機、平板、電腦都可以。</p>
+  <h1>學習小站</h1>
+  <p class="lead">英文、國文的小遊戲和練習。先選年級，再點一個開始。手機、平板、電腦都可以。</p>
 
+  <nav class="filter" aria-label="依年級篩選">
+    <button type="button" data-f="all" aria-pressed="true">全部</button>
+    <button type="button" data-f="g5" aria-pressed="false">小五</button>
+    <button type="button" data-f="g7" aria-pressed="false">國一</button>
+    <button type="button" data-f="g9" aria-pressed="false">國三</button>
+    <button type="button" data-f="zh" aria-pressed="false">國文</button>
+  </nav>
+
+  <section class="grp latest" id="latest">
+    <h2 class="sec">🆕 最新上架</h2>
+    <div class="mini">
+      <a class="mini-tile" href="practice/red-watch-quest.html"><span class="mi">⌚</span><span><b>The Red Watch 閱讀闖關</b><small>小五・原創故事附朗讀</small></span></a>
+      <a class="mini-tile" href="practice/new-kid-quest.html"><span class="mi">⚽</span><span><b>The New Kid 閱讀闖關</b><small>小五・原創故事附朗讀</small></span></a>
+      <a class="mini-tile" href="#reading"><span class="mi">📔</span><span><b>Tim's Diary 小五日記 8 篇</b><small>小五・延伸閱讀</small></span></a>
+      <a class="mini-tile" href="reading/sports-day.html"><span class="mi">🏃</span><span><b>Sports Day</b><small>國三・會考複習延伸閱讀</small></span></a>
+    </div>
+  </section>
+
+
+  <section class="grp">
   <h2 class="sec">🎮 小遊戲</h2>
   <div class="games">
-    <a class="game" href="games/moon-rabbit-grill.html">
+    <a class="game" data-grade="g5" href="games/moon-rabbit-grill.html">
       <svg viewBox="0 0 84 84" aria-hidden="true">
         <circle cx="42" cy="42" r="40" fill="#7ec8ff"/>
         <circle cx="42" cy="42" r="40" fill="url(#g)"/>
@@ -103,10 +135,12 @@
       </div>
     </a>
   </div>
+  </section>
 
+  <section class="grp">
   <h2 class="sec">📝 閱讀練習</h2>
   <div class="games">
-    <a class="game practice" href="practice/context-clue-detectives.html">
+    <a class="game practice" data-grade="g5" href="practice/context-clue-detectives.html">
       <svg viewBox="0 0 84 84" aria-hidden="true">
         <circle cx="42" cy="42" r="40" fill="#2f6fbf"/>
         <rect x="18" y="20" width="36" height="46" rx="4" fill="#fffaf2" stroke="#1f2a37" stroke-width="2"/>
@@ -122,7 +156,7 @@
       </div>
     </a>
 
-    <a class="game practice" href="practice/tornado-quest.html">
+    <a class="game practice" data-grade="g5" href="practice/tornado-quest.html">
       <svg viewBox="0 0 84 84" aria-hidden="true">
         <circle cx="42" cy="42" r="40" fill="#4a5a78"/>
         <ellipse cx="42" cy="22" rx="26" ry="9" fill="#d7dde8"/>
@@ -134,7 +168,7 @@
         <span class="tag">五上 Wonders U3 W4 · 5 關</span>
       </div>
     </a>
-    <a class="game practice" href="practice/got-the-beat-quest.html">
+    <a class="game practice" data-grade="g5" href="practice/got-the-beat-quest.html">
       <svg viewBox="0 0 84 84" aria-hidden="true">
         <circle cx="42" cy="42" r="40" fill="#7a54b8"/>
         <path d="M34 58V24l24-6v34" fill="none" stroke="#fffaf2" stroke-width="5" stroke-linejoin="round"/>
@@ -146,7 +180,7 @@
         <span class="tag">五上 Wonders U3 W5 · 6 關</span>
       </div>
     </a>
-    <a class="game practice" href="practice/red-watch-quest.html">
+    <a class="game practice" data-grade="g5" href="practice/red-watch-quest.html">
       <svg viewBox="0 0 84 84" aria-hidden="true">
         <circle cx="42" cy="42" r="40" fill="#2f8a57"/>
         <rect x="33" y="12" width="18" height="60" rx="6" fill="#1f2a37"/>
@@ -160,7 +194,7 @@
         <span class="tag">搭配五上 Wonders U5 W1 · 6 關</span>
       </div>
     </a>
-    <a class="game practice" href="practice/new-kid-quest.html">
+    <a class="game practice" data-grade="g5" href="practice/new-kid-quest.html">
       <svg viewBox="0 0 84 84" aria-hidden="true">
         <circle cx="42" cy="42" r="40" fill="#2f6fbf"/>
         <circle cx="42" cy="42" r="22" fill="#fffaf2" stroke="#1f2a37" stroke-width="3"/>
@@ -174,28 +208,36 @@
       </div>
     </a>
   </div>
+  </section>
 
+  <section class="grp" id="reading">
   <h2 class="sec">📖 延伸閱讀</h2>
   <p class="sec-note">原創短文，附中文對照、朗讀音檔和閱讀理解題。</p>
+  <div class="subgrp">
   <h3 class="sub">Tim's Diary 小五日記（五上 Wonders 單字）</h3>
   <div class="mini">
-    <a class="mini-tile" href="reading/snow-diary.html"><span class="mi">❄️</span><span><b>合歡山蓋冰屋</b><small>U3 Ice Hotels</small></span></a>
-    <a class="mini-tile" href="reading/power-out-diary.html"><span class="mi">🕯️</span><span><b>奶奶家的停電夜</b><small>U3 W3 Lighting Lives</small></span></a>
-    <a class="mini-tile" href="reading/typhoon-diary.html"><span class="mi">🌀</span><span><b>颱風夜搶救桂花</b><small>U3 W4 Tornado!</small></span></a>
-    <a class="mini-tile" href="reading/where-is-buddy.html"><span class="mi">🐶</span><span><b>Where Is Buddy?</b><small>U3 W4 Tornado!</small></span></a>
-    <a class="mini-tile" href="reading/chorus-diary.html"><span class="mi">🎵</span><span><b>合唱比賽</b><small>U3 W5 They've Got the Beat!</small></span></a>
-    <a class="mini-tile" href="reading/bright-night-diary.html"><span class="mi">🌅</span><span><b>晚上十點還亮著的天空</b><small>U4 W1 Alaska</small></span></a>
-    <a class="mini-tile" href="reading/yehliu-diary.html"><span class="mi">🌊</span><span><b>野柳女王頭的脖子</b><small>U4 W2 Into the Sea</small></span></a>
-    <a class="mini-tile" href="reading/lunar-new-year-diary.html"><span class="mi">🧧</span><span><b>回台南阿嬤家過農曆年</b><small>U4 W3 Happy New Year!</small></span></a>
+    <a class="mini-tile" data-grade="g5" href="reading/snow-diary.html"><span class="mi">❄️</span><span><b>合歡山蓋冰屋</b><small>U3 Ice Hotels</small></span></a>
+    <a class="mini-tile" data-grade="g5" href="reading/power-out-diary.html"><span class="mi">🕯️</span><span><b>奶奶家的停電夜</b><small>U3 W3 Lighting Lives</small></span></a>
+    <a class="mini-tile" data-grade="g5" href="reading/typhoon-diary.html"><span class="mi">🌀</span><span><b>颱風夜搶救桂花</b><small>U3 W4 Tornado!</small></span></a>
+    <a class="mini-tile" data-grade="g5" href="reading/where-is-buddy.html"><span class="mi">🐶</span><span><b>Where Is Buddy?</b><small>U3 W4 Tornado!</small></span></a>
+    <a class="mini-tile" data-grade="g5" href="reading/chorus-diary.html"><span class="mi">🎵</span><span><b>合唱比賽</b><small>U3 W5 They've Got the Beat!</small></span></a>
+    <a class="mini-tile" data-grade="g5" href="reading/bright-night-diary.html"><span class="mi">🌅</span><span><b>晚上十點還亮著的天空</b><small>U4 W1 Alaska</small></span></a>
+    <a class="mini-tile" data-grade="g5" href="reading/yehliu-diary.html"><span class="mi">🌊</span><span><b>野柳女王頭的脖子</b><small>U4 W2 Into the Sea</small></span></a>
+    <a class="mini-tile" data-grade="g5" href="reading/lunar-new-year-diary.html"><span class="mi">🧧</span><span><b>回台南阿嬤家過農曆年</b><small>U4 W3 Happy New Year!</small></span></a>
   </div>
+  </div>
+  <div class="subgrp">
   <h3 class="sub">國三會考複習</h3>
   <div class="mini">
-    <a class="mini-tile" href="reading/sports-day.html"><span class="mi">🏃</span><span><b>Sports Day: The Five-Dollar Eco-Challenge</b><small>會考第 1–2 冊語塊・素養題</small></span></a>
+    <a class="mini-tile" data-grade="g9" href="reading/sports-day.html"><span class="mi">🏃</span><span><b>Sports Day: The Five-Dollar Eco-Challenge</b><small>會考第 1–2 冊語塊・素養題</small></span></a>
   </div>
+  </div>
+  </section>
 
+  <section class="grp">
   <h2 class="sec">🔤 國中中翻英</h2>
   <div class="games">
-    <a class="game translate" href="translate/g7-translation-quest-01.html">
+    <a class="game translate" data-grade="g7" href="translate/g7-translation-quest-01.html">
       <svg viewBox="0 0 84 84" aria-hidden="true">
         <circle cx="42" cy="42" r="40" fill="#b5523b"/>
         <rect x="12" y="22" width="28" height="22" rx="5" fill="#fffaf2" stroke="#1f2a37" stroke-width="2"/>
@@ -211,7 +253,7 @@
         <span class="tag">國一上 · 5 關 30 題</span>
       </div>
     </a>
-    <a class="game translate" href="translate/g7-translation-quest-02.html">
+    <a class="game translate" data-grade="g7" href="translate/g7-translation-quest-02.html">
       <svg viewBox="0 0 84 84" aria-hidden="true">
         <circle cx="42" cy="42" r="40" fill="#b5523b"/>
         <rect x="12" y="22" width="28" height="22" rx="5" fill="#fffaf2" stroke="#1f2a37" stroke-width="2"/>
@@ -227,7 +269,7 @@
         <span class="tag">國一上 · 5 關 30 題</span>
       </div>
     </a>
-    <a class="game translate" href="translate/g7-translation-quest-03.html">
+    <a class="game translate" data-grade="g7" href="translate/g7-translation-quest-03.html">
       <svg viewBox="0 0 84 84" aria-hidden="true">
         <circle cx="42" cy="42" r="40" fill="#b5523b"/>
         <rect x="12" y="22" width="28" height="22" rx="5" fill="#fffaf2" stroke="#1f2a37" stroke-width="2"/>
@@ -244,10 +286,12 @@
       </div>
     </a>
   </div>
+  </section>
 
+  <section class="grp">
   <h2 class="sec">✍️ 國文練習</h2>
   <div class="games">
-    <a class="game chinese" href="chinese/writing-quest.html">
+    <a class="game chinese" data-grade="zh" href="chinese/writing-quest.html">
       <svg viewBox="0 0 84 84" aria-hidden="true">
         <circle cx="42" cy="42" r="40" fill="#3d7a4f"/>
         <rect x="20" y="18" width="38" height="48" rx="4" fill="#fffaf2" stroke="#1f2a37" stroke-width="2"/>
@@ -262,12 +306,37 @@
       </div>
     </a>
   </div>
+  </section>
 
   <div class="tips">
     <b>小提醒</b><br>
     遊戲有背景音樂和音效，按「開始玩」後才會出聲，右上角可以靜音。<br>
+    練習的進度存在這台裝置的瀏覽器裡，換手機或電腦要重新開始。<br>
     iPhone 側邊的靜音開關打開時會聽不到聲音，撥回響鈴就好。
   </div>
 </main>
+<script>
+// 年級篩選：卡片有 data-grade，整區沒東西就把區塊標題也藏起來；選擇記在這台裝置
+(function () {
+  var KEY = "site-grade-filter";
+  var btns = document.querySelectorAll(".filter button");
+  function apply(f) {
+    btns.forEach(function (b) { b.setAttribute("aria-pressed", String(b.dataset.f === f)); });
+    document.querySelectorAll("[data-grade]").forEach(function (el) { el.hidden = f !== "all" && el.dataset.grade !== f; });
+    document.querySelectorAll(".subgrp").forEach(function (g) { g.hidden = !g.querySelector("[data-grade]:not([hidden])"); });
+    document.querySelectorAll(".grp").forEach(function (g) {
+      g.hidden = g.classList.contains("latest") ? f !== "all" : !g.querySelector("[data-grade]:not([hidden])");
+    });
+    try { localStorage.setItem(KEY, f); } catch (e) {}
+  }
+  btns.forEach(function (b) { b.addEventListener("click", function () { apply(b.dataset.f); }); });
+  var saved = "all";
+  try { saved = localStorage.getItem(KEY) || "all"; } catch (e) {}
+  if (!document.querySelector('.filter button[data-f="' + saved + '"]')) saved = "all";
+  apply(saved);
+  // 點「最新上架」裡的 Tim's Diary 時先切回全部，才看得到延伸閱讀區
+  document.querySelectorAll('a[href^="#"]').forEach(function (a) { a.addEventListener("click", function () { apply("all"); }); });
+})();
+</script>
 </body>
 </html>
