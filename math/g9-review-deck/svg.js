@@ -151,12 +151,21 @@ const SV = (() => {
       </div></div>`;
     const g = h.querySelector('.stepg'), txt = h.querySelector('.step-txt'),
       vEl = h.querySelector('.stepv'), sl = h.querySelector('.steps-r');
+    let shown = -1;
     const draw = () => {
       const v = +sl.value;
       const i = Math.max(0, Math.min(N - 1, Math.ceil(v) - 1));
       const k = Math.max(0, Math.min(1, v - i));
       vEl.textContent = i + 1;
-      txt.innerHTML = `<b>步驟 ${i + 1}</b>｜${steps[i].t || ''}`;
+      // 換到新步驟才重寫說明並重排 MathJax（否則拖滑桿後公式會變回 \(...\) 原始碼）；
+      // 排版完公式高度改變，再送一次 input 讓投影片重新量高縮放
+      if (i !== shown) {
+        shown = i;
+        txt.innerHTML = `<b>步驟 ${i + 1}</b>｜${steps[i].t || ''}`;
+        if (/\\\(|\$\$/.test(steps[i].t || '') && window.MathJax && MathJax.typesetPromise) {
+          MathJax.typesetPromise([txt]).then(() => txt.dispatchEvent(new Event('input', { bubbles: true }))).catch(() => {});
+        }
+      }
       let s = '';
       if (acc) for (let j = 0; j < i; j++) { if (steps[j].d) s += steps[j].d(1); }
       if (steps[i].d) s += steps[i].d(k);
