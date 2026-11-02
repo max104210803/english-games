@@ -1,0 +1,173 @@
+/* =====================================================================
+   深色主題（2026-10-06 定案：深底配淺色圖卡、預設深色）
+   - 共用版：改這份，再複製到各 deck（new_deck.py 會自動複製）。
+   - 只在 <html data-theme="dark"> 時生效（index.html 預設帶此屬性；按「☀ 淺色」才切回，
+     選擇存在 localStorage 的 deck-theme，同一網址來源的各 deck 共用）。
+   - 深色：封面、頂部列、目錄、投影片外框、左側概念欄、範例、控制列、浮動工具列、易錯對照表（.xo）。
+   - 右側圖解欄刻意維持淺色「圖卡」：SVG 內字色寫死為深色，且使用者選定此風格。
+     圖卡內把顏色變數（--ink、--panel、--ctx…）還原成淺色值，滑桿、按鈕、MathJax 都照淺色顯示。
+   - 畫筆：深色時多一個「白」色（.dcolor-darkonly），黑色保留給淺色圖卡用。
+   ===================================================================== */
+
+/* 白色畫筆只在深色時出現 */
+.dcolor-darkonly { display: none; }
+html[data-theme="dark"] .dcolor-darkonly { display: block; }
+
+html[data-theme="dark"] {
+  --ink: #e5eaf3;
+  --muted: #a3afc2;
+  --faint: #7c879b;
+  --line: #334155;
+  --paper: #0b1220;
+  --panel: #151e2e;
+  --shadow-sm: 0 6px 18px rgba(0, 0, 0, 0.35);
+  --shadow: 0 18px 50px rgba(0, 0, 0, 0.45);
+  color-scheme: dark;
+}
+
+html[data-theme="dark"] body {
+  background:
+    radial-gradient(1200px 700px at 12% -10%, rgba(37, 99, 235, 0.16), transparent 60%),
+    radial-gradient(1000px 700px at 100% 0%, rgba(124, 58, 237, 0.14), transparent 55%),
+    radial-gradient(900px 700px at 90% 110%, rgba(5, 150, 105, 0.12), transparent 55%),
+    var(--paper);
+}
+
+/* 章色在深底上偏暗：深色區塊裡當文字用的章色一律調亮（--ctx） */
+html[data-theme="dark"] .slide,
+html[data-theme="dark"] .cover-card,
+html[data-theme="dark"] .toc-chapter,
+html[data-theme="dark"] .zoom-modal,
+html[data-theme="dark"] .zoom-bar {
+  --ctx: color-mix(in srgb, var(--ct, #2563eb) 55%, #ffffff);
+}
+
+/* ---------- 封面 ---------- */
+html[data-theme="dark"] .cover-inner {
+  background: rgba(21, 30, 46, 0.82);
+  border-color: rgba(255, 255, 255, 0.08);
+}
+html[data-theme="dark"] .cover-eyebrow { color: #8fb3ff; }
+html[data-theme="dark"] .cover-card .cc-num { color: var(--ctx); }
+
+/* ---------- 頂部列、目錄 ---------- */
+html[data-theme="dark"] .topbar { background: rgba(11, 18, 32, 0.88); }
+html[data-theme="dark"] .toc { background: rgba(11, 18, 32, 0.72); }
+html[data-theme="dark"] .toc-chead { color: var(--ctx); }
+html[data-theme="dark"] .toc-item.active {
+  color: var(--ctx);
+  background: rgba(96, 165, 250, 0.12);
+}
+html[data-theme="dark"] .toc-item:hover { background: rgba(96, 165, 250, 0.08); }
+html[data-theme="dark"] .slide-info::-webkit-scrollbar-thumb,
+html[data-theme="dark"] .toc::-webkit-scrollbar-thumb,
+html[data-theme="dark"] .slide-visual::-webkit-scrollbar-thumb { background: #475569; }
+
+/* ---------- 左側概念欄 ---------- */
+html[data-theme="dark"] .points li { color: var(--ink); }
+html[data-theme="dark"] .points li b,
+html[data-theme="dark"] .points .k,
+html[data-theme="dark"] .formula .formula-label,
+html[data-theme="dark"] .ex-head,
+html[data-theme="dark"] .ival,
+html[data-theme="dark"] .step-hint { color: var(--ctx); }
+
+html[data-theme="dark"] .formula {
+  background: color-mix(in srgb, var(--ct) 16%, var(--panel));
+  border-color: color-mix(in srgb, var(--ct) 45%, var(--panel));
+}
+html[data-theme="dark"] .example {
+  background: color-mix(in srgb, var(--ct) 9%, var(--panel));
+  border-color: color-mix(in srgb, var(--ct) 45%, var(--line));
+}
+html[data-theme="dark"] .ex-toggle,
+html[data-theme="dark"] .ex-zoom,
+html[data-theme="dark"] .ibtn {
+  background: var(--panel);
+  color: var(--ctx);
+  border-color: var(--ctx);
+}
+html[data-theme="dark"] .ex-toggle:hover,
+html[data-theme="dark"] .ex-zoom:hover,
+html[data-theme="dark"] .ibtn:hover,
+html[data-theme="dark"] .ibtn.active { background: var(--ct); color: #fff; }
+
+/* ---------- 右側視覺欄 ---------- */
+/* 預設：淺色圖卡。變數還原成淺色值 → 圖卡內的滑桿數值、按鈕、MathJax 與淺色模式一模一樣 */
+html[data-theme="dark"] .slide-visual {
+  --ink: #172033;
+  --muted: #657187;
+  --faint: #96a0b3;
+  --line: #dce3ee;
+  --panel: #ffffff;
+  --paper: #eef2f8;
+  --ctx: var(--ct);
+  color: #172033;
+  border-color: #334155;
+}
+html[data-theme="dark"] .vis-zoom { box-shadow: 0 4px 12px rgba(0, 0, 0, 0.35); }
+
+/* 例外：易錯對照表（.xo）跟著深色 */
+html[data-theme="dark"] .slide-visual:has(.xo) {
+  --ink: #e5eaf3;
+  --muted: #a3afc2;
+  --faint: #7c879b;
+  --line: #334155;
+  --panel: #151e2e;
+  --paper: #0b1220;
+  --ctx: color-mix(in srgb, var(--ct, #2563eb) 55%, #ffffff);
+  color: var(--ink);
+  background: linear-gradient(180deg, #111a29, #0e1624);
+}
+html[data-theme="dark"] .slide-visual:has(.xo) .vis-zoom { background: rgba(21, 30, 46, 0.92); color: var(--ctx); border-color: var(--ctx); }
+
+/* xo 表格的底色寫在行內樣式，深色時以 !important 覆蓋 */
+html[data-theme="dark"] .xo-bad {
+  background: #2a1520 !important;
+  border-color: #8a2a43 !important;
+}
+html[data-theme="dark"] .xo-good {
+  background: #0f2a22 !important;
+  border-color: #1f7a5a !important;
+}
+html[data-theme="dark"] .xo-bad .xo-h { color: #fb7185 !important; }
+html[data-theme="dark"] .xo-good .xo-h { color: #34d399 !important; }
+html[data-theme="dark"] .xo-t { color: #eef2f8 !important; }
+
+/* ---------- 底部控制列、浮動工具列 ---------- */
+html[data-theme="dark"] .nav-btn:hover:not(:disabled) { border-color: #60a5fa; color: #93c5fd; }
+html[data-theme="dark"] .progress-track { background: #2a3548; }
+html[data-theme="dark"] .dock { background: rgba(21, 30, 46, 0.92); }
+html[data-theme="dark"] .dbtn:hover { background: rgba(96, 165, 250, 0.16); color: #93c5fd; }
+html[data-theme="dark"] .dcolor { border-color: #1e293b; }
+
+/* ---------- 放大層 ---------- */
+/* 範例放大：深色；圖解放大：淺色圖卡（xo 表格例外，跟著深色） */
+html[data-theme="dark"] .zoom-modal { background: var(--paper); }
+html[data-theme="dark"] .zoom-bar { background: rgba(11, 18, 32, 0.96); }
+html[data-theme="dark"] .zoom-badge,
+html[data-theme="dark"] .zoom-btn { color: var(--ctx); }
+html[data-theme="dark"] .zoom-btn { background: var(--panel); border-color: var(--ctx); }
+html[data-theme="dark"] .zoom-btn:hover { background: var(--ct); color: #fff; }
+html[data-theme="dark"] .zoom-x { color: #fb7185; border-color: #fb7185; }
+html[data-theme="dark"] .zoom-x:hover { background: #e11d48; color: #fff; }
+html[data-theme="dark"] .zoom-sol { border-top-color: #334155; }
+html[data-theme="dark"] .zoom-modal:has(.zoom-body > .visual-host):not(:has(.xo)) {
+  --ink: #172033;
+  --muted: #657187;
+  --faint: #96a0b3;
+  --line: #dce3ee;
+  --panel: #ffffff;
+  --paper: #eef2f8;
+  --ctx: var(--ct);
+  background: #f6f8fc;
+  color: #172033;
+}
+
+/* ---------- 主題切換鈕 ---------- */
+.theme-btn { white-space: nowrap; }
+
+/* 手機版目錄抽屜 */
+@media (max-width: 1080px) {
+  html[data-theme="dark"] .toc { background: var(--paper); }
+}
