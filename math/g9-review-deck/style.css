@@ -278,6 +278,7 @@ button { font: inherit; cursor: pointer; }
   padding: 10px 14px;
   margin-bottom: 12px;
   overflow-x: auto;
+  flex-shrink: 0;   /* 左欄是 flex 直排；overflow 會讓公式框被壓扁成一條，內容多時由 fitSlide 整欄縮放 */
 }
 .formula .formula-label { font-size: 12px; font-weight: 900; color: var(--ct); letter-spacing: 0.06em; margin-bottom: 4px; }
 
