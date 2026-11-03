@@ -20,6 +20,15 @@ window.DECK = window.DECK || [];
   const BOX = (x, y, w, h, o = {}) =>
     `<rect x="${x}" y="${y}" width="${w}" height="${h}" rx="${o.r || 12}" fill="${o.fill || '#fff'}" stroke="${o.stroke || '#dce3ee'}" stroke-width="${o.sw || 1.8}"/>`;
 
+  // 啟發式圖卡：上方「先猜」提問，下方「發現」在學生拖出規律後才解鎖
+  const GUESS = (t) => `<div style="width:96%;margin:30px auto 8px;font-size:13.5px;font-weight:800;line-height:1.55;color:#5b21b6;background:#f4effe;border:1.5px dashed #c4b0f3;border-radius:10px;padding:7px 11px;text-align:left">🤔 先猜：${t}</div>`;
+  const AHA = (t, on, hint) => on
+    ? `<div style="width:96%;margin:8px auto 0;font-size:13.5px;font-weight:800;line-height:1.55;color:#047857;background:#e8f7ef;border:1.5px solid #9fd8bd;border-radius:10px;padding:7px 11px;text-align:left">💡 發現：${t}</div>`
+    : `<div style="width:96%;margin:8px auto 0;font-size:13px;font-weight:700;line-height:1.55;color:#7c879b;background:#f3f5f9;border:1.5px dashed #dce3ee;border-radius:10px;padding:7px 11px;text-align:left">🔒 ${hint || '拖拖看，找到規律就會解鎖發現'}</div>`;
+  // 圖卡骨架：先猜 → 圖 → 滑桿 → 發現
+  const CARD = (q, ctrl) => GUESS(q) + `<div style="width:100%"><div id="fig"></div>${ctrl ? `<div class="ictrl">${ctrl}</div>` : ''}<div id="aha"></div></div>`;
+  const CIRC = (x, y, r, fill, stroke) => `<circle cx="${x}" cy="${y}" r="${r}" fill="${fill}" stroke="${stroke || '#1f2a37'}" stroke-width="1.5"/>`;
+
   // 易錯對照表（HTML，左右兩欄）
   function xo(rows) {
     // class 名（xo／xo-bad／xo-good／xo-h／xo-t）供 theme-dark.css 深色模式覆蓋行內色
@@ -65,15 +74,37 @@ window.DECK = window.DECK || [];
         ],
         formula: { label: '面數', tex: '6\\text{面：}4\\text{垂直}+2\\text{平行}' },
         visual: (h) => {
-          let s = BOX(40, 210, 360, 16, { fill: '#94a3b8', stroke: '#64748b' });
-          s += SV.seg(80, 226, 80, 256, '#94a3b8', 7);
-          s += SV.seg(360, 226, 360, 256, '#94a3b8', 7);
-          s += TX(355, 202, '桌面', { fs: 13, c: '#64748b', anchor: 'middle' });
-          s += cuboid(120, 125, 130, 85, 40, {});
-          s += TX(308, 105, '站著 4 面', { fs: 14, c: RED });
-          s += TX(308, 130, '和桌面垂直', { fs: 14, c: RED });
-          s += TX(308, 165, '躺著 2 面平行', { fs: 14, c: BLU });
-          h.innerHTML = svg('0 0 440 260', s);
+          h.innerHTML = CARD('紙箱平放在桌上，有幾個面是「站著」的（和桌面垂直）？先數再勾選對答案。',
+            `<label>塗出站著的面 <input type="checkbox" id="sk"></label>
+            <label style="margin-left:10px">塗出躺著的面 <input type="checkbox" id="lk"></label>`);
+          let sOn = false, lOn = false;
+          const draw = () => {
+            const sk = h.querySelector('#sk').checked, lk = h.querySelector('#lk').checked;
+            if (sk) sOn = true;
+            if (lk) lOn = true;
+            let s = BOX(40, 210, 360, 16, { fill: '#94a3b8', stroke: '#64748b' });
+            s += SV.seg(80, 226, 80, 256, '#94a3b8', 7);
+            s += SV.seg(360, 226, 360, 256, '#94a3b8', 7);
+            s += TX(355, 202, '桌面', { fs: 13, c: '#64748b', anchor: 'middle' });
+            s += cuboid(120, 125, 130, 85, 40, {});
+            if (sk) {
+              s += `<polygon points="120,125 250,125 250,210 120,210" fill="rgba(225,29,72,.28)"/>`;
+              s += `<polygon points="250,125 290,85 290,170 250,210" fill="rgba(225,29,72,.28)"/>`;
+              s += TX(308, 112, '站著：前、右', { fs: 13, c: RED });
+              s += TX(308, 132, '＋看不到的後、左', { fs: 13, c: RED });
+              s += TX(308, 152, '＝ 4 面垂直', { fs: 14, c: RED });
+            }
+            if (lk) {
+              s += `<polygon points="120,125 250,125 290,85 160,85" fill="rgba(37,99,235,.3)"/>`;
+              s += TX(308, 182, '躺著：上、下 2 面', { fs: 13, c: BLU });
+              s += TX(200, 236, '↑ 底面貼著桌面（看不到）', { fs: 12, c: BLU, anchor: 'middle' });
+            }
+            h.querySelector('#fig').innerHTML = svg('0 0 440 260', s);
+            h.querySelector('#aha').innerHTML = AHA('看得到的只有 3 面，但長方體有 <b>6 個面</b>：4 個側面站著（垂直桌面），上下 2 面躺著（平行桌面）。數面時要把看不到的也想出來。',
+              sOn && lOn, '兩個都勾勾看');
+          };
+          h.querySelector('#sk').onchange = draw;
+          h.querySelector('#lk').onchange = draw; draw();
         },
         caption: '站著的都垂直，躺著的才平行：4＋2＝6。',
         example: {
@@ -93,17 +124,25 @@ window.DECK = window.DECK || [];
           '拖滑桿：把虛線調淡，看被擋住的三條邊。'
         ],
         visual: (h) => {
-          h.innerHTML = `<div style="width:100%"><div id="fig"></div>
-            <div class="ictrl"><label>虛線透明度 ＝ <span class="ival" id="ov">1.0</span></label>
-            <input type="range" id="os" min="0" max="10" step="1" value="10"></div></div>`;
+          h.innerHTML = CARD('透視圖上有幾條虛線？把虛線調淡到看不見，那些邊<b>真的不見了嗎</b>？',
+            `<label>虛線透明度 ＝ <span class="ival" id="ov">1.0</span></label>
+            <input type="range" id="os" min="0" max="10" step="1" value="10">`);
+          let faded = false;
           const draw = () => {
             const v = +h.querySelector('#os').value;
             const op = v / 10;
             h.querySelector('#ov').textContent = op.toFixed(1);
-            let s = cuboid(130, 70, 120, 85, 40, { dop: op });
-            s += TX(300, 100, '虛線 3 條', { fs: 14, c: C });
-            s += TX(300, 125, '被後面擋住', { fs: 14, c: C });
-            h.querySelector('#fig').innerHTML = svg('0 0 440 240', s);
+            if (v < 10) faded = true;
+            let s = cuboid(130, 90, 120, 85, 40, { dop: op });
+            // 被擋住的頂點：虛線交會處
+            s += `<circle cx="170" cy="135" r="5" fill="${RED}" opacity="${Math.max(op, 0.25)}"/>`;
+            s += TX(300, 110, '虛線 3 條', { fs: 14, c: C });
+            s += TX(300, 135, '交在 1 個', { fs: 14, c: C });
+            s += TX(300, 158, '看不到的頂點', { fs: 14, c: C });
+            s += TX(220, 222, '實線 9 條 ＋ 虛線 3 條 ＝ 12 條邊', { fs: 15, c: '#172033', anchor: 'middle' });
+            h.querySelector('#fig').innerHTML = svg('0 0 440 236', s);
+            h.querySelector('#aha').innerHTML = AHA('虛線是被前面擋住的邊。調淡了只是「看不到」，邊還在：<b>長方體一定有 12 條邊、8 個頂點、6 個面</b>，數的時候虛線也要算。',
+              faded, '把透明度往左拖');
           };
           h.querySelector('#os').oninput = draw; draw();
         },
@@ -126,10 +165,49 @@ window.DECK = window.DECK || [];
         ],
         formula: { label: '表面積', tex: 'S=2(ab+bc+ca)' },
         visual: (h) => {
-          h.innerHTML = SV.fbox([
-            { label: '長方體', tex: 'S=2(ab+bc+ca)', color: C, fill: '#fdf6e8', border: AMB, size: 20 },
-            { label: '正方體', tex: 'S=6a^2\\;,\\;a=5\\to150', color: GRN, fill: '#eef7f2', border: '#bfe0d1', size: 18, note: '單位是平方公分' }
-          ]);
+          h.innerHTML = CARD('長 4、寬 3、高 2 公分的盒子，6 個面要一個一個算嗎？把盒子<b>拆開攤平</b>看看。',
+            `<label>步驟 <span class="ival" id="tv">1</span>／3</label>
+            <input type="range" id="ts" min="1" max="3" step="1" value="1">`);
+          let done = false;
+          const u = 22, L = 4, Wd = 3, H = 2;
+          const F = { top: '#bfdbfe', fb: '#fecdd3', side: '#bbf7d0' };
+          const face = (x, y, w, hh, fill, txt) => `<rect x="${x}" y="${y}" width="${w * u}" height="${hh * u}" fill="${fill}" stroke="#1f2a37" stroke-width="1.6"/>` +
+            TX(x + w * u / 2, y + hh * u / 2 + 5, txt, { fs: 12, c: '#172033', anchor: 'middle' });
+          const draw = () => {
+            const t = +h.querySelector('#ts').value;
+            h.querySelector('#tv').textContent = t;
+            if (t === 3) done = true;
+            let s = '';
+            if (t === 1) {
+              s += cuboid(140, 110, L * 36, H * 36, 50, {});
+              s += TX(140 + L * 18, 110 + H * 36 + 20, '長 4', { fs: 13, c: C, anchor: 'middle' });
+              s += TX(140 + L * 36 + 58, 110 + H * 18 - 10, '高 2', { fs: 13, c: C });
+              s += TX(140 + L * 36 + 44, 80, '寬 3', { fs: 13, c: C });
+              s += TX(220, 228, '6 個面，看得到 3 個', { fs: 14, c: '#172033', anchor: 'middle' });
+            } else if (t === 2) {
+              const x0 = 220 - (Wd + L + Wd) * u / 2, xc = x0 + Wd * u;
+              s += face(xc, 8, L, H, F.fb, '後 4×2');
+              s += face(xc, 8 + H * u, L, Wd, F.top, '上 4×3');
+              s += face(xc, 8 + (H + Wd) * u, L, H, F.fb, '前 4×2');
+              s += face(xc, 8 + (2 * H + Wd) * u, L, Wd, F.top, '下 4×3');
+              s += face(x0, 8 + (H + Wd) * u, Wd, H, F.side, '左 3×2');
+              s += face(xc + L * u, 8 + (H + Wd) * u, Wd, H, F.side, '右 3×2');
+              s += TX(330, 30, '同顏色的', { fs: 12, c: '#657187', anchor: 'middle' });
+              s += TX(330, 48, '一樣大？', { fs: 12, c: '#657187', anchor: 'middle' });
+            } else {
+              const rows = [['上下', L, Wd, F.top, 12], ['前後', L, H, F.fb, 8], ['左右', Wd, H, F.side, 6]];
+              rows.forEach(([nm, w, hh, fill, a], i) => {
+                const y = 14 + i * 76;
+                s += face(40, y, w, hh, fill, '') + face(40 + w * u + 12, y, w, hh, fill, '');
+                s += TX(40 + 2 * w * u + 30, y + hh * u / 2 + 5, nm + '：' + a + ' 平方公分 × 2', { fs: 13, c: '#172033' });
+              });
+              s += TX(220, 236, '2 ×（12 ＋ 8 ＋ 6）＝ 2 × 26 ＝ 52 平方公分', { fs: 15, c: RED, anchor: 'middle' });
+            }
+            h.querySelector('#fig').innerHTML = svg('0 0 440 248', s);
+            h.querySelector('#aha').innerHTML = AHA('相對的兩面<b>一模一樣大</b>，所以只要算 3 種面積再 ×2。正方體更簡單：6 面全一樣，算 1 面 ×6 就好。',
+              done, '拖到第 3 步');
+          };
+          h.querySelector('#ts').oninput = draw; draw();
         },
         caption: '三組面各算一次再兩倍，正方體是六倍一面。',
         example: {
@@ -150,18 +228,30 @@ window.DECK = window.DECK || [];
         ],
         formula: { label: '蛋糕', tex: 'S=2(216+108+72)=792' },
         visual: (h) => {
-          h.innerHTML = `<div style="width:100%"><div id="fig"></div>
-            <div class="ictrl"><label>切成 n 份，n ＝ <span class="ival" id="nv">1</span></label>
-            <input type="range" id="ns" min="0" max="3" step="1" value="0"></div></div>`;
+          h.innerHTML = CARD('蛋糕切成好幾塊後，<b>每一塊的表面積加起來</b>，會比原來多、少、還是一樣？',
+            `<label>切成 n 份，n ＝ <span class="ival" id="nv">1</span></label>
+            <input type="range" id="ns" min="0" max="3" step="1" value="0">`);
           const Ns = [1, 2, 4, 8], Tot = [792, 1224, 1440, 1584];
+          const CUT = ['', '平切（+2 個 18×12）', '前後切（+2 個 18×6）', '左右切（+2 個 12×6）'];
+          let cut = false;
+          const L = (x1, y1, x2, y2) => `<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="${RED}" stroke-width="3"/>`;
           const draw = () => {
             const i = +h.querySelector('#ns').value;
             h.querySelector('#nv').textContent = Ns[i];
-            let s = cuboid(60, 90, 150 - i * 18, 80, 40, {});
-            s += TX(300, 100, '共 ' + Ns[i] + ' 份', { fs: 16, c: C });
-            s += TX(300, 130, '總表面 ' + Tot[i], { fs: 16, c: RED });
-            s += TX(300, 160, '差 ' + (Tot[i] - 792), { fs: 14, c: '#172033' });
-            h.querySelector('#fig').innerHTML = svg('0 0 440 240', s);
+            if (i > 0) cut = true;
+            // 長 18 → 180、高 6 → 60、寬 12 → 斜深 50
+            let s = cuboid(30, 110, 180, 60, 50, {});
+            if (i >= 1) s += L(30, 140, 210, 140) + L(210, 140, 260, 90);
+            if (i >= 2) s += L(55, 85, 235, 85) + L(235, 85, 235, 145);
+            if (i >= 3) s += L(120, 110, 120, 170) + L(120, 110, 170, 60);
+            s += TX(120, 200, '18 × 12 × 6 的蛋糕', { fs: 12, c: '#657187', anchor: 'middle' });
+            s += TX(345, 70, '共 ' + Ns[i] + ' 塊', { fs: 16, c: C, anchor: 'middle' });
+            s += TX(345, 100, '表面積總和 ' + Tot[i], { fs: 15, c: RED, anchor: 'middle' });
+            s += TX(345, 126, '比原來多 ' + (Tot[i] - 792), { fs: 13, c: '#172033', anchor: 'middle' });
+            for (let k = 1; k <= i; k++) s += TX(345, 140 + k * 20, '第 ' + k + ' 刀：' + CUT[k], { fs: 11, c: RED, anchor: 'middle' });
+            h.querySelector('#fig').innerHTML = svg('0 0 440 220', s);
+            h.querySelector('#aha').innerHTML = AHA('紅線是刀口。每切一刀，刀口兩邊各露出一個<b>原本藏在裡面的新面</b>，所以總表面積只會變多。切成 8 塊，多出來的剛好跟原來一樣多（792）。',
+              cut, '把 n 拖大，切切看');
           };
           h.querySelector('#ns').oninput = draw; draw();
         },
@@ -184,20 +274,30 @@ window.DECK = window.DECK || [];
         ],
         formula: { label: '切分', tex: '\\text{總表面}=792+432k' },
         visual: (h) => {
-          h.innerHTML = `<div style="width:100%"><div id="fig"></div>
-            <div class="ictrl"><label>刀數 k ＝ <span class="ival" id="kv">1</span></label>
-            <input type="range" id="ks" min="0" max="3" step="1" value="1"></div></div>`;
+          h.innerHTML = CARD('一直平切下去，每多一刀，表面積總和會多多少？<b>每刀都一樣多嗎？</b>',
+            `<label>平切 k ＝ <span class="ival" id="kv">0</span> 刀</label>
+            <input type="range" id="ks" min="0" max="3" step="1" value="0">`);
+          const seen = new Set();
           const draw = () => {
             const k = +h.querySelector('#ks').value;
             h.querySelector('#kv').textContent = k;
-            const tot = 792 + 432 * k;
-            let s = '';
-            for (let i = 0; i <= k; i++) {
-              s += SV.seg(60 + i * 80, 80, 60 + i * 80, 180, i === 0 ? '#cbd5e1' : RED, i === 0 ? 2 : 4);
+            seen.add(k);
+            const tot = 792 + 432 * k, gap = 18, th = (120 - gap * k) / (k + 1);
+            let s = TX(130, 22, '側面看：拉開每一層', { fs: 12, c: '#657187', anchor: 'middle' });
+            for (let j = 0; j <= k; j++) {
+              const y = 36 + j * (th + gap);
+              s += `<rect x="40" y="${y}" width="180" height="${th}" rx="3" fill="#fde68a" stroke="${C}" stroke-width="2"/>`;
+              if (j > 0) s += `<line x1="40" y1="${y}" x2="220" y2="${y}" stroke="${RED}" stroke-width="4"/>`;
+              if (j < k) s += `<line x1="40" y1="${y + th}" x2="220" y2="${y + th}" stroke="${RED}" stroke-width="4"/>`;
+              if (j < k) s += TX(232, y + th + gap / 2 + 5, '新 2 面', { fs: 11, c: RED });
             }
-            s += TX(220, 210, 'k 刀 → 總表面 ' + tot + ' 平方公分', { fs: 16, c: RED, anchor: 'middle' });
-            s += TX(220, 50, '平切每刀 +2 個 18×12 切面（+432）', { fs: 13, c: '#172033', anchor: 'middle' });
-            h.querySelector('#fig').innerHTML = svg('0 0 440 240', s);
+            s += TX(345, 70, k + ' 刀 → ' + (k + 1) + ' 層', { fs: 16, c: C, anchor: 'middle' });
+            s += TX(345, 102, '新面：' + (2 * k) + ' 個 18×12', { fs: 13, c: RED, anchor: 'middle' });
+            s += TX(345, 130, '792 ＋ 432 × ' + k, { fs: 14, c: '#172033', anchor: 'middle' });
+            s += TX(345, 156, '＝ ' + tot + ' 平方公分', { fs: 15, c: RED, anchor: 'middle' });
+            h.querySelector('#fig').innerHTML = svg('0 0 440 172', s);
+            h.querySelector('#aha').innerHTML = AHA('每一刀都讓刀口的上下各多一個 18×12 的面：<b>每刀固定多 2×216＝432</b>。刀數加 1，總表面積就加 432，像在數倍數一樣規律。',
+              seen.size >= 3, '多拖幾個刀數看看（已看 ' + seen.size + ' 種）');
           };
           h.querySelector('#ks').oninput = draw; draw();
         },

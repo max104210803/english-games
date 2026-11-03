@@ -20,6 +20,15 @@ window.DECK = window.DECK || [];
   const BOX = (x, y, w, h, o = {}) =>
     `<rect x="${x}" y="${y}" width="${w}" height="${h}" rx="${o.r || 12}" fill="${o.fill || '#fff'}" stroke="${o.stroke || '#dce3ee'}" stroke-width="${o.sw || 1.8}"/>`;
 
+  // 啟發式圖卡：上方「先猜」提問，下方「發現」在學生拖出規律後才解鎖
+  const GUESS = (t) => `<div style="width:96%;margin:30px auto 8px;font-size:13.5px;font-weight:800;line-height:1.55;color:#5b21b6;background:#f4effe;border:1.5px dashed #c4b0f3;border-radius:10px;padding:7px 11px;text-align:left">🤔 先猜：${t}</div>`;
+  const AHA = (t, on, hint) => on
+    ? `<div style="width:96%;margin:8px auto 0;font-size:13.5px;font-weight:800;line-height:1.55;color:#047857;background:#e8f7ef;border:1.5px solid #9fd8bd;border-radius:10px;padding:7px 11px;text-align:left">💡 發現：${t}</div>`
+    : `<div style="width:96%;margin:8px auto 0;font-size:13px;font-weight:700;line-height:1.55;color:#7c879b;background:#f3f5f9;border:1.5px dashed #dce3ee;border-radius:10px;padding:7px 11px;text-align:left">🔒 ${hint || '拖拖看，找到規律就會解鎖發現'}</div>`;
+  // 圖卡骨架：先猜 → 圖 → 滑桿 → 發現
+  const CARD = (q, ctrl) => GUESS(q) + `<div style="width:100%"><div id="fig"></div>${ctrl ? `<div class="ictrl">${ctrl}</div>` : ''}<div id="aha"></div></div>`;
+  const CIRC = (x, y, r, fill, stroke) => `<circle cx="${x}" cy="${y}" r="${r}" fill="${fill}" stroke="${stroke || '#1f2a37'}" stroke-width="1.5"/>`;
+
   // 易錯對照表（HTML，左右兩欄）
   function xo(rows) {
     // class 名（xo／xo-bad／xo-good／xo-h／xo-t）供 theme-dark.css 深色模式覆蓋行內色
@@ -52,11 +61,38 @@ window.DECK = window.DECK || [];
         ],
         formula: { label: '時間乘', tex: '155\\times4=620\\text{秒}=10\\text{分}20\\text{秒}' },
         visual: (h) => {
-          h.innerHTML = SV.fbox([
-            { label: '化小', tex: '2\\text{分}35\\text{秒}=155\\text{秒}', color: BLU, fill: '#eef4ff', border: BLU, size: 18 },
-            { label: '相乘', tex: '155\\times4=620\\text{秒}', color: C, fill: '#fdeef2', border: '#f3c4d0', size: 18 },
-            { label: '進位', tex: '620\\text{秒}=10\\text{分}20\\text{秒}', color: GRN, fill: '#eef7f2', border: '#bfe0d1', size: 18 }
-          ]);
+          h.innerHTML = CARD('2 分 35 秒的歌連播 4 次。分、秒分開乘：2×4＝8 分、35×4＝140 秒，答案是「8 分 140 秒」嗎？',
+            `<label>播 n ＝ <span class="ival" id="nv">1</span> 次</label>
+            <input type="range" id="ns" min="1" max="4" step="1" value="1">`);
+          let carried = false;
+          const U = 34, X0 = 30, COL = ['#fecdd3', '#fde68a', '#bbf7d0', '#bfdbfe'];
+          const draw = () => {
+            const n = +h.querySelector('#ns').value;
+            h.querySelector('#nv').textContent = n;
+            const sec = 155 * n, mm = Math.floor(sec / 60), ss = sec % 60, rawS = 35 * n;
+            if (rawS >= 60) carried = true;
+            let s = '';
+            for (let i = 0; i < n; i++) {
+              const x1 = X0 + i * 155 / 60 * U, w = 155 / 60 * U;
+              s += `<rect x="${x1}" y="40" width="${w}" height="34" fill="${COL[i]}" stroke="#1f2a37" stroke-width="1.5"/>`;
+              s += TX(x1 + w / 2, 62, '第' + (i + 1) + '首', { fs: 11, c: '#172033', anchor: 'middle' });
+            }
+            s += SV.seg(X0, 90, X0 + 11 * U, 90, '#94a3b8', 2);
+            for (let m = 0; m <= 11; m++) {
+              s += `<line x1="${X0 + m * U}" y1="84" x2="${X0 + m * U}" y2="96" stroke="#94a3b8" stroke-width="2"/>`;
+              s += TX(X0 + m * U, 112, m + '分', { fs: 10, c: '#657187', anchor: 'middle' });
+            }
+            const xe = X0 + sec / 60 * U;
+            s += `<line x1="${xe}" y1="30" x2="${xe}" y2="96" stroke="${RED}" stroke-width="2.5"/>`;
+            s += TX(Math.min(xe, 370), 26, mm + ' 分 ' + ss + ' 秒', { fs: 13, c: RED, anchor: 'middle' });
+            s += TX(220, 145, '分開乘：' + (2 * n) + ' 分 ' + rawS + ' 秒', { fs: 15, c: '#172033', anchor: 'middle' });
+            s += TX(220, 172, rawS >= 60 ? rawS + ' 秒裡有 ' + Math.floor(rawS / 60) + ' 個 60 秒 → 再進 ' + Math.floor(rawS / 60) + ' 分 ＝ ' + mm + ' 分 ' + ss + ' 秒' : '秒還沒滿 60，不用進位',
+              { fs: 14, c: rawS >= 60 ? RED : GRN, anchor: 'middle' });
+            h.querySelector('#fig').innerHTML = svg('0 0 440 185', s);
+            h.querySelector('#aha').innerHTML = AHA('看紅線停在哪：4 首是 <b>10 分 20 秒</b>，不是 8 分 140 秒。秒滿 60 就要換成 1 分；也可以先全部化成秒（155×4＝620 秒）再換回分秒。',
+              carried, '多播幾次，看秒數什麼時候超過 60');
+          };
+          h.querySelector('#ns').oninput = draw; draw();
         },
         caption: '三步曲：化小、相乘、進位，順序不能亂。',
         example: {
@@ -78,22 +114,32 @@ window.DECK = window.DECK || [];
         formula: { label: '進位', tex: '884\\text{秒}=14\\text{分}44\\text{秒}' },
         visual: (h) => {
           h.innerHTML = `<div style="width:100%"><div id="fig"></div>
-            <div class="ictrl"><label>次數 n ＝ <span class="ival" id="nv">17</span></label>
-            <input type="range" id="ns" min="1" max="17" step="1" value="17"></div></div>`;
+            <div class="ictrl"><label>次數 n ＝ <span class="ival" id="nv">1</span></label>
+            <input type="range" id="ns" min="1" max="17" step="1" value="1"></div></div>`;
+          h.innerHTML = GUESS('把秒倒進「1 分鐘杯」，每杯裝滿 60 秒。52 秒倒 17 次，<b>能裝滿幾杯、剩幾秒</b>？') + h.innerHTML + '<div id="aha"></div>';
+          let big = false;
           const draw = () => {
             const n = +h.querySelector('#ns').value;
             h.querySelector('#nv').textContent = n;
             const tot = 52 * n, mm = Math.floor(tot / 60), ss = tot % 60;
-            let s = '';
-            const w = Math.min(360, tot / 3);
-            s += BOX(40, 90, w, 40, { fill: 'rgba(225,29,72,.15)', stroke: C });
-            s += TX(220, 70, '52×' + n + ' = ' + tot + ' 秒', { fs: 18, c: C, anchor: 'middle' });
-            s += TX(220, 160, '= ' + mm + ' 分 ' + ss + ' 秒', { fs: 22, c: RED, anchor: 'middle' });
-            h.querySelector('#fig').innerHTML = svg('0 0 440 190', s);
+            if (n >= 10) big = true;
+            let s = TX(220, 20, '52 × ' + n + ' ＝ ' + tot + ' 秒', { fs: 16, c: C, anchor: 'middle' });
+            for (let i = 0; i <= mm && i < 16; i++) {
+              const x = 24 + (i % 8) * 50, y = 34 + Math.floor(i / 8) * 64, f = i < mm ? 1 : ss / 60;
+              if (i === mm && ss === 0) break;
+              s += `<path d="M${x},${y} L${x + 40},${y} L${x + 36},${y + 50} L${x + 4},${y + 50} Z" fill="#fff" stroke="#1f2a37" stroke-width="1.6"/>`;
+              const fy = y + 50 - 50 * f, ins = 4 * (fy - y) / 50;
+              s += `<path d="M${x + ins},${fy} L${x + 40 - ins},${fy} L${x + 36},${y + 50} L${x + 4},${y + 50} Z" fill="${i < mm ? '#93c5fd' : '#fdba74'}"/>`;
+              s += TX(x + 20, y + 32, i < mm ? '60' : '' + ss, { fs: 11, c: '#172033', anchor: 'middle' });
+            }
+            s += TX(220, 186, '滿 ' + mm + ' 杯（' + mm + ' 分），剩 ' + ss + ' 秒 ＝ ' + mm + ' 分 ' + ss + ' 秒', { fs: 15, c: RED, anchor: 'middle' });
+            h.querySelector('#fig').innerHTML = svg('0 0 440 198', s);
+            h.querySelector('#aha').innerHTML = AHA('藍杯是裝滿的 60 秒（1 分），橘杯是還沒滿的秒數。<b>秒數除以 60：商是分、餘數是秒</b>。884÷60＝14 餘 44，就是 14 分 44 秒。',
+              big, '把次數拖大，看杯子怎麼一杯杯裝滿');
           };
           h.querySelector('#ns').oninput = draw; draw();
         },
-        caption: 'n＝17 時長條最長：884 秒＝14 分 44 秒。',
+        caption: 'n＝17 時裝滿 14 杯、剩 44 秒：884 秒＝14 分 44 秒。',
         example: {
           q: '\\(52\\) 秒 \\(\\times 17\\) ＝幾分幾秒？',
           steps: ['\\(52\\times 17=884\\) 秒。', '\\(884=840+44\\)，\\(840\\) 秒\\(=14\\) 分。'],
@@ -112,11 +158,42 @@ window.DECK = window.DECK || [];
         ],
         formula: { label: '時間除', tex: '26\\text{分}24\\text{秒}\\div6=4\\text{分}24\\text{秒}' },
         visual: (h) => {
-          h.innerHTML = SV.fbox([
-            { label: '分', tex: '26\\div6=4\\cdots2\\text{分}', color: BLU, fill: '#eef4ff', border: BLU, size: 18 },
-            { label: '化秒', tex: '2\\text{分}+24\\text{秒}=144\\text{秒}', color: AMB, fill: '#fdf6e8', border: AMB, size: 18 },
-            { label: '秒', tex: '144\\div6=24\\text{秒}', color: GRN, fill: '#eef7f2', border: '#bfe0d1', size: 18 }
-          ]);
+          h.innerHTML = CARD('6 個人平分 26 分 24 秒。每人先拿 4 分，<b>剩下的 2 分怎麼分</b>？',
+            `<label>步驟 <span class="ival" id="tv">1</span>／3</label>
+            <input type="range" id="ts" min="1" max="3" step="1" value="1">`);
+          let done = false;
+          const P = ['#fecdd3', '#fde68a', '#bbf7d0', '#bfdbfe', '#ddd6fe', '#fbcfe8'];
+          const draw = () => {
+            const t = +h.querySelector('#ts').value;
+            h.querySelector('#tv').textContent = t;
+            if (t === 3) done = true;
+            let s = TX(220, 20, '26 分（每格 1 分）＋ 24 秒', { fs: 13, c: '#657187', anchor: 'middle' });
+            for (let i = 0; i < 26; i++) {
+              const left = i >= 24, x = 14 + i * 14.5;
+              const fill = left ? (t >= 2 ? '#f3f5f9' : '#e2e8f0') : P[Math.floor(i / 4)];
+              s += `<rect x="${x}" y="32" width="13" height="30" rx="2" fill="${fill}" stroke="${left ? AMB : '#64748b'}" stroke-width="${left ? 2 : 1}" ${left && t >= 2 ? 'stroke-dasharray="3 2"' : ''}/>`;
+            }
+            s += `<rect x="${14 + 26 * 14.5 + 2}" y="38" width="22" height="18" rx="2" fill="#e2e8f0" stroke="${AMB}" stroke-width="2"/>`;
+            s += TX(14 + 26 * 14.5 + 13, 76, '24秒', { fs: 10, c: AMB, anchor: 'middle' });
+            for (let p = 0; p < 6; p++) s += TX(14 + p * 58 + 29, 78, '第' + (p + 1) + '人', { fs: 10, c: '#657187', anchor: 'middle' });
+            s += TX(220, 104, '步驟 1：26 ÷ 6 ＝ 4 … 2，每人先拿 4 分，剩 2 分', { fs: 13, c: BLU, anchor: 'middle' });
+            if (t >= 2) {
+              s += `<rect x="40" y="118" width="${144 * 2.5}" height="26" rx="4" fill="#fde68a" stroke="${AMB}" stroke-width="2"/>`;
+              s += TX(220, 136, '2 分 ＝ 120 秒，加 24 秒 ＝ 144 秒', { fs: 13, c: '#172033', anchor: 'middle' });
+              s += TX(220, 164, '步驟 2：剩下的分鐘分不下去，換成秒', { fs: 13, c: AMB, anchor: 'middle' });
+            }
+            if (t >= 3) {
+              for (let p = 0; p < 6; p++) {
+                s += `<rect x="${40 + p * 60}" y="176" width="60" height="26" fill="${P[p]}" stroke="#1f2a37" stroke-width="1.2"/>`;
+                s += TX(70 + p * 60, 194, '24 秒', { fs: 11, c: '#172033', anchor: 'middle' });
+              }
+              s += TX(220, 224, '步驟 3：144 ÷ 6 ＝ 24 秒 → 每人 4 分 24 秒', { fs: 14, c: GRN, anchor: 'middle' });
+            }
+            h.querySelector('#fig').innerHTML = svg('0 0 440 236', s);
+            h.querySelector('#aha').innerHTML = AHA('大單位分不完，就<b>把剩下的換成小單位再分</b>（1 分＝60 秒），跟整數除法「餘數往下一位借」是同一個道理。',
+              done, '把步驟拖到 3');
+          };
+          h.querySelector('#ts').oninput = draw; draw();
         },
         caption: '餘下的 2 分化成 120 秒，加上 24 秒才去除。',
         example: {
@@ -137,22 +214,34 @@ window.DECK = window.DECK || [];
         ],
         formula: { label: '日時除', tex: '228\\div6=38\\text{時}=1\\text{日}14\\text{時}' },
         visual: (h) => {
-          h.innerHTML = `<div style="width:100%"><div id="fig"></div>
-            <div class="ictrl"><label>日數 D ＝ <span class="ival" id="dv">9</span>（D 日 12 時 ÷ 6）</label>
-            <input type="range" id="ds" min="5" max="10" step="1" value="9"></div></div>`;
+          h.innerHTML = CARD('9 日 12 時分給 6 個展區，直接 9÷6 會卡住（1 日還剩 3 日）。<b>換成什麼單位就分得開</b>？',
+            `<label>日數 D ＝ <span class="ival" id="dv">9</span>（D 日 12 時 ÷ 6）</label>
+            <input type="range" id="ds" min="5" max="10" step="1" value="9">`);
+          const seen = new Set();
+          const P = ['#fecdd3', '#fde68a', '#bbf7d0', '#bfdbfe', '#ddd6fe', '#fbcfe8'];
           const draw = () => {
             const d = +h.querySelector('#ds').value;
             h.querySelector('#dv').textContent = d;
-            const tot = d * 24 + 12, q = Math.floor(tot / 6), r = tot % 6;
-            let s = BOX(40, 50, 360, 120, { fill: 'rgba(37,99,235,.06)', stroke: BLU });
-            s += TX(220, 95, d + '日12時 = ' + tot + '時 ÷ 6', { fs: 20, c: BLU, anchor: 'middle' });
-            if (r === 0) {
-              const dd = Math.floor(q / 24), hh = q % 24;
-              s += TX(220, 135, '= ' + q + '時 = ' + dd + '日' + hh + '時', { fs: 17, c: RED, anchor: 'middle' });
-            } else {
-              s += TX(220, 135, '= ' + q + '時餘' + r + '時（除不盡）', { fs: 16, c: '#172033', anchor: 'middle' });
+            seen.add(d);
+            const tot = d * 24 + 12, q = tot / 6, sc = 392 / 252, X0 = 24;
+            const dd = Math.floor(q / 24), hh = q % 24;
+            let s = TX(220, 18, d + ' 日 12 時 ＝ ' + d + '×24＋12 ＝ ' + tot + ' 時', { fs: 14, c: BLU, anchor: 'middle' });
+            for (let p = 0; p < 6; p++) {
+              s += `<rect x="${X0 + p * q * sc}" y="30" width="${q * sc}" height="30" fill="${P[p]}" stroke="#1f2a37" stroke-width="1.2"/>`;
+              s += TX(X0 + (p + 0.5) * q * sc, 50, '第' + (p + 1) + '區', { fs: 10, c: '#172033', anchor: 'middle' });
             }
-            h.querySelector('#fig').innerHTML = svg('0 0 440 200', s);
+            s += SV.seg(X0, 74, X0 + tot * sc, 74, '#94a3b8', 2);
+            for (let k = 0; k <= d; k++) {
+              s += `<line x1="${X0 + 24 * k * sc}" y1="68" x2="${X0 + 24 * k * sc}" y2="80" stroke="#64748b" stroke-width="2"/>`;
+              if (k % 2 === 0 || k === d) s += TX(X0 + 24 * k * sc, 94, k + '日', { fs: 10, c: '#657187', anchor: 'middle' });
+            }
+            s += `<rect x="${X0}" y="104" width="${q * sc}" height="22" fill="${P[0]}" stroke="${RED}" stroke-width="2"/>`;
+            s += `<rect x="${X0}" y="104" width="${Math.min(q, 24) * sc}" height="22" fill="none" stroke="${BLU}" stroke-width="2" stroke-dasharray="4 3"/>`;
+            s += TX(X0 + q * sc + 8, 120, '每區 ' + tot + '÷6 ＝ ' + q + ' 時', { fs: 13, c: RED });
+            s += TX(220, 156, q + ' 時 ＝ ' + (dd ? dd + ' 日（24 時）＋ ' : '') + hh + ' 時 ＝ ' + (dd ? dd + ' 日 ' : '') + hh + ' 時', { fs: 15, c: '#172033', anchor: 'middle' });
+            h.querySelector('#fig').innerHTML = svg('0 0 440 170', s);
+            h.querySelector('#aha').innerHTML = AHA('日分不平均，就<b>全部換成小時</b>（1 日＝24 時）再平分，分完再把 24 時換回 1 日。藍虛線框就是「滿 1 日」的那一段。',
+              seen.size >= 2, '換個日數看看');
           };
           h.querySelector('#ds').oninput = draw; draw();
         },
@@ -175,13 +264,15 @@ window.DECK = window.DECK || [];
         ],
         formula: { label: '間隔', tex: '\\text{休息段數}=\\text{次數}-1' },
         visual: (h) => {
-          h.innerHTML = `<div style="width:100%"><div id="fig"></div>
-            <div class="ictrl"><label>播放次數 n ＝ <span class="ival" id="nv">4</span></label>
-            <input type="range" id="ns" min="1" max="4" step="1" value="4"></div></div>`;
+          h.innerHTML = CARD('影片播 4 次，中間要休息幾次？<b>4 次還是 3 次？</b>先猜，再拖拖看。',
+            `<label>播放次數 n ＝ <span class="ival" id="nv">1</span></label>
+            <input type="range" id="ns" min="1" max="4" step="1" value="1">`);
+          const seen = new Set();
           const draw = () => {
             const n = +h.querySelector('#ns').value;
             h.querySelector('#nv').textContent = n;
-            let s = '', x = 40;
+            seen.add(n);
+            let s = TX(220, 40, '播 ' + n + ' 次 → 休息 ' + (n - 1) + ' 次', { fs: 18, c: C, anchor: 'middle' }), x = 40;
             for (let i = 0; i < n; i++) {
               s += BOX(x, 80, 70, 40, { fill: 'rgba(225,29,72,.15)', stroke: C });
               x += 70;
@@ -193,8 +284,11 @@ window.DECK = window.DECK || [];
             const tot = n * 75 + (n - 1) * 15;
             const hh = Math.floor(tot / 60), mm = tot % 60;
             s += TX(220, 160, '播放' + n + '次＋休息' + (n - 1) + '段＝' + tot + '分', { fs: 15, c: '#172033', anchor: 'middle' });
-            s += TX(220, 190, '上午9時＋' + hh + '時' + mm + '分', { fs: 16, c: RED, anchor: 'middle' });
-            h.querySelector('#fig').innerHTML = svg('0 0 440 220', s);
+            const endH = 9 + hh, clock = (endH < 12 ? '上午 ' + endH : endH === 12 ? '中午 12' : '下午 ' + (endH - 12)) + ' 時' + (mm ? ' ' + mm + ' 分' : '');
+            s += TX(220, 190, '上午 9 時＋' + hh + ' 時 ' + mm + ' 分 → ' + clock + '結束', { fs: 15, c: RED, anchor: 'middle' });
+            h.querySelector('#fig').innerHTML = svg('0 0 440 210', s);
+            h.querySelector('#aha').innerHTML = AHA('休息夾在兩次播放<b>中間</b>，最後一次播完就結束，不用再休息：所以<b>休息次數＝播放次數－1</b>。種樹、排椅子的「間隔」也是同一個道理。',
+              seen.size >= 3, '多拖幾種次數，數數橘色的休息塊（已看 ' + seen.size + ' 種）');
           };
           h.querySelector('#ns').oninput = draw; draw();
         },
