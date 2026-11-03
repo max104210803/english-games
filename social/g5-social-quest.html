@@ -1,0 +1,352 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>五上社會闖關</title>
+<!-- 五上社會第一、二單元闖關（網站版）：題目全部自編，依課本觀念出題。
+     由 900-系統與模板/腳本/build_soc_quest.py 產生，不要直接改本檔。 -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&family=Noto+Serif+TC:wght@700;900&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#f3f6fa; --paper:#ffffff; --ink:#1f2a37; --muted:#5f6b7a; --line:#dbe3ec;
+  --red:#c8463d; --red-soft:#fbe9e6; --yellow:#e8b730; --yellow-soft:#fdf3d4;
+  --blue:#2f6fbf; --blue-soft:#e4eefa; --green:#2f8a57; --green-soft:#e3f3e9;
+  --purple:#7a54b8; --purple-soft:#efe8fa;
+  --shadow:0 2px 0 rgba(31,42,55,.06), 0 8px 24px rgba(31,42,55,.06);
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#141a21; --paper:#1d252f; --ink:#e8eef5; --muted:#a3b0bf; --line:#334050;
+    --red:#ec7b70; --red-soft:#3b2422; --yellow:#e9c04e; --yellow-soft:#3a3220;
+    --blue:#7eaee8; --blue-soft:#1d2c40; --green:#5cc08a; --green-soft:#1b3326;
+    --purple:#b49be2; --purple-soft:#2c2440; --shadow:0 2px 0 rgba(0,0,0,.3);
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#141a21; --paper:#1d252f; --ink:#e8eef5; --muted:#a3b0bf; --line:#334050;
+  --red:#ec7b70; --red-soft:#3b2422; --yellow:#e9c04e; --yellow-soft:#3a3220;
+  --blue:#7eaee8; --blue-soft:#1d2c40; --green:#5cc08a; --green-soft:#1b3326;
+  --purple:#b49be2; --purple-soft:#2c2440; --shadow:0 2px 0 rgba(0,0,0,.3);
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:17px/1.8 "Noto Sans TC","Microsoft JhengHei","PingFang TC",sans-serif}
+.wrap{max-width:860px;margin:0 auto;padding:20px 16px 80px}
+header h1{font-family:"Noto Serif TC",serif;font-weight:900;font-size:clamp(26px,5vw,38px);margin:8px 0 2px}
+header p{margin:0;color:var(--muted);font-size:15px}
+.topbar{display:flex;justify-content:space-between;align-items:center;gap:8px}
+.theme{border:2px solid var(--line);background:var(--paper);color:var(--ink);border-radius:10px;padding:4px 10px;font:inherit;font-size:14px;cursor:pointer}
+nav{display:flex;gap:8px;flex-wrap:wrap;margin:18px 0 22px;position:sticky;top:0;background:var(--bg);padding:10px 0;z-index:5;border-bottom:1px solid var(--line)}
+nav button{flex:1 1 auto;min-width:96px;border:2px solid var(--line);background:var(--paper);color:var(--ink);border-radius:12px;padding:8px 10px;font:inherit;font-size:15px;cursor:pointer}
+nav button .st{color:var(--line);margin-left:4px}
+nav button.done .st{color:var(--yellow)}
+nav button.on{border-color:var(--blue);box-shadow:inset 0 -3px 0 var(--blue)}
+section.stage{display:none}
+section.stage.on{display:block;animation:fade .25s ease}
+@keyframes fade{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+.badge{display:inline-block;background:var(--blue);color:#fff;border-radius:999px;padding:2px 12px;font-size:14px;font-weight:700}
+.badge.ext{background:var(--purple)}
+h2{font-family:"Noto Serif TC",serif;font-size:clamp(24px,4.4vw,32px);margin:8px 0 4px}
+h3{font-size:19px;margin:0 0 8px}
+img.hero{display:block;width:100%;max-width:560px;height:auto;margin:10px auto 14px;border-radius:18px;box-shadow:var(--shadow)}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]) img.hero{filter:brightness(.88)}}
+:root[data-theme="dark"] img.hero{filter:brightness(.88)}
+.card{background:var(--paper);border:1px solid var(--line);border-radius:16px;padding:18px;margin:16px 0;box-shadow:var(--shadow)}
+.motto{background:var(--yellow-soft);border-left:6px solid var(--yellow);border-radius:12px;padding:12px 16px;font-weight:700}
+.small{font-size:14px;color:var(--muted)}
+.q{margin:6px 0 4px}
+.q .num{font-weight:700;color:var(--blue);margin-right:6px}
+.q .stem{font-weight:500;margin-bottom:8px}
+.q .zh{font-size:14px;color:var(--muted);margin:-4px 0 8px}
+.opts{display:flex;flex-direction:column;gap:8px}
+.opts.row{flex-direction:row;flex-wrap:wrap}
+.opt{text-align:left;border:2px solid var(--line);background:var(--paper);color:var(--ink);border-radius:12px;padding:10px 14px;font:inherit;cursor:pointer;transition:transform .1s}
+.opt:hover{border-color:var(--blue)}
+.opt.right{border-color:var(--green);background:var(--green-soft)}
+.opt.wrong{border-color:var(--red);background:var(--red-soft);animation:shake .3s}
+.opt:disabled{cursor:default}
+@keyframes shake{25%{transform:translateX(-4px)}75%{transform:translateX(4px)}}
+.fb{margin-top:8px;font-size:15px;border-radius:10px;padding:8px 12px;display:none}
+.fb.show{display:block}
+.fb.ok{background:var(--green-soft)} .fb.no{background:var(--red-soft)}
+.para{display:block;margin-top:6px;font-size:14px;background:var(--blue-soft);border-radius:8px;padding:6px 10px}
+.btn{border:none;background:var(--blue);color:#fff;border-radius:10px;padding:8px 16px;font:inherit;font-weight:700;cursor:pointer;margin:8px 8px 0 0}
+.btn.ghost{background:transparent;color:var(--ink);border:2px solid var(--line)}
+.btn:disabled{opacity:.45;cursor:not-allowed}
+.pills{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
+.pill{font:inherit;font-size:14px;border-radius:999px;padding:3px 12px;background:var(--paper);color:var(--muted);border:1.5px solid var(--line);cursor:pointer}
+.pill:hover{border-color:var(--blue);color:var(--ink)}
+.pill.sel{background:var(--blue-soft);border-color:var(--blue);color:var(--ink)}
+.tipbox{display:none;margin-top:10px;border-radius:12px;padding:10px 14px;background:var(--blue-soft);font-size:15px;border-left:5px solid var(--blue)}
+.tipbox.show{display:block;animation:fade .2s ease}
+.reveal{display:none;margin-top:10px;background:var(--green-soft);border-radius:12px;padding:10px 14px}
+.reveal.show{display:block;animation:fade .2s ease}
+.clear{display:none;text-align:center;background:var(--yellow-soft);border:2px solid var(--yellow);border-radius:16px;padding:16px;margin:20px 0;font-weight:700;font-size:18px}
+.clear.show{display:block;animation:pop .35s ease}
+@keyframes pop{0%{transform:scale(.9)}70%{transform:scale(1.03)}100%{transform:scale(1)}}
+.score{font-size:14px;color:var(--muted);text-align:right}
+/* Watch / Warning */
+.sort{display:flex;gap:8px;flex-wrap:wrap;margin-top:6px}
+.sort .opt{flex:1 1 140px;text-align:center;font-weight:700}
+.wbox{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.wbox > div{border-radius:12px;padding:12px 14px}
+.wbox .w1{background:var(--yellow-soft);border-left:6px solid var(--yellow)}
+.wbox .w2{background:var(--red-soft);border-left:6px solid var(--red)}
+@media (max-width:600px){.wbox{grid-template-columns:1fr} nav{position:static}}
+/* 點線索 */
+.sent{line-height:2.3;font-size:18px}
+.sent .ch{cursor:pointer;border-radius:6px;padding:2px 3px;border:1.5px dashed transparent;transition:background .15s}
+.sent .ch:hover{border-color:var(--blue);background:var(--blue-soft)}
+.sent .ch.hit{background:var(--green-soft);border:1.5px solid var(--green)}
+.sent .ch.miss{background:var(--red-soft);border:1.5px solid var(--red)}
+.sent u{text-decoration-thickness:2px;font-weight:700}
+textarea{width:100%;min-height:110px;border:2px solid var(--line);border-radius:12px;padding:12px;font:inherit;background:var(--paper);color:var(--ink);resize:vertical}
+textarea:focus{outline:none;border-color:var(--blue)}
+label.chk{display:block;margin:4px 0;cursor:pointer}
+.starter{font-size:14px;color:var(--muted);margin:4px 0 8px}
+.starter code{background:var(--blue-soft);color:var(--ink);border-radius:6px;padding:1px 6px;font-family:inherit}
+table.vt{width:100%;border-collapse:collapse;font-size:15px}
+table.vt td,table.vt th{border-bottom:1px solid var(--line);padding:6px 8px;text-align:left;vertical-align:top}
+table.vt th{color:var(--muted);font-weight:500}
+footer{margin-top:30px;font-size:13px;color:var(--muted)}
+/* 拖拉分類框 */
+.bins{display:grid;grid-template-columns:1fr 1fr;gap:10px;position:sticky;z-index:4;background:var(--bg);padding:8px 0}
+.bin{border:3px dashed var(--line);border-radius:14px;padding:10px;text-align:center;font-weight:700;transition:transform .15s,background .15s}
+.bin small{font-weight:400;color:var(--muted)}
+.bin[data-v="Watch"]{background:var(--yellow-soft);border-color:var(--yellow)}
+.bin[data-v="Warning"]{background:var(--red-soft);border-color:var(--red)}
+.bin.over{transform:scale(1.04);border-style:solid}
+.grip{display:inline-block;touch-action:none;-webkit-user-select:none;user-select:none;cursor:grab;background:var(--blue-soft);border:1.5px solid var(--blue);border-radius:8px;padding:0 8px;margin-right:6px;font-size:14px}
+.dragghost{position:fixed;z-index:60;pointer-events:none;max-width:320px;background:var(--paper);border:2px solid var(--blue);border-radius:12px;padding:8px 12px;font-size:14px;box-shadow:0 10px 24px rgba(0,0,0,.25);transform:rotate(-2deg)}
+.card.dragging{opacity:.4}
+/* 進度與鼓勵 */
+.pbar{position:relative;height:22px;background:var(--line);border-radius:999px;margin:6px 0 10px;overflow:hidden}
+.pbar i{position:absolute;inset:0 auto 0 0;width:0;background:linear-gradient(90deg,var(--green),var(--yellow));border-radius:999px;transition:width .5s ease}
+.pbar span{position:relative;display:block;text-align:center;font-size:13px;line-height:22px;font-weight:700;color:var(--ink)}
+.toast{position:fixed;left:50%;bottom:28px;transform:translateX(-50%);z-index:70;background:var(--ink);color:var(--bg);padding:10px 20px;border-radius:999px;font-weight:700;box-shadow:var(--shadow);transition:opacity .4s}
+.toast.bye{opacity:0}
+.celebrate{position:fixed;inset:0;z-index:80;background:rgba(10,15,25,.55);display:flex;align-items:center;justify-content:center;padding:16px;animation:fade .25s ease}
+.cbox{background:var(--paper);border-radius:22px;max-width:440px;width:100%;padding:24px 22px;text-align:center;box-shadow:0 20px 50px rgba(0,0,0,.3);animation:pop .4s ease}
+.cemo{font-size:64px;line-height:1.1;animation:bounce 1s ease infinite alternate}
+@keyframes bounce{to{transform:translateY(-8px) rotate(-6deg)}}
+.ctitle{font-family:"Noto Serif TC",serif;font-weight:900;font-size:24px;margin:6px 0}
+.cstars{font-size:38px;color:var(--yellow);letter-spacing:4px}
+.cstars span{display:inline-block;animation:pop .45s ease both}
+.cstars .dim{color:var(--line);animation:none}
+.cen{font-size:22px;font-weight:700;color:var(--blue);margin-top:4px}
+.czh{margin:2px 0 10px}
+.cstat{font-size:14px;color:var(--muted);margin-bottom:8px}
+.crest{background:var(--yellow-soft);border-radius:10px;padding:8px 12px;font-size:14px;margin-bottom:6px}
+canvas.confetti{position:fixed;inset:0;z-index:90;pointer-events:none}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header>
+  <div class="topbar">
+    <span class="badge"><a href="../index.html" style="color:inherit;text-decoration:none">← 回學習小站</a></span>
+    <span><button class="theme" id="sndBtn" title="音效開關">🔊</button> <button class="theme" id="themeBtn" title="切換深淺色">🌓</button></span>
+  </div>
+  <h1>五上社會闖關</h1>
+  <p>第一單元「臺灣的地理位置、社會規範、法律」和第二單元「地形、氣候」，一課一關，共 35 題選擇題。答錯可以再選，直到選對為止，「第一次就答對」才算分。</p>
+</header>
+
+<nav id="nav">
+  <button data-go="1">第1關 臺灣的地理位置<span class="st">★</span></button>
+  <button data-go="2">第2關 社會規範<span class="st">★</span></button>
+  <button data-go="3">第3關 法律<span class="st">★</span></button>
+  <button data-go="4">第4關 地形與生活<span class="st">★</span></button>
+  <button data-go="5">第5關 氣候與生活<span class="st">★</span></button>
+</nav>
+
+<section class="stage" data-stage="1">
+  <span class="badge">第 1 關</span> <span class="badge ext">第一單元第1課</span>
+  <h2>臺灣的地理位置</h2>
+  <div class="card"><div class="motto">記住臺灣四周：東太平洋、西臺灣海峽（中國）、南巴士海峽（菲律賓）、東北東海（日本、南韓）。</div></div>
+  <div id="mc1"></div>
+  <div class="score" id="sc1"></div>
+  <div class="clear" data-clear="1">🗺️ 第 1 關過關！</div>
+</section>
+<section class="stage" data-stage="2">
+  <span class="badge">第 2 關</span> <span class="badge ext">第一單元第2課</span>
+  <h2>社會規範</h2>
+  <div class="card"><div class="motto">生活中的例子，一個一個判斷是哪一種社會規範。</div></div>
+  <div id="mc2"></div>
+  <div class="score" id="sc2"></div>
+  <div class="clear" data-clear="2">🏮 第 2 關過關！</div>
+</section>
+<section class="stage" data-stage="3">
+  <span class="badge">第 3 關</span> <span class="badge ext">第一單元第3課</span>
+  <h2>法律</h2>
+  <div class="card"><div class="motto">記住數字：兒童未滿 12、少年 12～18、未滿 15 不得受僱、未滿 18 不得菸酒。</div></div>
+  <div id="mc3"></div>
+  <div class="score" id="sc3"></div>
+  <div class="clear" data-clear="3">🔢 第 3 關過關！</div>
+</section>
+<section class="stage" data-stage="4">
+  <span class="badge">第 4 關</span> <span class="badge ext">第二單元第1課</span>
+  <h2>地形與生活</h2>
+  <div class="card"><div class="motto">四方位海岸：北岬灣、西沙洲、東斷崖、南珊瑚。</div></div>
+  <div id="mc4"></div>
+  <div class="score" id="sc4"></div>
+  <div class="clear" data-clear="4">🗾 第 4 關過關！</div>
+</section>
+<section class="stage" data-stage="5">
+  <span class="badge">第 5 關</span> <span class="badge ext">第二單元第2課</span>
+  <h2>氣候與生活</h2>
+  <div class="card"><div class="motto">記住先民智慧：澎湖菜宅防風、臺南竹籠厝躲水。</div></div>
+  <div id="mc5"></div>
+  <div class="score" id="sc5"></div>
+  <div class="clear" data-clear="5">🌦️ 第 5 關過關！</div>
+</section>
+
+<footer>
+  題目依五上社會第一、二單元的課本觀念自編。進度存在這台裝置的瀏覽器裡。
+  <button class="btn ghost" id="resetBtn" style="font-size:13px;padding:2px 10px">清除進度</button>
+</footer>
+</div>
+<script>
+(function(){
+"use strict";
+var ST=[[{"q": "臺灣的南邊隔著哪一個海峽和菲律賓相望？", "o": ["臺灣海峽", "巴士海峽", "東海", "太平洋"], "a": 1, "e": "南邊：巴士海峽、菲律賓。臺灣海峽在西邊。", "p": "西臺灣海峽、南巴士海峽，最容易搞混"}, {"q": "下列哪一個國家位在臺灣的東北邊？", "o": ["菲律賓", "中國", "日本", "越南"], "a": 2, "e": "東北邊：東海，鄰國日本、南韓。"}, {"q": "從宜蘭縣往東遠望太平洋，可以看到哪一座外形像烏龜的島？", "o": ["琉球嶼", "龜山島", "蘭嶼", "綠島"], "a": 1, "e": "龜山島因外形像烏龜而得名，可以搭船登島觀光。"}, {"q": "臺灣（包含所有島嶼）的總面積大約是多少？", "o": ["3,600 平方公里", "36,000 平方公里", "360,000 平方公里", "3,600,000 平方公里"], "a": 1, "e": "約 <b>36,000 平方公里</b>，是所有島嶼加起來的面積。"}, {"q": "「大家一起把漁網拉上岸，再一起分享漁獲。」這是哪一種海洋文化？", "o": ["海女文化", "牽罟文化", "媽祖信仰", "移民節"], "a": 1, "e": "牽罟：眾人合力拉網、共享漁獲，展現<b>互助及共享</b>的精神。"}, {"q": "雅美族（達悟族）下水捕魚前，會為哪一種重要的捕魚器具舉行祭典？", "o": ["拼板舟", "竹筏", "漁網", "燈塔"], "a": 0, "e": "雅美族住在臺東縣蘭嶼鄉，拼板舟下水前舉行祭典，祈求平安、豐收。"}, {"q": "近年移居臺灣的新住民，以來自哪一個區域的國家人數較多？", "o": ["東北亞", "東南亞", "歐洲", "美洲"], "a": 1, "e": "新住民以<b>越南、印尼</b>等東南亞國家人數較多。"}], [{"q": "「生命禮俗」指的是什麼？", "o": ["人在出生、成年、結婚等重要階段，為求平安順利而舉行的儀式或活動", "每年固定時間舉辦的運動比賽", "宗教的經典與教義", "政府制定的法律條文"], "a": 0, "e": "生命禮俗屬於<b>風俗習慣</b>，例如滿月、成年禮、婚禮。"}, {"q": "四種社會規範中，哪一種是<b>唯一</b>具有強制力的？", "o": ["風俗習慣", "宗教信仰", "倫理道德", "法律"], "a": 3, "e": "不遵守法律，可依法給予懲罰或處分。"}, {"q": "阿美族的豐年祭大約在每年國曆幾月舉辦？", "o": ["1～3 月", "4～6 月", "7～9 月", "10～12 月"], "a": 2, "e": "每年國曆 <b>7～9 月</b>，部落會選日期舉辦，以傳統歌舞祈福、追思與感謝祖先。"}, {"q": "民間信仰強調什麼觀念？", "o": ["善惡有報，做壞事會遭到神明懲罰", "遵守聖經的博愛精神", "眾人合力、共享漁獲", "政府要依法行政"], "a": 0, "e": "② 是基督教；③ 是牽罟；④ 是法律。"}, {"q": "風俗習慣有什麼功能？", "o": ["增加個人對群體的歸屬感，形成穩定社會的力量", "違反的人一定會被罰款", "只有宗教團體需要遵守", "讓每個人都做一樣的事"], "a": 0, "e": "風俗習慣能維持人際和諧互動、增加<b>歸屬感</b>。"}, {"q": "駕駛隨意併排停車，會妨礙其他車輛通行。規範這件事的主要是哪一種社會規範？", "o": ["風俗習慣", "宗教信仰", "倫理道德", "法律"], "a": 3, "e": "駕駛不應違規停車，是<b>法律</b>的規定。"}], [{"q": "兒童及少年福利與權益保障法中，「兒童」是指幾歲的人？", "o": ["未滿 6 歲", "未滿 12 歲", "未滿 15 歲", "未滿 18 歲"], "a": 1, "e": "兒童：未滿 12 歲；少年：12 歲以上未滿 18 歲。"}, {"q": "雇主不得僱用未滿幾歲的人從事工作？", "o": ["12 歲", "15 歲", "18 歲", "20 歲"], "a": 1, "e": "未滿 <b>15 歲</b>不得受僱。"}, {"q": "未滿幾歲禁止飲酒、吸菸？", "o": ["12 歲", "15 歲", "18 歲", "20 歲"], "a": 2, "e": "未滿 <b>18 歲</b>禁止飲酒、吸菸。"}, {"q": "防詐騙「3C 原則」是指哪三件事？", "o": ["冷靜、查證、撥打 165", "拍照、上傳、分享", "匯款、保密、等待", "複製、貼上、轉傳"], "a": 0, "e": "Calm 冷靜、Check 查證、Call 撥打 165 反詐騙專線。"}, {"q": "可疑的網路訊息常有三大特徵，下列哪一個<b>不是</b>？", "o": ["不停催促", "要求保密", "強迫做不願意的事", "鼓勵你先問爸媽"], "a": 3, "e": "詐騙者會催你、要你保密、強迫你；鼓勵問爸媽的才不是詐騙。"}, {"q": "下列哪一項是政府推動國家語言發展法的做法？", "o": ["校園推動臺灣手語課程", "規定大家只能說同一種語言", "取消客語標示", "禁止編製語言繪本"], "a": 0, "e": "手語課程、語言教材繪本、客語友善環境都是推動方式。"}, {"q": "小學五年級（11 歲）的學生，<b>不宜</b>觀賞哪一級的節目？", "o": ["普遍級", "有成年人陪伴的保護級", "輔12級", "以上都可以看"], "a": 2, "e": "輔12級：未滿 12 歲不宜觀賞。"}], [{"q": "臺灣島是因為哪兩個板塊長期推擠而逐漸隆起？", "o": ["歐亞板塊與菲律賓海板塊", "太平洋板塊與非洲板塊", "美洲板塊與歐亞板塊", "印度板塊與澳洲板塊"], "a": 0, "e": "臺灣島位在<b>歐亞板塊與菲律賓海板塊</b>的交界處。"}, {"q": "四周高、中間低平的地形是什麼？", "o": ["平原", "盆地", "台地", "丘陵"], "a": 1, "e": "盆地，例如臺北盆地。"}, {"q": "桃園台地地勢較高、取水不易，早期居民開鑿什麼來儲存雨水？", "o": ["水庫", "埤塘", "鹽田", "魚塭"], "a": 1, "e": "開鑿<b>埤塘</b>儲存雨水；乾旱時容易乾枯。"}, {"q": "臺灣島東西較窄，使河川具有什麼特色？", "o": ["長度短、坡度陡、水流湍急", "長度長、坡度緩、水流平穩", "大多發源於台地", "全年水量穩定"], "a": 0, "e": "所以雖然雨多，水資源卻不易留住。"}, {"q": "新竹科學園區、清華大學設在哪裡，讓當地土地利用方式改變？", "o": ["臺北盆地", "竹東丘陵", "桃園台地", "高屏溪下游"], "a": 1, "e": "竹東丘陵早期種茶，受政府政策影響設置大學與科學園區。"}, {"q": "西元 1999 年九二一大地震時，哪一所學校的操場跑道隆起，後來設立地震教育園區？", "o": ["臺中市霧峰區光復國中", "臺北市建國中學", "花蓮縣光復國小", "臺南市安平國中"], "a": 0, "e": "原址設立<b>九二一地震教育園區</b>，讓大家認識板塊推擠的影響。"}, {"q": "淡水河上游的翡翠水庫，主要供應哪裡的用水？", "o": ["臺北市與新北市部分地區", "高雄市", "桃園市", "臺中市"], "a": 0, "e": "翡翠水庫供應臺北市與新北市部分地區用水；興建時碧山村被淹沒。"}], [{"q": "颱風侵襲臺灣主要集中在哪兩個季節？", "o": ["春、夏", "夏、秋", "秋、冬", "冬、春"], "a": 1, "e": "主要集中在<b>夏、秋</b>兩季。"}, {"q": "冬季的東北季風使臺灣哪些地區溼冷、容易降雨？", "o": ["北部、東北部", "南部", "中南部", "西南部"], "a": 0, "e": "南部受山脈阻擋，冬季乾燥少雨。"}, {"q": "西部沿海的風力發電機，冬季多面向哪個方向？", "o": ["東北方", "西南方", "正南方", "正西方"], "a": 0, "e": "冬季面向<b>東北方</b>，夏季轉向西南方。"}, {"q": "南投縣仁愛鄉地勢高、氣候涼爽，適合種植哪一類水果？", "o": ["百香果", "蘋果、水梨", "香蕉", "鳳梨"], "a": 1, "e": "仁愛鄉（山地）→ 蘋果、水梨；埔里鎮（盆地、溫暖）→ 百香果。"}, {"q": "寒害是指氣溫降到幾度以下？", "o": ["0°C", "5°C", "10°C", "15°C"], "a": 2, "e": "氣溫降至 <b>10°C 以下</b>，虱目魚等養殖水產容易受害。"}, {"q": "澎湖菜宅是用什麼材料堆成矮牆來防風？", "o": ["竹子", "珊瑚礁石", "水泥", "茅草"], "a": 1, "e": "以<b>珊瑚礁石</b>堆成矮牆，靠技巧堆砌不用水泥。"}, {"q": "臺南竹籠厝用竹子與茅草搭建，主要是為了應付哪一種情況？", "o": ["地震", "洪水淹水", "寒流", "乾旱"], "a": 1, "e": "曾文溪豪雨時常改道淹水，竹籠厝輕巧，可以扛著房子移動躲水災。"}, {"q": "西元 2009 年哪一個颱風造成高雄縣小林村被土石流掩埋？", "o": ["莫拉克颱風", "納莉颱風", "賀伯颱風", "凡那比颱風"], "a": 0, "e": "2009 年 8 月 8 日<b>莫拉克颱風</b>。"}]];
+var NAMES=["臺灣的地理位置", "社會規範", "法律", "地形與生活", "氣候與生活"], EMO=["🗺️", "🏮", "🔢", "🗾", "🌦️"], CHEER=[["地圖達人！", "臺灣四周的鄰海和鄰國都記住了。"], ["生活觀察家！", "課本的道理你都能用在生活裡。"], ["法律小博士！", "年齡數字和法律名稱都記住了。"], ["臺灣地形通！", "板塊、地形、河川、海岸都記住了。"], ["防災小尖兵！", "颱風、季風、災害都難不倒你。"]], N=ST.length;
+var FIN=["五上社會小達人！","5 關全部過關，把最難的一題說給家人聽吧。"];
+var KEY="soc51-site-quest-v1", prog={};
+try{ prog=JSON.parse(localStorage.getItem(KEY)||"{}")||{}; }catch(e){ prog={}; }
+function save(){ try{ localStorage.setItem(KEY, JSON.stringify(prog)); }catch(e){} }
+prog.ans=prog.ans||{}; prog.first=prog.first||{}; prog.done=prog.done||{};
+function $(id){return document.getElementById(id)}
+function el(html){var d=document.createElement("div"); d.innerHTML=html; return d.firstElementChild}
+var LET="①②③④";
+function renderMC(st){
+  var box=$("mc"+st);
+  ST[st-1].forEach(function(it,i){
+    var id="s"+st+"q"+i;
+    var c=el('<div class="card q" data-id="'+id+'"><div class="stem"><span class="num">'+(i+1)+'.</span>'+it.q+'</div><div class="opts"></div><div class="fb"></div></div>');
+    var opts=c.querySelector(".opts"), fb=c.querySelector(".fb");
+    it.o.forEach(function(t,k){
+      var b=el('<button class="opt">'+LET[k]+' '+t+'</button>');
+      b.onclick=function(){ choose(id,k,true) };
+      opts.appendChild(b);
+    });
+    function choose(qid,k,user){
+      var bs=opts.querySelectorAll(".opt");
+      if(k===it.a){
+        bs.forEach(function(x,j){ x.disabled=true; if(j===it.a) x.classList.add("right") });
+        fb.className="fb show ok";
+        fb.innerHTML="✅ "+(user?praise()+" ":"答對了！")+it.e+(it.p?'<span class="para">📌 陷阱：'+it.p+'</span>':"");
+        if(user){ sfx("ok"); if(!(qid in prog.first)) prog.first[qid]=true; prog.ans[qid]=k; save(); check(st,true) }
+      }else{
+        bs[k].classList.add("wrong"); bs[k].disabled=true;
+        fb.className="fb show no";
+        fb.innerHTML="❌ 再想想。回想課本是怎麼說的。";
+        if(user){ sfx("no"); if(!(qid in prog.first)) prog.first[qid]=false; save() }
+      }
+    }
+    box.appendChild(c);
+    if(prog.ans[id]!==undefined) choose(id,prog.ans[id],false);
+  });
+}
+function ids(st){ return ST[st-1].map(function(_,i){ return "s"+st+"q"+i }) }
+function check(st,user){
+  var L=ids(st);
+  var fin=L.filter(function(id){ return prog.ans[id]!==undefined }).length,
+      tot=L.length, ok=fin===tot, was=!!prog.done[st], half=Math.ceil(tot/2),
+      first=L.filter(function(id){ return prog.first[id]===true }).length;
+  var sc=$("sc"+st); if(sc) sc.textContent="第一次就答對："+first+" / "+tot;
+  var pb=$("pb"+st); if(pb){ pb.querySelector("i").style.width=Math.round(fin/tot*100)+"%"; pb.querySelector("span").textContent="本關進度 "+fin+" / "+tot+(ok?"　⭐ 完成":"") }
+  if(user && !ok && tot>3 && fin===half && !prog["half"+st]){ prog["half"+st]=true; save(); toast(HALF[Math.floor(Math.random()*HALF.length)]) }
+  var c=document.querySelector('[data-clear="'+st+'"]');
+  if(ok){ c.classList.add("show"); prog.done[st]=true; save() }
+  var nb=document.querySelector('nav [data-go="'+st+'"]'); if(nb) nb.classList.toggle("done", !!prog.done[st]);
+  if(user && ok && !was) celebrate(st, first, tot);
+}
+var AC=null;
+function sfx(kind){
+  if(prog.mute) return;
+  try{
+    AC=AC||new (window.AudioContext||window.webkitAudioContext)();
+    if(AC.state==="suspended") AC.resume();
+    var t=AC.currentTime;
+    function tone(freq,start,dur,type,vol,slide){
+      var o=AC.createOscillator(), g=AC.createGain();
+      o.type=type||"sine"; o.frequency.setValueAtTime(freq,t+start);
+      if(slide) o.frequency.exponentialRampToValueAtTime(slide,t+start+dur);
+      g.gain.setValueAtTime(0.0001,t+start);
+      g.gain.exponentialRampToValueAtTime(vol||0.2,t+start+0.015);
+      g.gain.exponentialRampToValueAtTime(0.0001,t+start+dur);
+      o.connect(g); g.connect(AC.destination); o.start(t+start); o.stop(t+start+dur+0.05);
+    }
+    if(kind==="ok"){ tone(784,0,0.14,"triangle",0.22); tone(1175,0.1,0.28,"triangle",0.22) }
+    else if(kind==="no"){ tone(220,0,0.18,"square",0.07,180); tone(165,0.16,0.26,"square",0.07,130) }
+    else if(kind==="win"){ [523,659,784,1047].forEach(function(f,i){ tone(f,i*0.12,i===3?0.5:0.16,"triangle",0.2) }) }
+  }catch(e){}
+}
+function sndIcon(){ $("sndBtn").textContent=prog.mute?"🔇":"🔊" }
+
+
+var PRAISE=["太棒了！","好厲害！","漂亮！","答對了！","很會喔！","讚！"];
+var HALF=["已經完成一半了，加油！💪","過半了！再撐一下就過關 🚀","一半完成！要不要站起來伸個懶腰？🙆"];
+var T0=Date.now();
+function praise(){ return PRAISE[Math.floor(Math.random()*PRAISE.length)] }
+function toast(msg){ var t=el('<div class="toast">'+msg+'</div>'); document.body.appendChild(t); setTimeout(function(){t.classList.add("bye")},2200); setTimeout(function(){t.remove()},2700) }
+function celebrate(st, first, tot){
+  var stars = first===tot ? 3 : (first>=tot*0.6 ? 2 : 1),
+      mins=Math.max(1,Math.round((Date.now()-T0)/60000)), all=true, ch=CHEER[st-1], starHtml="";
+  for(var k=1;k<=N;k++) if(!prog.done[k]) all=false;
+  for(var i=0;i<3;i++) starHtml+= i<stars ? '<span style="animation-delay:'+(0.25+i*0.25)+'s">★</span>' : '<span class="dim">★</span>';
+  var nextSt=0; for(var j=1;j<=N;j++){ var s2=(st+j-1)%N+1; if(!prog.done[s2]){ nextSt=s2; break } }
+  var m=el('<div class="celebrate"><div class="cbox">'+
+    '<div class="cemo">'+(all?"🏆":EMO[st-1])+'</div>'+
+    '<div class="ctitle">'+(all?N+" 關全部過關！":"第 "+st+" 關「"+NAMES[st-1]+"」過關！")+'</div>'+
+    '<div class="cstars">'+starHtml+'</div>'+
+    '<div class="cen">'+(all?FIN[0]:ch[0])+'</div><div class="czh">'+(all?FIN[1]:ch[1])+'</div>'+
+    '<div class="cstat">第一次就答對 <b>'+first+' / '+tot+'</b>　·　這次練了 <b>'+mins+'</b> 分鐘</div>'+
+    (mins>=15?'<div class="crest">☕ 已經練超過 15 分鐘了，起來喝口水、看看遠方，再回來繼續。</div>':'')+
+    '<div>'+(nextSt?'<button class="btn" data-next>下一關 →</button>':'')+'<button class="btn ghost" data-close>'+(nextSt?'先休息一下':'關閉')+'</button></div>'+
+    '</div></div>');
+  document.body.appendChild(m); confetti(); sfx("win");
+  var nx=m.querySelector("[data-next]"); if(nx) nx.onclick=function(){ m.remove(); go(nextSt); window.scrollTo({top:0,behavior:"smooth"}) };
+  m.querySelector("[data-close]").onclick=function(){ m.remove() };
+  m.onclick=function(e){ if(e.target===m) m.remove() };
+}
+function confetti(){
+  if(window.matchMedia && matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+  var cv=document.createElement("canvas"), x=cv.getContext("2d"), W=cv.width=innerWidth, H=cv.height=innerHeight, P=[], col=["#e8b730","#2f6fbf","#c8463d","#2f8a57","#7a54b8","#f08cb4"];
+  cv.className="confetti"; document.body.appendChild(cv);
+  for(var i=0;i<140;i++) P.push({x:W/2+(Math.random()-.5)*W*.3, y:H*.35, vx:(Math.random()-.5)*14, vy:-Math.random()*13-4, r:Math.random()*6+4, c:col[i%col.length], a:Math.random()*6, s:(Math.random()-.5)*.3});
+  var t0=performance.now();
+  (function f(t){ var k=Math.max(0,(t-t0)/1000); x.clearRect(0,0,W,H);
+    P.forEach(function(p){ p.vy+=.35; p.vx*=.99; p.x+=p.vx; p.y+=p.vy; p.a+=p.s; x.save(); x.globalAlpha=Math.max(0,1-k/2.6); x.translate(p.x,p.y); x.rotate(p.a); x.fillStyle=p.c; x.fillRect(-p.r/2,-p.r/4,p.r,p.r/2); x.restore() });
+    if(k<2.6) requestAnimationFrame(f); else cv.remove() })(t0);
+}
+
+
+function go(n){
+  document.querySelectorAll("section.stage").forEach(function(s){ s.classList.toggle("on", s.dataset.stage==n) });
+  document.querySelectorAll("nav button").forEach(function(b){ b.classList.toggle("on", b.dataset.go==n) });
+  prog.cur=n; save();
+}
+document.addEventListener("click",function(e){
+  var g=e.target.closest("[data-go]"); if(g){ go(g.dataset.go); window.scrollTo({top:0,behavior:"smooth"}) }
+});
+$("themeBtn").onclick=function(){
+  var r=document.documentElement, dark=r.dataset.theme ? r.dataset.theme==="dark" : matchMedia("(prefers-color-scheme: dark)").matches;
+  r.dataset.theme = dark ? "light" : "dark"; prog.theme=r.dataset.theme; save();
+};
+if(prog.theme) document.documentElement.dataset.theme=prog.theme;
+$("sndBtn").onclick=function(){ prog.mute=!prog.mute; save(); sndIcon(); if(!prog.mute) sfx("ok") };
+sndIcon();
+$("resetBtn").onclick=function(){ if(confirm("確定要清除所有作答進度嗎？")){ try{localStorage.removeItem(KEY)}catch(e){} location.reload() } };
+for(var st=1;st<=N;st++){
+  renderMC(st);
+  var h=document.querySelector('section.stage[data-stage="'+st+'"] h2');
+  h.insertAdjacentHTML("afterend",'<div class="pbar" id="pb'+st+'"><i></i><span></span></div>');
+  check(st,false);
+}
+go(prog.cur||1);
+})();
+</script>
+</body>
+</html>
