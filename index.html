@@ -64,6 +64,8 @@
   .game.math .tag { background: rgba(159,216,255,.15); color: #9fd8ff; }
   .game.science h3 { color: #ffc98a; }
   .game.science .tag { background: rgba(255,201,138,.15); color: #ffc98a; }
+  .game.social h3 { color: #8fe3c4; }
+  .game.social .tag { background: rgba(143,227,196,.15); color: #8fe3c4; }
   .sec-note { margin: -6px 0 10px; color: var(--muted); font-size: 14px; }
   .sub { margin: 14px 0 8px; font-size: 15px; color: #c9b8ff; }
   .mini { display: grid; gap: 10px; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); }
@@ -94,7 +96,7 @@
 <body>
 <main>
   <h1>學習小站</h1>
-  <p class="lead">英文、國文、數學的小遊戲和練習。先選年級，再點一個開始。手機、平板、電腦都可以。</p>
+  <p class="lead">英文、國文、數學、自然、社會的小遊戲和練習。先選年級，再點一個開始。手機、平板、電腦都可以。</p>
 
   <nav class="filter" aria-label="依年級篩選">
     <button type="button" data-f="all" aria-pressed="true">全部</button>
@@ -108,6 +110,7 @@
   <section class="grp latest" id="latest">
     <h2 class="sec">🆕 最新上架</h2>
     <div class="mini">
+      <a class="mini-tile" href="social/g5-social-quest.html"><span class="mi">🌏</span><span><b>五上社會闖關</b><small>小五・第一、二單元 35 題</small></span></a>
       <a class="mini-tile" href="science/g9-review-deck/index.html"><span class="mi">🔧</span><span><b>九上自然複習：力與運動・功與能</b><small>國三・互動簡報 38 頁</small></span></a>
       <a class="mini-tile" href="science/g8-review-deck/index.html"><span class="mi">🧊</span><span><b>八下自然複習：浮力・壓力・有機</b><small>國二・互動簡報 21 頁</small></span></a>
       <a class="mini-tile" href="math/g9-review-deck/index.html"><span class="mi">🧭</span><span><b>九上數學複習：圓</b><small>國三・互動簡報 18 頁</small></span></a>
@@ -343,6 +346,26 @@
         <h3>五上數學複習（互動簡報）</h3>
         <p>因數倍數、整數速算、分數、長方體表面積、時間的乘除，一頁一個重點，拖滑桿看數字怎麼變，每頁附例題和易錯對照。</p>
         <span class="tag">小五上 · 5 章 30 頁 · 15 頁可拖動</span>
+      </div>
+    </a>
+  </div>
+  </section>
+
+  <section class="grp">
+  <h2 class="sec">🌏 社會</h2>
+  <div class="games">
+    <a class="game social" data-grade="g5" href="social/g5-social-quest.html">
+      <svg viewBox="0 0 84 84" aria-hidden="true">
+        <circle cx="42" cy="42" r="40" fill="#1f6f8b"/>
+        <path d="M44 14c-6 6-10 14-12 24-2 9-1 18 3 26 2 4 6 4 7 0 3-10 8-18 10-28 2-8 0-16-8-22z" fill="#7fcf8f" stroke="#1f2a37" stroke-width="2.5" stroke-linejoin="round"/>
+        <path d="M38 34l6-4 4 6-5 6z" fill="#3f8f55"/>
+        <circle cx="62" cy="22" r="7" fill="#ffd27a" stroke="#1f2a37" stroke-width="2"/>
+        <path d="M18 60q6-4 12 0t12 0" fill="none" stroke="#9fd8ff" stroke-width="3" stroke-linecap="round"/>
+      </svg>
+      <div>
+        <h3>五上社會闖關：地理位置・規範・法律・地形・氣候</h3>
+        <p>一課一關，臺灣四周的海峽與鄰國、四種社會規範、兒少法律與防詐、地形河川、季風與災害，選錯可以再選，每題都有解說。</p>
+        <span class="tag">小五上 第一、二單元 · 5 關 35 題</span>
       </div>
     </a>
   </div>
