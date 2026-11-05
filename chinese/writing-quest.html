@@ -84,6 +84,13 @@ img.hero{display:block;width:100%;max-width:520px;height:auto;margin:10px auto 1
 .strike span:hover{background:var(--blue-soft)}
 .strike span.cut{text-decoration:line-through;text-decoration-thickness:2px;color:var(--muted);background:var(--red-soft)}
 .strike span.miss{outline:2px solid var(--red)}
+.burger .layer{border-radius:14px;padding:10px 14px;margin:8px 0;border-left:8px solid}
+.burger .l1{background:var(--yellow-soft);border-color:#e0962f;border-radius:40px 40px 14px 14px}
+.burger .l2{background:var(--green-soft);border-color:var(--green)}
+.burger .l3{background:var(--blue-soft);border-color:var(--blue);border-radius:14px 14px 40px 40px}
+.f1{color:#d07a1c;font-weight:700}.f2{color:var(--green);font-weight:700}.f3{color:var(--blue);font-weight:700}
+.flab{display:block;margin:12px 0 4px}
+textarea.short{min-height:70px}
 textarea{width:100%;min-height:130px;border:2px solid var(--line);border-radius:12px;padding:12px;font:inherit;background:var(--paper);color:var(--ink);resize:vertical}
 textarea:focus{outline:none;border-color:var(--blue)}
 .btn{border:none;background:var(--red);color:#fff;border-radius:10px;padding:8px 16px;font:inherit;font-weight:700;cursor:pointer;margin:8px 8px 0 0}
@@ -176,6 +183,7 @@ footer{margin-top:40px;font-size:13px;color:var(--muted);text-align:center}
   <button data-go="3">第3關 連接詞<span class="st">★</span></button>
   <button data-go="4">第4關 分段落<span class="st">★</span></button>
   <button data-go="5">總結挑戰<span class="st">★</span></button>
+  <button data-go="6">番外 童話小雜記<span class="st">★</span></button>
 </nav>
 
 <!-- ============ 第 1 關 ============ -->
@@ -381,6 +389,45 @@ footer{margin-top:40px;font-size:13px;color:var(--muted);text-align:center}
   <div class="clear" data-clear="5">🏆 全部完成！把作品拿給老師或家人看，請他們說出最有畫面的一句。</div>
 </section>
 
+<!-- ============ 番外：小五 50 字童話小雜記（2026-11-05 新增） ============ -->
+<section class="stage" data-stage="6">
+  <span class="badge">番外練習</span> <span class="ref">小五也能玩・用到第 1 關「寫具體」</span>
+  <h2>我夢想中的童話故事（50 字小雜記）</h2>
+  <div class="motto">題目：〈我夢想中的童話故事〉　約 50 字（40～60 字都可以），大約 3～4 句話。</div>
+
+  <div class="card">
+    <h3>漢堡寫作法：三層疊起來就完成</h3>
+    <div class="burger">
+      <div class="layer l1"><b>🍞 上層麵包｜開頭：說出題目</b><br>我想走進什麼樣的童話世界？<br><span class="small">可以這樣開始：「我夢想中的童話故事，是……」</span></div>
+      <div class="layer l2"><b>🥬 中間餡料｜寫一個畫面</b><br>在那裡看到什麼？做了什麼事？只挑一件最想做的。<br><span class="small">加料四招：📍時間地點　🔢數字　👀看到聽到聞到　💬誰說了什麼</span></div>
+      <div class="layer l3"><b>🍞 下層麵包｜結尾：寫出心情</b><br>我覺得怎麼樣？有什麼願望？<br><span class="small">用表情或動作說心情，比只寫「好開心」更生動。</span></div>
+    </div>
+    <button class="btn ghost" data-reveal="fairyEx">看參考範文</button>
+    <div class="reveal" id="fairyEx"><span class="f1">我夢想中的童話故事，是住在糖果城堡裡。</span><span class="f2">屋頂是巧克力，窗戶是亮晶晶的冰糖。我和好朋友一起分享甜點，</span><span class="f3">每天都笑得合不攏嘴！</span><br><span class="small">（52 字。顏色：<span class="f1">開頭</span>／<span class="f2">畫面</span>／<span class="f3">心情</span>。範文只看方向，請寫自己的想法。）</span></div>
+  </div>
+
+  <div class="card">
+    <h3>換你寫：一層一層填</h3>
+    <label class="flab f1" for="w6a">🍞 開頭（1 句）</label>
+    <textarea id="w6a" class="short" placeholder="我夢想中的童話故事，是……"></textarea>
+    <label class="flab f2" for="w6b">🥬 畫面（1～2 句，試著加料）</label>
+    <textarea id="w6b" class="short" placeholder="我看到……我和……一起……"></textarea>
+    <label class="flab f3" for="w6c">🍞 心情（1 句）</label>
+    <textarea id="w6c" class="short" placeholder="……讓我覺得……／真希望……"></textarea>
+    <p class="small" id="count6" style="margin:8px 0 0"></p>
+    <button class="btn ghost" id="copy6">複製全文</button>
+    <button class="btn ghost" id="clear6">清空重寫</button>
+  </div>
+
+  <div class="card">
+    <h3>漢堡檢查站 <span class="small">（點燈號看說明；全部亮綠燈就過關）</span></h3>
+    <div class="pills" id="m6"></div>
+    <div class="tipbox" id="t6"></div>
+    <div class="lens" id="l6"></div>
+  </div>
+  <div class="clear" data-clear="6">🍔 漢堡完成！把你的童話小雜記念給家人聽，請他們說出最有畫面的一句。</div>
+</section>
+
 <footer>觀念參考《作文力中階》，內容與例句皆為自編。進度只存在這台裝置的瀏覽器裡。</footer>
 </div>
 
@@ -410,7 +457,7 @@ footer{margin-top:40px;font-size:13px;color:var(--muted);text-align:center}
   }
 
   // ---------- 過關條件 ----------
-  var need={1:['1a','1b','1c','blocks'],2:['strike','2a'],3:['3a','3b','3c','3d','3e','3f'],4:['seg','4a','4b'],5:['final']};
+  var need={1:['1a','1b','1c','blocks'],2:['strike','2a'],3:['3a','3b','3c','3d','3e','3f'],4:['seg','4a','4b'],5:['final'],6:['fairy']};
   var solved={};
   function solve(id){
     solved[id]=true;
@@ -874,6 +921,38 @@ footer{margin-top:40px;font-size:13px;color:var(--muted);text-align:center}
   };
   $('clearDraft').onclick=function(){if(confirm('確定要清空重寫嗎？')){w5.value='';s5.redraw()}};
   s5.redraw();
+
+  // ---------- 番外：童話小雜記（漢堡三層） ----------
+  var F6=['w6a','w6b','w6c'].map($);
+  var cnt6=function(s){return s.replace(/[\s，。！？、「」『』：；…,.!?:;]/g,'').length};
+  try{var d6=JSON.parse(sget(KEY+'-fairy')||'[]');F6.forEach(function(el,i){if(d6[i])el.value=d6[i]})}catch(e){}
+  var s6={only:null};
+  s6.redraw=function(){
+    var a=F6[0].value.trim(), b=F6[1].value.trim(), c=F6[2].value.trim(), t=a+b+c, n=cnt6(t);
+    var rb=scan(b), rc=scan(c), r=scan(t);
+    var used=['when','num','sense','talk'].filter(function(k){return rb[k].length>0});
+    $('count6').textContent='開頭 '+cnt6(a)+' 字＋畫面 '+cnt6(b)+' 字＋心情 '+cnt6(c)+' 字＝共 '+n+' 字（不算標點）';
+    var items=[
+      {k:'start',n:'🍞 開頭點題',ok:/童話|夢想/.test(a),tip:'第一句要說出題目，讓讀者知道你在寫「夢想中的童話故事」。',detail:a?(/童話|夢想/.test(a)?'有說到題目 ✓':'開頭還沒出現「童話」或「夢想」。'):'開頭還沒寫。'},
+      {k:'pic',n:'🥬 畫面加料'+(used.length?' '+used.length:''),ok:used.length>0,tip:'中間的畫面至少用一招：時間地點、數字、看到聽到聞到、說的話。',detail:used.length?'你用到了：'+used.map(function(k){return DET[k].n}).join('、'):'畫面裡還沒找到加料，試試加一個數字或一句對話。'},
+      {k:'mood',n:'🍞 寫出心情',ok:cnt6(c)>=4,tip:'最後一句寫出你的感受或願望。',detail:cnt6(c)>=4?'有寫心情 ✓'+(rc.vagueWords.length?'　小建議：「'+rc.vagueWords.join('、')+'」可以試著換成表情或動作，例如「笑得合不攏嘴」。':''):'心情這一層還太短。'},
+      {k:'len',n:'✏️ '+n+' 字',ok:n>=40&&n<=60,tip:'這次的目標是約 50 字，40～60 字都可以。',detail:n<40?'還差 '+(40-n)+' 字，把畫面寫細一點。':(n>60?'多了 '+(n-60)+' 字，刪掉重複的句子（第 2 關的技巧）。':'字數剛剛好 ✓')}
+    ];
+    pills($('m6'),items,$('t6'),$('l6'),s6);
+    renderLens($('l6'),t,r,DET[s6.only]?s6.only:null);
+    sset(KEY+'-fairy',JSON.stringify(F6.map(function(el){return el.value})));
+    if(items.every(function(x){return x.ok}))solve('fairy');
+  };
+  F6.forEach(function(el){el.addEventListener('input',s6.redraw)});
+  vagueClick($('l6'),$('t6'));
+  $('copy6').onclick=function(){
+    var b=this, txt=F6.map(function(el){return el.value.trim()}).join('');
+    function ok(){b.textContent='已複製 ✓';setTimeout(function(){b.textContent='複製全文'},1500)}
+    if(navigator.clipboard&&window.isSecureContext){navigator.clipboard.writeText(txt).then(ok,function(){})}
+    else{var ta=document.createElement('textarea');ta.value=txt;document.body.appendChild(ta);ta.select();document.execCommand('copy');ta.remove();ok()}
+  };
+  $('clear6').onclick=function(){if(confirm('確定要清空重寫嗎？')){F6.forEach(function(el){el.value=''});s6.redraw()}};
+  s6.redraw();
 
   renderNav();
   // 已過關的關卡：只亮星星，不顯示答案與過關橫幅，重新進來可以再練一次
