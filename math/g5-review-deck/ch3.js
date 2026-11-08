@@ -235,52 +235,68 @@ window.DECK = window.DECK || [];
       });
     }
 
-    /* ---------- 4. 求 1/甲：扣掉已知的部分（互動） ---------- */
+    /* ---------- 4. 求 1/甲：彩帶切三段，中間那段就是 1/甲（互動） ---------- */
     {
       const Tt = P.unit.T, Aa = P.unit.A, Cc = P.unit.C;
       const L = LCM(LCM(Tt[1], Aa[1]), Cc[1]);
       const nT = Tt[0] * L / Tt[1], nA = Aa[0] * L / Aa[1], nC = Cc[0] * L / Cc[1];
-      const rest = RED64(nT - nA - nC, L), jia = rest[1] / rest[0];
+      const nM = nT - nA - nC, rest = RED64(nM, L), jia = rest[1] / rest[0];
+      const T = `${Tt[0]}/${Tt[1]}`, A = `${Aa[0]}/${Aa[1]}`, C3 = `${Cc[0]}/${Cc[1]}`;
       out.push({
         sec: S64, secName: N64,
-        title: `${Tt[0]}/${Tt[1]}＝${Aa[0]}/${Aa[1]}＋1/甲＋${Cc[0]}/${Cc[1]}：扣掉已知的，剩下的就是 1/甲`,
+        title: `${T}＝${A}＋1/甲＋${C3}：中間那一段就是 1/甲`,
         points: [
-          `全部 ＝ 三塊加起來，所以 \\(\\frac{1}{甲}=\\frac{${Tt[0]}}{${Tt[1]}}-\\frac{${Aa[0]}}{${Aa[1]}}-\\frac{${Cc[0]}}{${Cc[1]}}\\)。`,
-          `通分成分母 ${L}：\\(\\frac{${nT}}{${L}}-\\frac{${nA}}{${L}}-\\frac{${nC}}{${L}}=\\frac{${nT - nA - nC}}{${L}}=\\frac{${rest[0]}}{${rest[1]}}\\)。`,
-          `\\(\\frac{1}{甲}=\\frac{1}{${jia}}\\)，所以 <span class="k">甲 ＝ ${jia}</span>（分子是 1 時，甲就是分母）。`
+          `把 \\(\\frac{${Tt[0]}}{${Tt[1]}}\\) 想成一條彩帶，切成三段：第一段 \\(\\frac{${Aa[0]}}{${Aa[1]}}\\)、第三段 \\(\\frac{${Cc[0]}}{${Cc[1]}}\\)，<b>中間那段就是 \\(\\frac{1}{甲}\\)</b>。`,
+          `中間那段 ＝ 全長 － 頭 － 尾：\\(\\frac{${nT}}{${L}}-\\frac{${nA}}{${L}}-\\frac{${nC}}{${L}}=\\frac{${nM}}{${L}}=\\frac{1}{${jia}}\\)。`,
+          `\\(\\frac{1}{甲}=\\frac{1}{${jia}}\\)：分子都是 1，分母也要一樣，所以 <span class="k">甲 ＝ ${jia}</span>。`
         ],
-        formula: { label: '扣掉已知', tex: `\\frac{1}{甲}=\\frac{${nT}-${nA}-${nC}}{${L}}=\\frac{${rest[0]}}{${rest[1]}}` },
+        formula: { label: '中間那段', tex: `\\frac{1}{甲}=\\frac{${nT}-${nA}-${nC}}{${L}}=\\frac{${nM}}{${L}}=\\frac{1}{${jia}}` },
         visual: (h) => {
-          h.innerHTML = CARD64(`一條 ${Tt[0]}/${Tt[1]} 長的彩帶剪成三段，已知兩段，第三段是幾分之一？`,
-            `<label>扣掉第 <span class="ival" id="kv">0</span> 段已知</label>
-            <input type="range" id="ks" min="0" max="2" step="1" value="0">`);
+          h.innerHTML = CARD64(`\\(\\frac{${Tt[0]}}{${Tt[1]}}=\\frac{${Aa[0]}}{${Aa[1]}}+\\square+\\frac{${Cc[0]}}{${Cc[1]}}\\)，中間的 □ 是「幾分之一」？`,
+            `<label>步驟 <span class="ival" id="kv">1</span> / 4</label>
+            <input type="range" id="ks" min="1" max="4" step="1" value="1">`);
           let seen = false;
+          const STEP = ['先看彩帶全長', '切下第一段', '切下第三段', '剩下中間那段'];
           const draw = () => {
             const k = +h.querySelector('#ks').value;
-            if (k === 2) seen = true;
-            h.querySelector('#kv').textContent = k;
-            const cw = 360 / L, X = 40, y = 70;
-            let s = `<rect x="${X}" y="${y}" width="360" height="30" fill="none" stroke="#94a3b8" stroke-width="1.5"/>`;
-            for (let i = 0; i < nT; i++) {
-              let fill = '#bbf7d0';
-              if (k >= 1 && i < nA) fill = '#e2e8f0';
-              if (k >= 2 && i >= nT - nC) fill = '#e2e8f0';
-              s += `<rect x="${X + i * cw}" y="${y}" width="${cw}" height="30" fill="${fill}" stroke="#fff" stroke-width="0.8"/>`;
+            if (k === 4) seen = true;
+            h.querySelector('#kv').textContent = k + '　' + STEP[k - 1];
+            const X = 30, W = 380, cw = W / L, y = 64, bh = 34;
+            const mid = (a, b) => X + (a + b) / 2 * cw;
+            let s = '';
+            // 1 的長度（虛線框）＋尺
+            s += `<rect x="${X}" y="${y}" width="${W}" height="${bh}" fill="none" stroke="#94a3b8" stroke-width="1.5" stroke-dasharray="5 4"/>`;
+            for (let i = 0; i <= L; i++) s += `<line x1="${X + i * cw}" y1="${y + bh}" x2="${X + i * cw}" y2="${y + bh + (i === 0 || i === L ? 10 : 5)}" stroke="#94a3b8" stroke-width="1.2"/>`;
+            s += TX(X, y + bh + 24, '0', { fs: 13, c: '#64748b', anchor: 'middle' }) + TX(X + W, y + bh + 24, '1', { fs: 13, c: '#64748b', anchor: 'middle' });
+            // 彩帶各段
+            const seg = (a, b, fill, stroke) => `<rect x="${X + a * cw}" y="${y}" width="${(b - a) * cw}" height="${bh}" fill="${fill}" stroke="${stroke}" stroke-width="2"/>`;
+            if (k === 1) s += seg(0, nT, '#bbf7d0', GRN);
+            if (k >= 2) s += seg(0, nA, '#bfdbfe', BLU);
+            if (k === 2 || k === 3) s += seg(nA, k === 3 ? nT - nC : nT, '#bbf7d0', GRN);
+            if (k >= 3) s += seg(nT - nC, nT, '#e9d5ff', VIO);
+            if (k === 4) s += seg(nA, nA + nM, '#fed7aa', AMB);
+            s += TX(X, 30, `彩帶全長 ${T} ＝ ${nT}/${L}（虛線框是 1）`, { fs: 13.5, c: GRN });
+            if (k >= 2) s += TX(mid(0, nA), y + bh / 2 + 5, `${A}＝${nA}/${L}`, { fs: 12.5, c: BLU, anchor: 'middle' });
+            if (k >= 3) s += TX(mid(nT - nC, nT), y - 8, `${C3}`, { fs: 12.5, c: VIO, anchor: 'middle' });
+            if (k === 4) {
+              s += TX(mid(nA, nA + nM), y - 8, `1/甲 ＝ ${nM}/${L}`, { fs: 13, c: AMB, anchor: 'middle' });
+              // 第二列：jia 段中間那段排起來剛好是 1
+              const y2 = 150;
+              for (let j = 0; j < jia; j++) s += `<rect x="${X + j * nM * cw}" y="${y2}" width="${nM * cw}" height="26" fill="${j % 2 ? '#fdba74' : '#fed7aa'}" stroke="${AMB}" stroke-width="1.5"/>` +
+                TX(X + (j + 0.5) * nM * cw, y2 + 18, `${nM}/${L}`, { fs: 11.5, c: '#9a3412', anchor: 'middle' });
+              s += TX(220, y2 + 50, `${jia} 段中間那段排起來剛好是 1 → 每段是 1/${jia}，甲 ＝ ${jia}`, { fs: 14, c: AMB, anchor: 'middle' });
             }
-            s += TX(X, y - 10, `塗色 ${nT}/${L} ＝ ${Tt[0]}/${Tt[1]}（全部）`, { fs: 13, c: GRN });
-            if (k >= 1) s += TX(X + nA * cw / 2, y + 52, `${Aa[0]}/${Aa[1]}＝${nA}格`, { fs: 12.5, c: '#64748b', anchor: 'middle' });
-            if (k >= 2) s += TX(X + (nT - nC / 2) * cw, y + 52, `${Cc[0]}/${Cc[1]}`, { fs: 12.5, c: '#64748b', anchor: 'middle' });
-            if (k >= 2) s += TX(220, 160, `剩 ${nT - nA - nC} 格 ＝ ${nT - nA - nC}/${L} ＝ 1/${jia} → 甲 ＝ ${jia}`, { fs: 15, c: GRN, anchor: 'middle' });
-            h.querySelector('#fig').innerHTML = svg('0 0 440 175', s);
-            h.querySelector('#aha').innerHTML = AHA64(`剩下的 ${nT - nA - nC}/${L} 約分成 1/${jia}，所以甲 ＝ ${jia}。「${jia} 的倒數是 1/${jia}」：倒數就是分子分母上下對調。`,
-              seen, '把兩段已知都扣掉');
+            h.querySelector('#fig').innerHTML = svg('0 0 440 215', s);
+            h.querySelector('#aha').innerHTML = AHA64(`中間那段是 ${nM}/${L}，${jia} 段排起來剛好是 1，所以它就是 1/${jia}。1/甲 ＝ 1/${jia}，甲 ＝ ${jia}。`,
+              seen, '拉到第 4 步');
+            if (window.MathJax && MathJax.typesetPromise) MathJax.typesetPromise([h]).catch(() => {});
           };
           h.querySelector('#ks').oninput = draw; draw();
         },
-        caption: '全部－已知的兩段＝未知的那段，約分成 1/□ 就讀出甲。',
+        caption: '彩帶全長－頭－尾＝中間那段；看幾段排滿 1，就知道甲。',
         example: {
           q: `已知 \\(\\frac{${Tt[0]}}{${Tt[1]}}=\\frac{${Aa[0]}}{${Aa[1]}}+\\frac{1}{甲}+\\frac{${Cc[0]}}{${Cc[1]}}\\)，甲是多少？`,
-          steps: [`\\(\\frac{1}{甲}=\\frac{${nT}}{${L}}-\\frac{${nA}}{${L}}-\\frac{${nC}}{${L}}=\\frac{${nT - nA - nC}}{${L}}\\)。`, `\\(\\frac{${nT - nA - nC}}{${L}}=\\frac{1}{${jia}}\\)，甲 ＝ ${jia}。`],
+          steps: [`中間那段：\\(\\frac{1}{甲}=\\frac{${nT}}{${L}}-\\frac{${nA}}{${L}}-\\frac{${nC}}{${L}}=\\frac{${nM}}{${L}}\\)。`, `\\(\\frac{${nM}}{${L}}=\\frac{1}{${jia}}\\)，所以甲 ＝ ${jia}。`],
           ans: `${jia}`
         }
       });

@@ -28,10 +28,14 @@
   function fitEl(box, content) {
     if (!box || !content) return;
     content.style.transform = 'none';
+    content.style.transformOrigin = '';
     const avail = box.clientHeight;
     const need = content.scrollHeight;
     // 留 6px 安全邊界，吸收縮放後的次像素捨入，避免滑桿底緣被裁掉一絲
     if (avail > 0 && need > avail + 1) {
+      // 內容比欄高時是從頂端排下來的；以「頂端」為縮放基準才會整組收進欄內。
+      // 用中心當基準時，縮小後底部會往下凸出，「發現」框與滑桿被裁掉（2026-11-08 修正）
+      content.style.transformOrigin = 'top center';
       content.style.transform = 'scale(' + Math.max(0.5, (avail - 6) / need) + ')';
     }
   }
@@ -64,6 +68,12 @@
     m.id = 'zoomModal'; m.className = 'zoom-modal hidden';
     m.innerHTML = `<div class="zoom-body" id="zoomBody"></div>`;
     document.body.appendChild(m);
+    // 放大層裡拖滑桿會重畫圖、解鎖「發現」框，高度改變後要重新量一次
+    let zoomRAF = null;
+    m.addEventListener('input', () => {
+      if (zoomRAF) return;
+      zoomRAF = requestAnimationFrame(() => { zoomRAF = null; fitZoomHost(); });
+    });
     const bar = document.createElement('div');
     bar.id = 'zoomBar'; bar.className = 'zoom-bar hidden';
     bar.innerHTML = `<div class="zoom-badge" id="zoomBadge"></div>
@@ -109,7 +119,24 @@
     const body = document.getElementById('zoomBody');
     if (!body) return;
     const isDrawing = !!host.querySelector('svg:not(mjx-container svg)');
-    if (isDrawing) { host.style.width = ''; host.style.transform = 'none'; return; }
+    if (isDrawing) {
+      host.style.width = ''; host.style.transform = 'none';
+      // 繪圖撐滿寬度後常比螢幕高，滑桿與「發現」框要捲動才看得到（2026-11-08 使用者反映）。
+      // 量出超出可視高度多少，就把圖（SVG）等比縮矮多少，讓「提問＋圖＋滑桿＋發現」一次看完。
+      const svgs = [...host.querySelectorAll('svg')].filter(v => !v.closest('mjx-container'));
+      svgs.forEach(v => { v.style.maxHeight = ''; });
+      const modal = document.getElementById('zoomModal');
+      const cs = getComputedStyle(modal);
+      const avail = modal.clientHeight - parseFloat(cs.paddingTop) - parseFloat(cs.paddingBottom);
+      const over = host.scrollHeight - avail;
+      if (over > 1 && svgs.length) {
+        const hs = svgs.map(v => v.getBoundingClientRect().height);
+        const total = hs.reduce((a, b) => a + b, 0);
+        const k = Math.max(0.3, (total - over - 4) / total);
+        svgs.forEach((v, i) => { v.style.maxHeight = Math.floor(hs[i] * k) + 'px'; });
+      }
+      return;
+    }
     // 以「原本在投影片視覺欄的寬度」當基準寬度，再整塊等比放大，維持原有版面比例
     const baseW = +host.dataset.zoomBase || 460;
     host.style.width = baseW + 'px';
@@ -149,6 +176,7 @@
       zoomHost.style.width = ''; zoomHost.style.margin = '';
       zoomHost.style.flex = ''; zoomHost.style.height = '';
       zoomHost.style.transform = ''; zoomHost.style.transformOrigin = '';
+      zoomHost.querySelectorAll('svg').forEach(v => { v.style.maxHeight = ''; });
       delete zoomHost.dataset.zoomBase;
       zoomHostParent.insertBefore(zoomHost, zoomHostParent.firstChild);   // 把圖放回原視覺欄
       zoomHost = null; zoomHostParent = null;
