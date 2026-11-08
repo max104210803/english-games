@@ -1,5 +1,5 @@
 /* ============ 第 3 章　分數 ============
-   節次：6-1 分數比大小、6-2 分數加減、6-3 分數應用
+   節次：6-1 分數比大小、6-2 分數加減、6-3 分數應用、6-4 異分母加減進階
    內容：觀念整理與例題皆為自編，數字以程式驗算。
    課綱邊界（本章刻意不放）：分數乘除法、約分的短除法、
      小數與分數互換（本章只做同分母化與加減應用）。
@@ -43,11 +43,379 @@ window.DECK = window.DECK || [];
       </div>`).join('') + `</div>`;
   }
 
+
+  // 6-4 數字：全部自編（不沿用原卷），已用 Python 驗算
+  const P64 = {
+    borrow: { A: [6, 3, 4], B: [2, 5, 6] },
+    paren: { A: [5, 3, 4], C: [5, 6], E: [1, 4] },
+    between: { lo: [2, 3], hi: [4, 5], N: 60 },
+    unit: { T: [5, 6], A: [1, 2], C: [1, 12] },
+    tele: { s: 4, e: 19 },
+    op: { da: 3, db: 4, x: 30, y: 8, z: 4 },
+    clock: { fast: [4, 1, 6], slow: [1, 3, 4] }
+  };
+
+  /* ======== 6-4 異分母加減進階：7 頁共用產生器（數字全部由 P64 決定）======== */
+  // 分數小工具：約分、帶分數、TeX／純文字兩種寫法
+  const GCD = (a, b) => (b ? GCD(b, a % b) : Math.abs(a));
+  const LCM = (a, b) => a / GCD(a, b) * b;
+  const RED64 = (n, d) => { const g = GCD(n, d); return [n / g, d / g]; };
+  const MX = (w, n, d) => [w * d + n, d];                       // 帶分數 → 假分數
+  const ADD = (p, q) => RED64(p[0] * q[1] + q[0] * p[1], p[1] * q[1]);
+  const SUB = (p, q) => RED64(p[0] * q[1] - q[0] * p[1], p[1] * q[1]);
+  const TF = (n, d) => {                                         // TeX：自動化成帶分數
+    [n, d] = RED64(n, d);
+    const w = Math.floor(n / d), r = n - w * d;
+    if (r === 0) return `${w}`;
+    return w ? `${w}\\frac{${r}}{${d}}` : `\\frac{${r}}{${d}}`;
+  };
+  const PF = (n, d) => {                                         // 純文字（標題、SVG）
+    [n, d] = RED64(n, d);
+    const w = Math.floor(n / d), r = n - w * d;
+    if (r === 0) return `${w}`;
+    return w ? `${w}又${r}/${d}` : `${r}/${d}`;
+  };
+  const TW = (w, n, d) => `${w}\\frac{${n}}{${d}}`;              // 不約分的帶分數 TeX（通分過程用）
+  const GUESS64 = (t) => `<div style="width:96%;margin:26px auto 8px;font-size:13.5px;font-weight:800;line-height:1.55;color:#5b21b6;background:#f4effe;border:1.5px dashed #c4b0f3;border-radius:10px;padding:7px 11px;text-align:left">🤔 先猜：${t}</div>`;
+  const AHA64 = (t, on, hint) => on
+    ? `<div style="width:96%;margin:8px auto 0;font-size:13.5px;font-weight:800;line-height:1.55;color:#047857;background:#e8f7ef;border:1.5px solid #9fd8bd;border-radius:10px;padding:7px 11px;text-align:left">💡 發現：${t}</div>`
+    : `<div style="width:96%;margin:8px auto 0;font-size:13px;font-weight:700;line-height:1.55;color:#7c879b;background:#f3f5f9;border:1.5px dashed #dce3ee;border-radius:10px;padding:7px 11px;text-align:left">🔒 ${hint}</div>`;
+  const CARD64 = (q, ctrl) => GUESS64(q) + `<div style="width:100%"><div id="fig"></div><div class="ictrl">${ctrl}</div><div id="aha"></div></div>`;
+  const S64 = '6-4', N64 = '異分母加減進階';
+
+  function build64(P) {
+    const out = [];
+
+    /* ---------- 1. 帶分數相減要借 1（互動） ---------- */
+    {
+      const [w1, a1, b1] = P.borrow.A, [w2, a2, b2] = P.borrow.B;
+      const L = LCM(b1, b2), n1 = a1 * L / b1, n2 = a2 * L / b2;
+      const ans = SUB(MX(w1, a1, b1), MX(w2, a2, b2));
+      out.push({
+        sec: S64, secName: N64,
+        title: `${PF(...MX(w1, a1, b1))}－${PF(...MX(w2, a2, b2))}：分數部分不夠減，先借 1`,
+        points: [
+          `先通分：\\(${TW(w1, a1, b1)}=${TW(w1, n1, L)}\\)，\\(${TW(w2, a2, b2)}=${TW(w2, n2, L)}\\)。`,
+          `分數部分 \\(\\frac{${n1}}{${L}}<\\frac{${n2}}{${L}}\\) 不夠減，<span class="k">從整數借 1</span>：1 ＝ \\(\\frac{${L}}{${L}}\\)。`,
+          `\\(${TW(w1, n1, L)}=${TW(w1 - 1, n1 + L, L)}\\)，再整數減整數、分數減分數。`
+        ],
+        formula: { label: '借 1', tex: `${TW(w1 - 1, n1 + L, L)}-${TW(w2, n2, L)}=${TF(...ans)}` },
+        visual: (h) => {
+          h.innerHTML = CARD64(`分數部分 ${n1}/${L} 比 ${n2}/${L} 少，可以直接「反過來減」嗎？拖拖看「借 1」。`,
+            `<label>從整數借 1：<span class="ival" id="bv">不借</span></label>
+            <input type="range" id="bs" min="0" max="1" step="1" value="0">`);
+          let seen = false;
+          const draw = () => {
+            const b = +h.querySelector('#bs').value;
+            if (b) seen = true;
+            h.querySelector('#bv').textContent = b ? '借了' : '不借';
+            const cw = 360 / L, X = 40;
+            const bar = (y, cells, col, fill, txt) => {
+              let s = `<rect x="${X}" y="${y}" width="${cw * cells}" height="22" fill="${fill}"/>`;
+              for (let k = 1; k < L; k++) s += `<line x1="${X + k * cw}" y1="${y}" x2="${X + k * cw}" y2="${y + 22}" stroke="${col}" stroke-width="0.6" opacity="0.6"/>`;
+              s += `<rect x="${X}" y="${y}" width="360" height="22" fill="none" stroke="${col}" stroke-width="1.8"/>`;
+              return s + TX(X, y - 5, txt, { fs: 12.5, c: col });
+            };
+            let s = '';
+            if (b) s += bar(26, L, BLU, '#bfdbfe', `借來的 1 ＝ ${L}/${L}（整數 ${w1} 變 ${w1 - 1}）`);
+            s += bar(80, n1, GRN, '#bbf7d0', `被減數的分數部分 ${n1}/${L}`);
+            s += bar(134, n2, RED, '#fecdd3', `減數的分數部分 ${n2}/${L}`);
+            const msg = b
+              ? `${L + n1}/${L} － ${n2}/${L} ＝ ${L + n1 - n2}/${L}；整數 ${w1 - 1} － ${w2} ＝ ${w1 - 1 - w2}`
+              : `${n1} 格不夠拿走 ${n2} 格！`;
+            s += TX(220, 186, msg, { fs: 14, c: b ? GRN : RED, anchor: 'middle' });
+            h.querySelector('#fig').innerHTML = svg('0 0 440 200', s);
+            h.querySelector('#aha').innerHTML = AHA64(`借 1 就是把 1 個整數拆成 ${L}/${L}，分數部分變成 ${L + n1}/${L} 就夠減了。答案 ${PF(...ans)}。反過來減（${n2}－${n1}）是錯的。`,
+              seen, '把滑桿拉到「借了」');
+          };
+          h.querySelector('#bs').oninput = draw; draw();
+        },
+        caption: '借 1＝拆成一整條：整數少 1，分數多一個分母。',
+        example: {
+          q: `計算 \\(${TW(w1, a1, b1)}-${TW(w2, a2, b2)}\\)。`,
+          steps: [`通分：\\(${TW(w1, n1, L)}-${TW(w2, n2, L)}\\)。`, `借 1：\\(${TW(w1 - 1, n1 + L, L)}-${TW(w2, n2, L)}=${TW(w1 - 1 - w2, n1 + L - n2, L)}\\)。`],
+          ans: `\\(${TF(...ans)}\\)`
+        }
+      });
+    }
+
+    /* ---------- 2. 去括號要變號（互動：分步驟） ---------- */
+    {
+      const [W, a, b] = P.paren.A, [c, d] = P.paren.C, [e, f] = P.paren.E;
+      const A = MX(W, a, b), Cc = [c, d], E = [e, f];
+      const AE = ADD(A, E), ans = SUB(AE, Cc);
+      out.push({
+        sec: S64, secName: N64,
+        title: `減掉括號：－(${c}/${d}－${e}/${f}) 拆開變成 －${c}/${d}＋${e}/${f}`,
+        points: [
+          '括號前面是減號，拆掉括號時，括號裡的<span class="k">減號要變加號</span>。',
+          `\\(${TW(W, a, b)}+\\frac{${e}}{${f}}\\) 剛好湊成整數 \\(${TF(...AE)}\\)，再減 \\(\\frac{${c}}{${d}}\\) 最快。`,
+          '連續減兩個數，也可以先把兩數加起來再一次減掉。'
+        ],
+        formula: { label: '去括號', tex: `a-(b-c)=a-b+c` },
+        visual: (h) => {
+          h.innerHTML = CARD64(`「減掉 (${c}/${d}－${e}/${f})」和「減掉 ${c}/${d}」比，哪一個減得比較多？`,
+            `<label>步驟 <span class="ival" id="sv">1</span> / 3</label>
+            <input type="range" id="ss" min="1" max="3" step="1" value="1">`);
+          let seen = false;
+          const draw = () => {
+            const st = +h.querySelector('#ss').value;
+            if (st === 3) seen = true;
+            h.querySelector('#sv').textContent = st;
+            const S = A[0] / A[1], cv = c / d, ev = e / f, X0 = 400, U = 300;
+            const x = (v) => X0 - (S - v) * U;
+            let s = `<line x1="20" y1="120" x2="425" y2="120" stroke="#94a3b8" stroke-width="2"/>`;
+            s += `<circle cx="${x(S)}" cy="120" r="5" fill="${BLU}"/>` + TX(x(S), 146, PF(...A), { fs: 13, c: BLU, anchor: 'middle' });
+            const arrow = (x1, x2, y, col, txt) => `<line x1="${x1}" y1="${y}" x2="${x2}" y2="${y}" stroke="${col}" stroke-width="3"/>` +
+              `<polygon points="${x2},${y} ${x2 + (x2 < x1 ? 9 : -9)},${y - 6} ${x2 + (x2 < x1 ? 9 : -9)},${y + 6}" fill="${col}"/>` + TX((x1 + x2) / 2, y - 8, txt, { fs: 13, c: col, anchor: 'middle' });
+            if (st >= 2) s += arrow(x(S), x(S - cv), 70, RED, `先減 ${c}/${d}（減太多了）`);
+            if (st >= 3) s += arrow(x(S - cv), x(S - cv + ev), 100, GRN, `補回 ${e}/${f}`);
+            if (st >= 3) s += `<circle cx="${x(S - cv + ev)}" cy="120" r="6" fill="${GRN}"/>` + TX(x(S - cv + ev), 168, '答案 ' + PF(...ans), { fs: 14, c: GRN, anchor: 'middle' });
+            if (st === 1) s += TX(220, 60, `原式：${PF(...A)} －（${c}/${d} － ${e}/${f}）`, { fs: 15, c: '#172033', anchor: 'middle' });
+            h.querySelector('#fig').innerHTML = svg('0 0 440 185', s);
+            h.querySelector('#aha').innerHTML = AHA64(`括號裡是「${c}/${d} 少掉 ${e}/${f}」，所以只該減這麼少；先減整個 ${c}/${d} 就多減了 ${e}/${f}，要<b>加回來</b>。`,
+              seen, '拉到第 3 步');
+          };
+          h.querySelector('#ss').oninput = draw; draw();
+        },
+        caption: '減掉一個差＝先減大的，再把多減的加回來。',
+        example: {
+          q: `計算 \\(${TW(W, a, b)}-\\left(\\frac{${c}}{${d}}-\\frac{${e}}{${f}}\\right)\\)。`,
+          steps: [`去括號：\\(${TW(W, a, b)}-\\frac{${c}}{${d}}+\\frac{${e}}{${f}}\\)。`, `先湊整：\\(${TW(W, a, b)}+\\frac{${e}}{${f}}=${TF(...AE)}\\)，\\(${TF(...AE)}-\\frac{${c}}{${d}}=${TF(...ans)}\\)。`],
+          ans: `\\(${TF(...ans)}\\)`
+        }
+      });
+    }
+
+    /* ---------- 3. 兩個分數之間有幾個（互動） ---------- */
+    {
+      const [p, q] = P.between.lo, [r, s0] = P.between.hi, N = P.between.N;
+      const lo = p * N / q, hi = r * N / s0;
+      out.push({
+        sec: S64, secName: N64,
+        title: `比 ${p}/${q} 大、比 ${r}/${s0} 小，分母 ${N} 的分數有 ${hi - lo - 1} 個`,
+        points: [
+          `兩個分數都通分成分母 ${N}：\\(\\frac{${p}}{${q}}=\\frac{${lo}}{${N}}\\)，\\(\\frac{${r}}{${s0}}=\\frac{${hi}}{${N}}\\)。`,
+          `分子要在 ${lo} 和 ${hi} 之間，<span class="k">不含兩端</span>：${lo + 1}、${lo + 2}、…、${hi - 1}。`,
+          `個數 ＝ ${hi - 1} － ${lo + 1} ＋ 1 ＝ ${hi - lo - 1}。`
+        ],
+        formula: { label: '數格子', tex: `\\frac{${lo}}{${N}}<\\frac{k}{${N}}<\\frac{${hi}}{${N}}` },
+        visual: (h) => {
+          h.innerHTML = CARD64(`分母換成 ${2 * N}，中間的分數會變多還是一樣多？`,
+            `<label>分母 ＝ <span class="ival" id="nv">${N}</span></label>
+            <input type="range" id="ns" min="1" max="3" step="1" value="1">`);
+          let seen = false;
+          const draw = () => {
+            const m = +h.querySelector('#ns').value, D = N * m;
+            if (m > 1) seen = true;
+            h.querySelector('#nv').textContent = D;
+            const L0 = lo * m, H0 = hi * m, cnt = H0 - L0 - 1, X = 40, Wd = 360, step = Wd / (H0 - L0);
+            let s = `<line x1="${X}" y1="100" x2="${X + Wd}" y2="100" stroke="#94a3b8" stroke-width="2"/>`;
+            for (let k = L0; k <= H0; k++) {
+              const xx = X + (k - L0) * step, end = (k === L0 || k === H0);
+              s += `<line x1="${xx}" y1="92" x2="${xx}" y2="108" stroke="${end ? RED : GRN}" stroke-width="${end ? 2.5 : 1.5}"/>`;
+              if (!end) s += `<circle cx="${xx}" cy="100" r="${Math.min(4, step / 3)}" fill="${GRN}"/>`;
+            }
+            s += `<circle cx="${X}" cy="100" r="6" fill="#fff" stroke="${RED}" stroke-width="2.5"/><circle cx="${X + Wd}" cy="100" r="6" fill="#fff" stroke="${RED}" stroke-width="2.5"/>`;
+            s += TX(X - 14, 135, `${p}/${q}＝${L0}/${D}`, { fs: 13, c: RED, anchor: 'start' });
+            s += TX(X + Wd + 14, 135, `${r}/${s0}＝${H0}/${D}`, { fs: 13, c: RED, anchor: 'end' });
+            s += TX(220, 60, `中間的綠點：分子 ${L0 + 1}～${H0 - 1}，共 ${cnt} 個`, { fs: 15, c: GRN, anchor: 'middle' });
+            h.querySelector('#fig').innerHTML = svg('0 0 440 160', s);
+            h.querySelector('#aha').innerHTML = AHA64(`分母變大，格子切得更細，中間的分數就變多。題目指定分母 ${N}，所以答案是 ${hi - lo - 1} 個；兩端的紅圈不算（「比…大、比…小」不含等於）。`,
+              seen, '把分母拉大看看');
+          };
+          h.querySelector('#ns').oninput = draw; draw();
+        },
+        caption: '先通分成指定的分母，再數兩端之間的分子（不含兩端）。',
+        example: {
+          q: `比 \\(\\frac{${p}}{${q}}\\) 大、比 \\(\\frac{${r}}{${s0}}\\) 小，分母是 ${N} 的分數有幾個？`,
+          steps: [`\\(\\frac{${p}}{${q}}=\\frac{${lo}}{${N}}\\)，\\(\\frac{${r}}{${s0}}=\\frac{${hi}}{${N}}\\)。`, `分子 ${lo + 1}～${hi - 1}：\\(${hi - 1}-${lo + 1}+1=${hi - lo - 1}\\)。`],
+          ans: `${hi - lo - 1} 個`
+        }
+      });
+    }
+
+    /* ---------- 4. 求 1/甲：扣掉已知的部分（互動） ---------- */
+    {
+      const Tt = P.unit.T, Aa = P.unit.A, Cc = P.unit.C;
+      const L = LCM(LCM(Tt[1], Aa[1]), Cc[1]);
+      const nT = Tt[0] * L / Tt[1], nA = Aa[0] * L / Aa[1], nC = Cc[0] * L / Cc[1];
+      const rest = RED64(nT - nA - nC, L), jia = rest[1] / rest[0];
+      out.push({
+        sec: S64, secName: N64,
+        title: `${Tt[0]}/${Tt[1]}＝${Aa[0]}/${Aa[1]}＋1/甲＋${Cc[0]}/${Cc[1]}：扣掉已知的，剩下的就是 1/甲`,
+        points: [
+          `全部 ＝ 三塊加起來，所以 \\(\\frac{1}{甲}=\\frac{${Tt[0]}}{${Tt[1]}}-\\frac{${Aa[0]}}{${Aa[1]}}-\\frac{${Cc[0]}}{${Cc[1]}}\\)。`,
+          `通分成分母 ${L}：\\(\\frac{${nT}}{${L}}-\\frac{${nA}}{${L}}-\\frac{${nC}}{${L}}=\\frac{${nT - nA - nC}}{${L}}=\\frac{${rest[0]}}{${rest[1]}}\\)。`,
+          `\\(\\frac{1}{甲}=\\frac{1}{${jia}}\\)，所以 <span class="k">甲 ＝ ${jia}</span>（分子是 1 時，甲就是分母）。`
+        ],
+        formula: { label: '扣掉已知', tex: `\\frac{1}{甲}=\\frac{${nT}-${nA}-${nC}}{${L}}=\\frac{${rest[0]}}{${rest[1]}}` },
+        visual: (h) => {
+          h.innerHTML = CARD64(`一條 ${Tt[0]}/${Tt[1]} 長的彩帶剪成三段，已知兩段，第三段是幾分之一？`,
+            `<label>扣掉第 <span class="ival" id="kv">0</span> 段已知</label>
+            <input type="range" id="ks" min="0" max="2" step="1" value="0">`);
+          let seen = false;
+          const draw = () => {
+            const k = +h.querySelector('#ks').value;
+            if (k === 2) seen = true;
+            h.querySelector('#kv').textContent = k;
+            const cw = 360 / L, X = 40, y = 70;
+            let s = `<rect x="${X}" y="${y}" width="360" height="30" fill="none" stroke="#94a3b8" stroke-width="1.5"/>`;
+            for (let i = 0; i < nT; i++) {
+              let fill = '#bbf7d0';
+              if (k >= 1 && i < nA) fill = '#e2e8f0';
+              if (k >= 2 && i >= nT - nC) fill = '#e2e8f0';
+              s += `<rect x="${X + i * cw}" y="${y}" width="${cw}" height="30" fill="${fill}" stroke="#fff" stroke-width="0.8"/>`;
+            }
+            s += TX(X, y - 10, `塗色 ${nT}/${L} ＝ ${Tt[0]}/${Tt[1]}（全部）`, { fs: 13, c: GRN });
+            if (k >= 1) s += TX(X + nA * cw / 2, y + 52, `${Aa[0]}/${Aa[1]}＝${nA}格`, { fs: 12.5, c: '#64748b', anchor: 'middle' });
+            if (k >= 2) s += TX(X + (nT - nC / 2) * cw, y + 52, `${Cc[0]}/${Cc[1]}`, { fs: 12.5, c: '#64748b', anchor: 'middle' });
+            if (k >= 2) s += TX(220, 160, `剩 ${nT - nA - nC} 格 ＝ ${nT - nA - nC}/${L} ＝ 1/${jia} → 甲 ＝ ${jia}`, { fs: 15, c: GRN, anchor: 'middle' });
+            h.querySelector('#fig').innerHTML = svg('0 0 440 175', s);
+            h.querySelector('#aha').innerHTML = AHA64(`剩下的 ${nT - nA - nC}/${L} 約分成 1/${jia}，所以甲 ＝ ${jia}。「${jia} 的倒數是 1/${jia}」：倒數就是分子分母上下對調。`,
+              seen, '把兩段已知都扣掉');
+          };
+          h.querySelector('#ks').oninput = draw; draw();
+        },
+        caption: '全部－已知的兩段＝未知的那段，約分成 1/□ 就讀出甲。',
+        example: {
+          q: `已知 \\(\\frac{${Tt[0]}}{${Tt[1]}}=\\frac{${Aa[0]}}{${Aa[1]}}+\\frac{1}{甲}+\\frac{${Cc[0]}}{${Cc[1]}}\\)，甲是多少？`,
+          steps: [`\\(\\frac{1}{甲}=\\frac{${nT}}{${L}}-\\frac{${nA}}{${L}}-\\frac{${nC}}{${L}}=\\frac{${nT - nA - nC}}{${L}}\\)。`, `\\(\\frac{${nT - nA - nC}}{${L}}=\\frac{1}{${jia}}\\)，甲 ＝ ${jia}。`],
+          ans: `${jia}`
+        }
+      });
+    }
+
+    /* ---------- 5. 拆項相消（互動，進階） ---------- */
+    {
+      const a0 = P.tele.s, e0 = P.tele.e;
+      const fin = SUB([1, a0], [1, e0 + 1]);
+      out.push({
+        sec: S64, secName: N64,
+        title: `進階：1/(${a0}×${a0 + 1})＋…＋1/(${e0}×${e0 + 1}) 拆開後中間全部消掉`,
+        points: [
+          `相鄰兩數相乘的分數可以拆：\\(\\frac{1}{${a0}\\times${a0 + 1}}=\\frac{1}{${a0}}-\\frac{1}{${a0 + 1}}\\)（通分驗算：\\(\\frac{${a0 + 1}-${a0}}{${a0 * (a0 + 1)}}\\)）。`,
+          '每一項都拆開後，前一項的「減」和後一項的「加」互相抵消。',
+          `最後只剩頭尾：\\(\\frac{1}{${a0}}-\\frac{1}{${e0 + 1}}=${TF(...fin)}\\)。`
+        ],
+        formula: { label: '拆項', tex: `\\frac{1}{n\\times(n+1)}=\\frac{1}{n}-\\frac{1}{n+1}` },
+        visual: (h) => {
+          h.innerHTML = CARD64(`加了這麼多項，算到最後會剩下幾個分數？`,
+            `<label>加到 1/(m×(m+1))，m ＝ <span class="ival" id="mv">${a0 + 2}</span></label>
+            <input type="range" id="ms" min="${a0}" max="${e0}" step="1" value="${a0 + 2}">`);
+          let seen = false;
+          const draw = () => {
+            const m = +h.querySelector('#ms').value;
+            if (m === e0) seen = true;
+            h.querySelector('#mv').textContent = m;
+            const res = SUB([1, a0], [1, m + 1]);
+            let s = '', y = 40;
+            const show = Math.min(m - a0 + 1, 3);
+            for (let i = 0; i < show; i++) {
+              const n = a0 + i;
+              s += TX(40, y, `1/(${n}×${n + 1})`, { fs: 13.5, c: '#172033' });
+              s += TX(150, y, '＝', { fs: 13.5, c: '#172033' });
+              s += TX(175, y, `1/${n}`, { fs: 13.5, c: i === 0 ? BLU : '#94a3b8' });
+              s += TX(225, y, `－ 1/${n + 1}`, { fs: 13.5, c: (m === n) ? RED : '#94a3b8' });
+              if (i > 0) s += `<line x1="172" y1="${y - 5}" x2="210" y2="${y - 5}" stroke="${RED}" stroke-width="2"/>`;
+              if (n < m) s += `<line x1="238" y1="${y - 5}" x2="290" y2="${y - 5}" stroke="${RED}" stroke-width="2"/>`;
+              y += 30;
+            }
+            if (m - a0 + 1 > 3) {
+              s += TX(175, y, '⋮（中間全部互相抵消）', { fs: 13, c: '#94a3b8' }); y += 30;
+              s += TX(40, y, `1/(${m}×${m + 1})`, { fs: 13.5, c: '#172033' });
+              s += TX(150, y, '＝', { fs: 13.5, c: '#172033' });
+              s += TX(175, y, `1/${m}`, { fs: 13.5, c: '#94a3b8' });
+              s += `<line x1="172" y1="${y - 5}" x2="210" y2="${y - 5}" stroke="${RED}" stroke-width="2"/>`;
+              s += TX(225, y, `－ 1/${m + 1}`, { fs: 13.5, c: RED });
+              y += 30;
+            }
+            s += TX(220, y + 12, `總和 ＝ 1/${a0} － 1/${m + 1} ＝ ${PF(...res)}`, { fs: 16, c: GRN, anchor: 'middle' });
+            h.querySelector('#fig').innerHTML = svg(`0 0 440 ${y + 30}`, s);
+            h.querySelector('#aha').innerHTML = AHA64(`不管加幾項，都只剩<b>藍色的頭</b>和<b>紅色的尾</b>。加到 1/(${e0}×${e0 + 1}) 時：1/${a0} － 1/${e0 + 1} ＝ ${PF(...fin)}。`,
+              seen, `把 m 拉到最後一項 ${e0}`);
+          };
+          h.querySelector('#ms').oninput = draw; draw();
+        },
+        caption: '拆開、抵消、剩頭尾：一長串加法變成一次減法。',
+        example: {
+          q: `\\(\\frac{1}{${a0}\\times${a0 + 1}}+\\frac{1}{${a0 + 1}\\times${a0 + 2}}+\\cdots+\\frac{1}{${e0}\\times${e0 + 1}}=?\\)`,
+          steps: [`拆開：\\(\\left(\\frac{1}{${a0}}-\\frac{1}{${a0 + 1}}\\right)+\\left(\\frac{1}{${a0 + 1}}-\\frac{1}{${a0 + 2}}\\right)+\\cdots\\)`, `剩頭尾：\\(\\frac{1}{${a0}}-\\frac{1}{${e0 + 1}}=${TF(...fin)}\\)。`],
+          ans: `\\(${TF(...fin)}\\)`
+        }
+      });
+    }
+
+    /* ---------- 6. 自訂符號：由內而外照規則代 ---------- */
+    {
+      const { da, db, x, y, z } = P.op;
+      const inner = SUB([x, da], [y, db]), innerV = inner[0] / inner[1];
+      const outer = SUB([innerV * 1, da], [z, db]);
+      out.push({
+        sec: S64, secName: N64,
+        title: `自訂符號 甲×乙＝甲/${da}－乙/${db}：先算括號，再把結果當新的甲`,
+        points: [
+          '題目自己定義的「×」不是乘法，<span class="k">只照規則代數字</span>。',
+          `先算括號：\\(${x}\\times${y}=\\frac{${x}}{${da}}-\\frac{${y}}{${db}}=${TF(...inner)}\\)。`,
+          `括號的結果 ${TF(...inner)} 當新的甲：\\(${TF(...inner)}\\times${z}=\\frac{${innerV}}{${da}}-\\frac{${z}}{${db}}=${TF(...outer)}\\)。`
+        ],
+        formula: { label: '規則', tex: `甲\\times乙=\\frac{甲}{${da}}-\\frac{乙}{${db}}` },
+        visual: (h) => {
+          h.innerHTML = SV.fbox([
+            { label: '① 括號', tex: `${x}\\times${y}=\\frac{${x}}{${da}}-\\frac{${y}}{${db}}=${TF(...inner)}`, color: BLU, fill: '#eef4ff', border: '#c7d7fb', size: 18 },
+            { label: '② 外層', tex: `${TF(...inner)}\\times${z}=\\frac{${innerV}}{${da}}-\\frac{${z}}{${db}}=${TF(...outer)}`, color: GRN, fill: '#eef7f2', border: '#bfe0d1', size: 18 }
+          ]);
+        },
+        caption: '甲放在第一格、乙放在第二格，位置不能交換。',
+        example: {
+          q: `假設 甲×乙 ＝ \\(\\frac{甲}{${da}}-\\frac{乙}{${db}}\\)，求 \\((${x}\\times${y})\\times${z}\\)。`,
+          steps: [`\\(${x}\\times${y}=${TF(...inner)}\\)。`, `\\(${TF(...inner)}\\times${z}=\\frac{${innerV}}{${da}}-\\frac{${z}}{${db}}=${TF(...outer)}\\)。`],
+          ans: `\\(${TF(...outer)}\\)`
+        }
+      });
+    }
+
+    /* ---------- 7. 易錯對照 ---------- */
+    {
+      const [w1, a1, b1] = P.borrow.A, [w2, a2, b2] = P.borrow.B;
+      const L = LCM(b1, b2), n1 = a1 * L / b1, n2 = a2 * L / b2;
+      const [W, a, b] = P.paren.A, [c, d] = P.paren.C, [e, f] = P.paren.E;
+      const [fw, fa, fb] = P.clock.fast, [sw, sa, sb] = P.clock.slow;
+      const gap = ADD(MX(fw, fa, fb), MX(sw, sa, sb));
+      const [p, q] = P.between.lo, [r, s0] = P.between.hi, N = P.between.N;
+      const lo = p * N / q, hi = r * N / s0;
+      out.push({
+        sec: S64, secName: N64,
+        title: '進階四個坑：反過來減、去括號沒變號、快慢相減、數到兩端',
+        points: [
+          '帶分數相減，分數部分不夠減要<span class="k">借 1</span>，不能反過來減。',
+          '括號前是減號，拆括號後裡面的減號要變加號。',
+          '一個快、一個慢，兩錶差距是<b>加起來</b>；「比…大、比…小」不含兩端。'
+        ],
+        visual: (h) => {
+          h.innerHTML = xo([
+            [`${w1}又${n1}/${L}－${w2}又${n2}/${L}：分數部分寫 ${n2 - n1}/${L}`, `借 1：${w1 - 1}又${L + n1}/${L}－${w2}又${n2}/${L}＝${w1 - 1 - w2}又${L + n1 - n2}/${L}`],
+            [`${W}又${a}/${b}－(${c}/${d}－${e}/${f}) 寫成 －${c}/${d}－${e}/${f}`, `變號：－${c}/${d}＋${e}/${f}`],
+            [`一天快 ${fw}又${fa}/${fb} 秒、慢 ${sw}又${sa}/${sb} 秒，相差用減的`, `一快一慢要相加：${PF(...gap)} 秒`],
+            [`分子從 ${lo} 數到 ${hi}`, `不含兩端：${lo + 1}～${hi - 1}，共 ${hi - lo - 1} 個`]
+          ]);
+        },
+        caption: '借 1、變號、看方向、去兩端：寫完答案再檢查一次。',
+        example: {
+          q: `甲錶每天快 \\(${TW(fw, fa, fb)}\\) 秒，乙錶每天慢 \\(${TW(sw, sa, sb)}\\) 秒，對準後一天相差幾秒？`,
+          steps: ['一快一慢，方向相反，差距要相加。', `\\(${TW(fw, fa, fb)}+${TW(sw, sa, sb)}=${TF(...gap)}\\)。`],
+          ans: `\\(${TF(...gap)}\\) 秒`
+        }
+      });
+    }
+    return out;
+  }
+
   window.DECK.push({
     ch: 3,
     title: '分數',
     color: C,
-    sections: ['6-1 分數比大小', '6-2 分數加減', '6-3 分數應用'],
+    sections: ['6-1 分數比大小', '6-2 分數加減', '6-3 分數應用', '6-4 異分母加減進階'],
     slides: [
 
       /* ---------- 通分比大小 ---------- */
@@ -339,7 +707,9 @@ window.DECK = window.DECK || [];
           steps: ['\\(\\frac{20}{3}-\\frac{11}{4}=\\frac{80}{12}-\\frac{33}{12}\\)。', '\\(=\\frac{47}{12}=3\\frac{11}{12}\\)。'],
           ans: '\\(3\\frac{11}{12}\\) 瓶'
         }
-      }
+      },
+
+      ...build64(P64)
 
     ]
   });
