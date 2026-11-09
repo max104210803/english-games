@@ -1,0 +1,148 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>字詞語句闖關</title>
+<style>
+:root{--bg:#f6f1e7;--card:#fffdf8;--ink:#23201b;--muted:#6d665a;--line:#e2d9c8;--accent:#2f6f5e;--accent-soft:#dcefe7;--bad:#b23a2e;--bad-soft:#f9e1dd;--gold:#a56a12}
+@media (prefers-color-scheme:dark){:root{--bg:#171a1d;--card:#22272b;--ink:#ece8df;--muted:#a8a294;--line:#3a4046;--accent:#6fc5ab;--accent-soft:#1f3a33;--bad:#ef9488;--bad-soft:#442825;--gold:#e0b060}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:17px/1.75 "Noto Sans TC","PingFang TC","Microsoft JhengHei",sans-serif}
+main{max-width:680px;margin:0 auto;padding:18px 16px 48px}
+a.back{color:var(--muted);text-decoration:none;font-size:15px}
+h1{font-size:30px;line-height:1.3;margin:12px 0 4px}
+.sub{color:var(--muted);margin:0 0 20px}
+.stage{display:flex;width:100%;gap:14px;align-items:center;text-align:left;background:var(--card);color:inherit;border:1px solid var(--line);border-radius:14px;padding:14px 16px;margin-bottom:10px;font:inherit;cursor:pointer}
+.stage:hover{border-color:var(--accent)}
+.num{flex:none;width:44px;height:44px;border-radius:50%;display:grid;place-items:center;background:var(--accent-soft);color:var(--accent);font-weight:800}
+.stage b{display:block}.stage small{color:var(--muted);font-size:14px;line-height:1.5;display:block}
+.score{margin-left:auto;flex:none;color:var(--gold);font-weight:800;font-size:15px}
+.bar{height:8px;border-radius:4px;background:var(--line);overflow:hidden;margin:10px 0 18px}.bar i{display:block;height:100%;background:var(--accent);transition:width .2s}
+.meta{display:flex;justify-content:space-between;color:var(--muted);font-size:15px}
+.passage{background:var(--card);border-left:4px solid var(--gold);border-radius:6px;padding:10px 14px;margin:0 0 14px}
+.q{font-size:20px;font-weight:700;line-height:1.6;margin:0 0 14px}
+.opt{display:block;width:100%;text-align:left;background:var(--card);color:inherit;border:1.5px solid var(--line);border-radius:12px;padding:11px 14px;margin-bottom:9px;font:inherit;cursor:pointer}
+.opt:hover:not(:disabled){border-color:var(--accent)}.opt:disabled{cursor:default}
+.opt.ok{background:var(--accent-soft);border-color:var(--accent);font-weight:700}.opt.no{background:var(--bad-soft);border-color:var(--bad)}
+.ex{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:12px 14px;margin-top:6px}.ex b{color:var(--accent)}.ex.wrong b{color:var(--bad)}
+.go{display:block;width:100%;border:0;border-radius:12px;background:var(--accent);color:var(--card);font:inherit;font-weight:800;padding:12px;margin-top:14px;cursor:pointer}
+.ghost{background:transparent;color:var(--accent);border:1.5px solid var(--accent)}
+.big{font-size:52px;font-weight:800;color:var(--accent);margin:8px 0 0}
+.miss{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:10px 14px;margin-top:9px}.miss small{color:var(--muted);display:block;line-height:1.6}
+footer{color:var(--muted);font-size:14px;margin-top:26px}
+button:focus-visible{outline:3px solid var(--gold);outline-offset:2px}
+</style>
+</head>
+<body>
+<main id="app"></main>
+<script>
+// 每題的 o 陣列第一個是正解，作答時才隨機排列。
+var STAGES = [
+{t:"一字多義",d:"同一個字，放進不同的詞，意思不一樣。",q:[
+ {s:"下列哪個「絕」是「極、非常」的意思？",o:["他想出一個絕妙的點子","兩國斷絕外交關係","本店謝絕外帶","大雪使山村與外界隔絕"],e:"絕妙＝極妙。把「絕」換成「極」帶回去念，念得通就對了。其他三個都是斷開、拒絕或隔開。"},
+ {s:"下列哪一組「過」的意思相同？",o:["過河拆橋／路過","過猶不及／功過相抵","改過自新／過人之處","過獎／罪過"],e:"過河、路過都是「通過」。其他各組都混了「超過」和「過失」兩種意思。"},
+ {s:"下列哪個「鼎」是「大」的意思？",o:["鼎力支持","問鼎中原","三足鼎立","鐘鳴鼎食"],e:"鼎力＝大力。其他三個的「鼎」都和古代的鼎這種器物有關。"},
+ {s:"下列哪個「退」是「離開職位」的意思？",o:["退休","退貨","退燒","退票"],e:"退休是離開工作崗位。退貨、退票是把東西退回，退燒是體溫下降。"},
+ {s:"下列哪個「凡」是「平凡」的意思？",o:["超凡入聖","凡事小心","舉凡文具都打折","大凡成功的人都很努力"],e:"超凡＝超越平凡。其他三個的「凡」都是「所有、大概」的總括用法。"},
+ {s:"下列哪個「省」讀作ㄒㄧㄥˇ？",o:["反省","節省","省略","臺灣省"],e:"有檢查、明白的意思時讀ㄒㄧㄥˇ，例如反省。減少、行政區讀ㄕㄥˇ。"}
+]},
+{t:"易混字詞",d:"長得像、聽起來像，用起來不一樣。",q:[
+ {s:"形容建築色彩華麗，哪個寫法正確？",o:["金碧輝煌","金璧輝煌","金壁輝煌","今碧輝煌"],e:"碧是青綠色，金和碧都是顏色。璧是圓形的玉器。"},
+ {s:"「大樓終於ㄐㄩㄣˋ工」，應該用哪個字？",o:["竣","峻","俊","浚"],e:"竣＝完畢。山字旁的峻是高而險，也用於嚴峻。"},
+ {s:"新人第一次展現才華，「ㄓㄢˇ露頭角」應該用哪個字？",o:["嶄","斬","展","湛"],e:"嶄＝突出，像山峰冒出來。"},
+ {s:"「讓家人衣食無ㄩˊ」，應該用哪個字？",o:["虞","餘","魚","娛"],e:"虞＝憂慮，無虞就是不必擔心。"},
+ {s:"下列哪一句的詞語用得正確？",o:["消費者決定杯葛這家黑心廠商","兩家人為了土地杯葛多年","議員在會中糾葛這項提案","她一直榮膺老師的教誨"],e:"杯葛＝集體抵制；糾葛＝糾纏不清；教誨要用服膺，表示牢記在心。"},
+ {s:"下列哪一句的詞語用得正確？",o:["他榮膺本屆最佳新人","我一直榮膺父親的叮嚀","他服膺本屆冠軍","大家推舉他服膺會長一職"],e:"榮膺是光榮地接受職位或獎項；服膺是把道理或教導記在心裡。"}
+]},
+{t:"成語情境",d:"不只要懂字面，還要用對場合。",q:[
+ {s:"下列哪一句的成語用得正確？",o:["想舉發組長舞弊，又怕連累一起工作的朋友，他只好投鼠忌器。","海邊的夕陽如鏡花水月般壯麗。","自從搬到山上，他家戶限為穿，一整年都沒有訪客。","他畫了一條虛與委蛇的彩帶裝飾海報。"],e:"投鼠忌器是想行動又怕傷及旁人。鏡花水月指虛幻，戶限為穿指訪客極多，虛與委蛇指假意敷衍。"},
+ {s:"下列哪個成語形容拜訪的人非常多？",o:["戶限為穿","門可羅雀","杳無人跡","鏡花水月"],e:"戶限就是門檻，連門檻都被踩破了。門可羅雀剛好相反，是冷清得沒有人上門。"},
+ {s:"「虛與委蛇」是什麼意思？",o:["假意敷衍應付","道路彎彎曲曲","真心對待別人","像蛇一樣靈活"],e:"讀ㄒㄩ ㄩˇ ㄨㄟ ㄧˊ，跟蛇和道路都沒有關係。"},
+ {s:"下列哪一位同學最符合「從諫如流」？",o:["班長聽了同學的建議，立刻修改活動規則。","班長堅持己見，和同學爭到下課。","班長聽完沒有回應，照原定計畫進行。","班長在背後批評提建議的同學。"],e:"從諫如流是樂於接受別人的規勸，像水往低處流一樣自然。"},
+ {s:"「面對老闆要她虛報帳目的要求，她當面直言拒絕。」最適合用哪個成語形容？",o:["耿介不阿","前倨後恭","矯情干譽","假公濟私"],e:"耿介不阿是正直、不迎合別人。"},
+ {s:"「店員原本愛理不理，一知道對方是董事長，馬上變得殷勤。」最適合用哪個成語形容？",o:["前倨後恭","先公後私","反求諸己","從善如流"],e:"倨是傲慢。先傲慢、後恭敬，形容待人勢利。"}
+]},
+{t:"文句通順",d:"找贅字，看關聯詞，檢查前後意思。",q:[
+ {s:"下列哪一句沒有贅字？",o:["我們應該珍惜水資源。","請大家提早預約座位。","我親眼目睹了整個過程。","這是他過去的往事。"],e:"預約已有事先的意思；目睹就是親眼看見；往事就是過去的事。"},
+ {s:"「不是……而是……」要有對比。下列哪一句用得正確？",o:["他讀書不是為了分數，而是為了弄懂問題。","她運動不是為了健康，而是為了讓身體更好。","他道歉不是為了認錯，而是為了承認自己錯了。","我早起不是為了趕車，而是為了搭上早班車。"],e:"分數和弄懂問題是兩個不同的目標，才有對比。其他三句前後意思相同。"},
+ {s:"「儘管……仍然……」要有轉折。下列哪一句用得正確？",o:["儘管天氣炎熱，選手仍然堅持跑完全程。","儘管大家都支持他，他仍然很受歡迎。","儘管今天放假，我仍然開心地睡到自然醒。","儘管我肚子很餓，我仍然吃了很多飯。"],e:"天熱本來會想放棄，選手卻堅持，前後才是轉折。其他三句都是順著說。"},
+ {s:"下列哪一句是表態句（描寫主語的性質或狀態）？",o:["操場上的草地翠綠柔軟。","小明是班長。","教室裡有一臺投影機。","貓跳上了窗臺。"],e:"表語「翠綠柔軟」是形容詞。其他依序是判斷句、有無句、敘事句。"},
+ {s:"「今天的任務有三項□打掃、買菜、做飯。」□應該填哪個標點？",o:["：","；","、","？"],e:"冒號用來提起下文，後面接著列出三項任務。"},
+ {s:"下列哪一句前後語意矛盾？",o:["他是個懶散的人，每天都第一個到校打掃。","她生性節儉，買東西前總會比價。","他個性急躁，常常等不及別人說完。","弟弟很怕狗，看到狗就繞路走。"],e:"懶散的人和每天第一個到校打掃互相矛盾。"}
+]},
+{t:"抓選項陷阱",d:"倒、吹、換、搬，回短文找證據。",q:[
+ {p:"小鎮的舊鐵橋在颱風後封閉。居民每天改走河堤小路，才發現河堤上的步道長滿雜草。里長發起清掃活動，三個月後，步道開始有人晨跑，鎮公所也編列了修繕預算。",s:"哪一個選項犯了「倒」的毛病（先後順序弄反）？",o:["鎮公所編列預算後，里長才發起清掃活動。","舊鐵橋封閉後，居民改走河堤小路。","清掃之後，步道開始有人晨跑。","颱風過後，舊鐵橋封閉了。"],e:"短文的順序是先清掃，三個月後才編列預算。"},
+ {p:"小鎮的舊鐵橋在颱風後封閉。居民每天改走河堤小路，才發現河堤上的步道長滿雜草。里長發起清掃活動，三個月後，步道開始有人晨跑，鎮公所也編列了修繕預算。",s:"哪一個選項犯了「吹」的毛病（說得比原文多）？",o:["清掃活動使小鎮成為全國知名的運動勝地。","居民改走河堤小路。","里長發起清掃活動。","鎮公所編列了修繕預算。"],e:"短文只說開始有人晨跑，沒有提到全國知名。"},
+ {p:"蜂蜜放久了會結晶，這是葡萄糖析出的自然現象，不代表變質。想恢復液狀，可以隔溫水慢慢加熱，但水溫不宜過高，否則香氣會流失。",s:"哪一個選項犯了「換」的毛病（關鍵詞被偷換）？",o:["蜂蜜結晶是蔗糖析出的現象。","蜂蜜放久了會結晶。","可以隔溫水加熱，讓蜂蜜恢復液狀。","水溫過高，香氣會流失。"],e:"短文寫的是葡萄糖，選項換成了蔗糖。"},
+ {p:"校內籃球賽有三支隊伍：甲隊擅長防守，乙隊擅長快攻，丙隊以投籃命中率高聞名。",s:"哪一個選項犯了「搬」的毛病（張冠李戴）？",o:["甲隊擅長快攻。","甲隊擅長防守。","乙隊擅長快攻。","丙隊投籃命中率高。"],e:"快攻是乙隊的特色，被搬到甲隊身上。"},
+ {p:"小鎮的舊鐵橋在颱風後封閉。居民每天改走河堤小路，才發現河堤上的步道長滿雜草。里長發起清掃活動，三個月後，步道開始有人晨跑，鎮公所也編列了修繕預算。",s:"根據短文，下列何者不正確？",o:["鎮公所反對修繕步道。","舊鐵橋在颱風後封閉。","步道原本長滿雜草。","里長發起清掃活動。"],e:"看到「不正確」先圈起來。短文寫鎮公所編列了修繕預算，並沒有反對。"},
+ {p:"蜂蜜放久了會結晶，這是葡萄糖析出的自然現象，不代表變質。想恢復液狀，可以隔溫水慢慢加熱，但水溫不宜過高，否則香氣會流失。",s:"為什麼水溫不宜過高？",o:["因為香氣會流失。","因為蜂蜜會結晶。","因為蜂蜜會變質。","因為葡萄糖會消失。"],e:"問理由時，直接找「否則」後面的句子。"}
+]}
+];
+
+var KEY = "word-quest-best";
+function readBest(){try{return JSON.parse(localStorage.getItem(KEY)||"{}")}catch(e){return {}}}
+function saveBest(b){try{localStorage.setItem(KEY,JSON.stringify(b))}catch(e){}}
+var best = readBest();
+var app = document.getElementById("app");
+
+function el(tag, cls, text){var n=document.createElement(tag); if(cls)n.className=cls; if(text!==undefined)n.textContent=text; return n}
+function shuffle(a){a=a.slice();for(var i=a.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1));var t=a[i];a[i]=a[j];a[j]=t}return a}
+function clear(){app.textContent="";window.scrollTo(0,0)}
+function back(label,fn){var a=el("a","back",label);a.href=fn?"#":"../index.html";if(fn)a.onclick=function(e){e.preventDefault();fn()};app.appendChild(a)}
+
+function home(){
+  clear(); back("← 回學習小站");
+  app.appendChild(el("h1","","字詞語句闖關"));
+  app.appendChild(el("p","sub","五關、每關六題。答完馬上看解析，答錯的題目可以再練一次。"));
+  STAGES.forEach(function(s,i){
+    var b=el("button","stage");
+    b.appendChild(el("span","num",String(i+1)));
+    var d=el("span"); d.appendChild(el("b","",s.t)); d.appendChild(el("small","",s.d)); b.appendChild(d);
+    if(best[i]!==undefined)b.appendChild(el("span","score",best[i]+"/"+s.q.length));
+    b.onclick=function(){play(i,s.q.map(function(_,k){return k}),[])};
+    app.appendChild(b);
+  });
+  app.appendChild(el("footer","","題目與短文皆為自編。進度只存在這台裝置的瀏覽器裡。"));
+}
+
+function play(si,order,missed,pos,isRetry){
+  pos=pos||0; var stage=STAGES[si], item=stage.q[order[pos]];
+  clear(); back("← 回關卡列表",home);
+  var m=el("div","meta"); m.appendChild(el("span","",(isRetry?"再練一次・":"")+stage.t)); m.appendChild(el("span","",(pos+1)+" / "+order.length)); app.appendChild(m);
+  var bar=el("div","bar"), fill=el("i"); fill.style.width=(pos/order.length*100)+"%"; bar.appendChild(fill); app.appendChild(bar);
+  if(item.p)app.appendChild(el("div","passage",item.p));
+  app.appendChild(el("p","q",item.s));
+  var right=item.o[0], boxes=[];
+  shuffle(item.o).forEach(function(t){
+    var b=el("button","opt",t); boxes.push(b);
+    b.onclick=function(){
+      var ok=t===right;
+      boxes.forEach(function(x){x.disabled=true; if(x.textContent===right)x.classList.add("ok")});
+      if(!ok){b.classList.add("no"); missed.push(order[pos])}
+      var ex=el("div","ex"+(ok?"":" wrong")); ex.appendChild(el("b","",ok?"答對了！":"再想想："));
+      ex.appendChild(document.createTextNode(item.e)); app.appendChild(ex);
+      var go=el("button","go",pos+1<order.length?"下一題":"看結果");
+      go.onclick=function(){pos+1<order.length?play(si,order,missed,pos+1,isRetry):result(si,order,missed,isRetry)};
+      app.appendChild(go); go.focus({preventScroll:true});
+    };
+    app.appendChild(b);
+  });
+}
+
+function result(si,order,missed,isRetry){
+  var stage=STAGES[si], got=order.length-missed.length;
+  if(!isRetry){ if(best[si]===undefined||got>best[si]){best[si]=got;saveBest(best)} }
+  clear(); back("← 回關卡列表",home);
+  app.appendChild(el("h1","",(isRetry?"再練一次：":"")+stage.t));
+  app.appendChild(el("p","big",got+" / "+order.length));
+  app.appendChild(el("p","sub",missed.length?"把下面的題目再看一次，然後重練。":"全部答對，可以挑戰下一關！"));
+  missed.forEach(function(k){var q=stage.q[k],d=el("div","miss");d.appendChild(el("b","",q.s));d.appendChild(el("small","","正解："+q.o[0]));app.appendChild(d)});
+  if(missed.length){var r=el("button","go","只練答錯的題目");r.onclick=function(){play(si,shuffle(missed),[],0,true)};app.appendChild(r)}
+  var h=el("button","go ghost","回關卡列表");h.onclick=home;app.appendChild(h);
+}
+home();
+</script>
+</body>
+</html>
