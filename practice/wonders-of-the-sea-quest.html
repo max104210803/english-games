@@ -1,0 +1,935 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Wonders of the Sea 海洋奇觀與生態闖關實戰</title>
+<!-- Our World Level 5 Unit 1 Wonders of the Sea & Phonics L59 闖關練習 v1
+     依課本原文、海洋分層、情態助動詞、五彩珊瑚科普、L59複合字族與會考素養命題；
+     單檔完全自包含：內建 Web Audio 合成音效、深淺色切換、進度儲存與煙火慶祝。 -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&family=Noto+Serif+TC:wght@700;900&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#f0f5fa; --paper:#ffffff; --ink:#1a2b40; --muted:#53677d; --line:#d2e0ee;
+  --ocean-blue:#0c4a6e; --sky-blue:#0284c7; --blue-soft:#e0f2fe;
+  --coral-red:#e11d48; --coral-soft:#ffe4e6;
+  --kelp-green:#059669; --green-soft:#d1fae5;
+  --sun-gold:#d97706; --gold-soft:#fef3c7;
+  --abyss-dark:#0f172a; --abyss-soft:#334155;
+  --shadow:0 3px 6px rgba(12,74,110,0.06), 0 10px 28px rgba(12,74,110,0.08);
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#0b1320; --paper:#131e30; --ink:#e2ecf7; --muted:#8ea6c1; --line:#23354d;
+    --ocean-blue:#38bdf8; --sky-blue:#0ea5e9; --blue-soft:#082f49;
+    --coral-red:#fb7185; --coral-soft:#4c0519;
+    --kelp-green:#34d399; --green-soft:#064e3b;
+    --sun-gold:#fbbf24; --gold-soft:#451a03;
+    --abyss-dark:#020617; --abyss-soft:#1e293b;
+    --shadow:0 4px 12px rgba(0,0,0,0.4);
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#0b1320; --paper:#131e30; --ink:#e2ecf7; --muted:#8ea6c1; --line:#23354d;
+  --ocean-blue:#38bdf8; --sky-blue:#0ea5e9; --blue-soft:#082f49;
+  --coral-red:#fb7185; --coral-soft:#4c0519;
+  --kelp-green:#34d399; --green-soft:#064e3b;
+  --sun-gold:#fbbf24; --gold-soft:#451a03;
+  --abyss-dark:#020617; --abyss-soft:#1e293b;
+  --shadow:0 4px 12px rgba(0,0,0,0.4);
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:17px/1.8 "Noto Sans TC","Microsoft JhengHei","PingFang TC",sans-serif}
+.wrap{max-width:880px;margin:0 auto;padding:24px 16px 80px}
+header h1{font-family:"Noto Serif TC",serif;font-weight:900;font-size:clamp(26px,5vw,36px);margin:8px 0 4px;color:var(--ocean-blue)}
+header p{margin:0;color:var(--muted);font-size:15px}
+.topbar{display:flex;justify-content:space-between;align-items:center;gap:8px}
+.btn-group{display:flex;gap:6px}
+.theme, .snd-btn{border:2px solid var(--line);background:var(--paper);color:var(--ink);border-radius:10px;padding:4px 12px;font:inherit;font-size:14px;cursor:pointer;transition:all .15s}
+.theme:hover, .snd-btn:hover{border-color:var(--sky-blue)}
+nav{display:flex;gap:8px;flex-wrap:wrap;margin:20px 0 24px;position:sticky;top:0;background:var(--bg);padding:10px 0;z-index:10;border-bottom:1px solid var(--line)}
+nav button{flex:1 1 auto;min-width:110px;border:2px solid var(--line);background:var(--paper);color:var(--ink);border-radius:12px;padding:8px 10px;font:inherit;font-size:14.5px;cursor:pointer;font-weight:600;transition:all .15s}
+nav button .st{color:var(--line);margin-left:4px}
+nav button.done .st{color:var(--sun-gold)}
+nav button.on{border-color:var(--sky-blue);box-shadow:inset 0 -3px 0 var(--sky-blue)}
+section.stage{display:none}
+section.stage.on{display:block;animation:fade .25s ease}
+@keyframes fade{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+.badge{display:inline-block;background:var(--sky-blue);color:#fff;border-radius:999px;padding:3px 14px;font-size:13.5px;font-weight:700}
+.badge.gold{background:var(--sun-gold)}
+.badge.coral{background:var(--coral-red)}
+.badge.green{background:var(--kelp-green)}
+h2{font-family:"Noto Serif TC",serif;font-size:clamp(22px,4vw,28px);margin:10px 0 6px;color:var(--ocean-blue)}
+.card{background:var(--paper);border:1px solid var(--line);border-radius:16px;padding:20px;margin:16px 0;box-shadow:var(--shadow)}
+.motto{background:var(--blue-soft);border-left:5px solid var(--sky-blue);border-radius:12px;padding:12px 16px;font-weight:600;margin-bottom:14px;font-size:15px;line-height:1.7}
+
+.q{margin:20px 0;padding-bottom:18px;border-bottom:1px dashed var(--line)}
+.q:last-child{border-bottom:none}
+.q .num{font-weight:700;color:var(--sky-blue);margin-right:6px}
+.q .stem{font-weight:600;font-size:1.06rem;line-height:1.75;margin-bottom:6px}
+.q .zh{color:var(--muted);font-size:14.5px;margin-bottom:12px;line-height:1.6}
+.opts{display:flex;flex-direction:column;gap:8px}
+.opt{text-align:left;border:2px solid var(--line);background:var(--paper);color:var(--ink);border-radius:12px;padding:11px 15px;font:inherit;cursor:pointer;transition:all .15s}
+.opt:hover{border-color:var(--sky-blue)}
+.opt.right{border-color:var(--kelp-green);background:var(--green-soft);font-weight:700}
+.opt.wrong{border-color:var(--coral-red);background:var(--coral-soft);animation:shake .3s}
+@keyframes shake{25%{transform:translateX(-5px)}75%{transform:translateX(5px)}}
+.opt:disabled{cursor:default}
+
+.fb{margin-top:12px;font-size:14.5px;border-radius:10px;padding:11px 15px;display:none;line-height:1.7}
+.fb.show{display:block;animation:fade .2s ease}
+.fb.ok{background:var(--green-soft);border-left:4px solid var(--kelp-green)}
+.fb.no{background:var(--coral-soft);border-left:4px solid var(--coral-red)}
+.para{display:block;margin-top:6px;font-size:13.5px;color:var(--muted);background:rgba(0,0,0,0.03);padding:6px 10px;border-radius:6px}
+:root[data-theme="dark"] .para, @media (prefers-color-scheme: dark){:root:not([data-theme="light"]) .para{background:rgba(255,255,255,0.05)}}
+
+/* 二分類題型 */
+.sort-btns{display:flex;gap:10px;margin-top:10px}
+.sort-btns .opt{flex:1;text-align:center;padding:12px;font-weight:700}
+
+/* 點線索題型 */
+.sent{line-height:2.2;font-size:1.08rem;padding:14px 16px;background:var(--bg);border-radius:12px;border:1.5px dashed var(--line);margin:12px 0}
+.sent .ch{display:inline-block;padding:2px 10px;margin:3px 2px;border-radius:8px;background:var(--paper);border:1.5px solid var(--line);cursor:pointer;transition:all .15s}
+.sent .ch:hover{border-color:var(--sky-blue);background:var(--blue-soft)}
+.sent .ch.hit{border-color:var(--kelp-green);background:var(--green-soft);font-weight:700;color:var(--kelp-green)}
+.sent .ch.miss{border-color:var(--coral-red);background:var(--coral-soft);animation:shake .3s}
+
+/* 進度條與過關提示 */
+.pbar{height:16px;background:var(--line);border-radius:999px;overflow:hidden;position:relative;margin:12px 0 20px}
+.pbar i{position:absolute;left:0;top:0;bottom:0;width:0%;background:var(--sky-blue);border-radius:999px;transition:width .3s ease}
+.pbar span{position:absolute;left:0;right:0;top:0;bottom:0;display:flex;align-items:center;justify-content:center;font-size:11.5px;font-weight:700;color:var(--ink)}
+.clear{display:none;text-align:center;background:var(--gold-soft);border:2px solid var(--sun-gold);border-radius:16px;padding:18px;margin:22px 0;font-weight:700;font-size:17.5px}
+.clear.show{display:block;animation:pop .35s ease}
+@keyframes pop{0%{transform:scale(.92)}70%{transform:scale(1.03)}100%{transform:scale(1)}}
+
+/* Toast & Celebrate */
+.toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:var(--ink);color:var(--paper);padding:10px 22px;border-radius:999px;font-size:14.5px;font-weight:700;box-shadow:var(--shadow);z-index:99;animation:toastIn .3s ease}
+@keyframes toastIn{from{bottom:10px;opacity:0}to{bottom:24px;opacity:1}}
+.toast.bye{animation:toastOut .4s ease forwards}
+@keyframes toastOut{to{bottom:0px;opacity:0}}
+.celebrate{position:fixed;inset:0;background:rgba(0,0,0,.65);display:flex;align-items:center;justify-content:center;z-index:100;padding:16px;animation:fade .2s ease}
+.cbox{background:var(--paper);color:var(--ink);max-width:500px;width:100%;border-radius:22px;padding:26px 22px;text-align:center;box-shadow:var(--shadow);position:relative}
+.cemo{font-size:56px;margin-bottom:8px}
+.ctitle{font-family:"Noto Serif TC",serif;font-size:25px;font-weight:900;margin-bottom:6px;color:var(--sky-blue)}
+.cstars{font-size:32px;color:var(--sun-gold);margin:6px 0 12px;letter-spacing:4px}
+.cen{font-weight:700;font-size:18px;margin-bottom:4px}
+.czh{color:var(--muted);font-size:15px;margin-bottom:14px}
+.cstat{font-size:14px;color:var(--muted);margin-bottom:18px;padding:10px;background:var(--bg);border-radius:10px}
+canvas.confetti{position:fixed;inset:0;pointer-events:none;z-index:101}
+
+.hub-card{background:linear-gradient(135deg, rgba(2,132,199,0.08), rgba(5,150,105,0.08));border:2px dashed var(--sky-blue);border-radius:16px;padding:18px 20px;margin-top:36px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px}
+.hub-card .info{max-width:540px}
+.hub-card h4{margin:0 0 4px;font-size:17px;color:var(--ocean-blue)}
+.hub-card p{margin:0;font-size:14px;color:var(--muted)}
+.hub-btn{display:inline-block;background:var(--sky-blue);color:#fff;text-decoration:none;padding:9px 20px;border-radius:999px;font-weight:700;font-size:14.5px;transition:all .15s}
+.hub-btn:hover{filter:brightness(1.1);transform:translateY(-1px)}
+footer{text-align:center;font-size:14px;color:var(--muted);margin-top:40px;line-height:1.7}
+footer a{color:var(--sky-blue);text-decoration:none}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header>
+  <div class="topbar">
+    <div class="btn-group">
+      <button class="theme" id="themeBtn" title="切換深淺色模式">🌓 主題</button>
+      <button class="snd-btn" id="sndBtn" title="音效開關">🔊</button>
+      <button class="theme" id="resetBtn" title="清除進度重新挑戰">🔄 重練</button>
+    </div>
+    <span class="badge gold">Our World Level 5 · Unit 1</span>
+  </div>
+  <p style="margin:6px 0 0"><a href="../index.html" style="color:var(--sky-blue);text-decoration:none;font-size:13.5px;font-weight:600">← 回學習小站</a></p>
+  <h1>Wonders of the Sea 闖關實戰</h1>
+  <p>探索海洋三大分層、守護珊瑚生態！挑戰科普閱讀、情態助動詞義務禁止、原句線索推論、L59複合字族與會考文法診斷。</p>
+</header>
+
+<nav id="nav">
+  <button data-go="1">第1關 海洋分層<span class="st">★</span></button>
+  <button data-go="2">第2關 守則天平<span class="st">★</span></button>
+  <button data-go="3">第3關 珊瑚解密<span class="st">★</span></button>
+  <button data-go="4">第4關 線索偵探<span class="st">★</span></button>
+  <button data-go="5">第5關 發音字族<span class="st">★</span></button>
+  <button data-go="6">第6關 會考診斷<span class="st">★</span></button>
+</nav>
+
+<!-- ============ 第 1 關 ============ -->
+<section class="stage" data-stage="1">
+  <span class="badge">第 1 關</span>
+  <h2>深海潛水艇：海洋垂直分層與生物歸位</h2>
+  <div class="motto">💡 課本 P8：海洋依照陽光穿透深度分為三大層級（Sunlit、Twilight、Midnight），請根據各層深度與環境特徵選出正確答案！</div>
+  <div class="pbar"><i id="pb1"></i><span id="pt1">0 / 6</span></div>
+  <div class="card" id="qbox1"></div>
+  <div class="clear" id="clr1">🎉 恭喜通過第 1 關！海洋三大層級已完全解鎖！</div>
+</section>
+
+<!-- ============ 第 2 關 ============ -->
+<section class="stage" data-stage="2">
+  <span class="badge green">第 2 關</span>
+  <h2>海洋守衛兵：義務與禁止天平（快速二分類）</h2>
+  <div class="motto">⚖️ 課本 P10：區分情態助動詞 <b>【義務必須 (Must / Have to)】</b> 與 <b>【絕對禁止 (Can't / Don't)】</b>！點擊按鈕快速歸類！</div>
+  <div class="pbar"><i id="pb2"></i><span id="pt2">0 / 8</span></div>
+  <div class="card" id="qbox2"></div>
+  <div class="clear" id="clr2">🎉 恭喜通過第 2 關！守則天平已達完美平衡！</div>
+</section>
+
+<!-- ============ 第 3 關 ============ -->
+<section class="stage" data-stage="3">
+  <span class="badge coral">第 3 關</span>
+  <h2>珊瑚診斷室：五彩珊瑚科普探究</h2>
+  <div class="motto">🪸 課本 P14 精讀《Colorful Corals》：解開珊瑚身世之謎、刺胞動物構造、共生藻與大堡礁全球危機！</div>
+  <div class="pbar"><i id="pb3"></i><span id="pt3">0 / 5</span></div>
+  <div class="card" id="qbox3"></div>
+  <div class="clear" id="clr3">🎉 恭喜通過第 3 關！珊瑚礁生態全解碼！</div>
+</section>
+
+<!-- ============ 第 4 關 ============ -->
+<section class="stage" data-stage="4">
+  <span class="badge">第 4 關</span>
+  <h2>線索偵探社：原句關鍵觸發詞點擊</h2>
+  <div class="motto">🔍 找出課本原句中**推導底線目標字**的核心線索！點擊句子中帶有提示線索的詞塊！</div>
+  <div class="pbar"><i id="pb4"></i><span id="pt4">0 / 5</span></div>
+  <div class="card" id="qbox4"></div>
+  <div class="clear" id="clr4">🎉 恭喜通過第 4 關！你已成為最頂尖的上下文線索偵探！</div>
+</section>
+
+<!-- ============ 第 5 關 ============ -->
+<section class="stage" data-stage="5">
+  <span class="badge gold">第 5 關</span>
+  <h2>發音魔法塔：L59 複合字族密碼</h2>
+  <div class="motto">🎵 補充學習單 Lesson 59：掌握長母音特殊拼讀複合音圖（-oon, -ield, -igh, -oom, -eigh）與會考發音陷阱！</div>
+  <div class="pbar"><i id="pb5"></i><span id="pt5">0 / 6</span></div>
+  <div class="card" id="qbox5"></div>
+  <div class="clear" id="clr5">🎉 恭喜通過第 5 關！發音字族與音素密碼完全破解！</div>
+</section>
+
+<!-- ============ 第 6 關 ============ -->
+<section class="stage" data-stage="6">
+  <span class="badge coral">第 6 關</span>
+  <h2>會考文法與素養診斷室（國中會考模擬實戰）</h2>
+  <div class="motto">🎓 國中教育會考跨領域命題：檢測情態助動詞易錯辨析（must not vs don't have to）、字尾 -able、跨科自然保育素養題！</div>
+  <div class="pbar"><i id="pb6"></i><span id="pt6">0 / 6</span></div>
+  <div class="card" id="qbox6"></div>
+  <div class="clear" id="clr6">🏆 太神了！你已全數通關！榮獲「海洋守護先鋒」最高榮譽！</div>
+</section>
+
+<div class="hub-card">
+  <div class="info">
+    <h4>📚 延伸學習導航</h4>
+    <p>想看更多海洋生態與英文學習資源，回首頁逛逛吧！</p>
+  </div>
+  <a class="hub-btn" href="../index.html">回學習小站</a>
+</div>
+
+<footer>
+  <p>五上英語互動題庫系統<br>
+  National Geographic Learning: Our World Level 5 Unit 1 · 100% 離線免安裝自包含設計</p>
+</footer>
+</div>
+
+<!-- 慶祝彈窗 -->
+<div class="celebrate" id="celBox" style="display:none">
+  <div class="cbox">
+    <div class="cemo">🌊</div>
+    <div class="ctitle">Ocean Protector Master!</div>
+    <div class="cstars">★★★★★</div>
+    <div class="cen">Mission Accomplished! You Are a True Ocean Guardian!</div>
+    <div class="czh">恭喜你！完全掌握海洋三大分層、守則天平、珊瑚生態與會考文法！</div>
+    <div class="cstat" id="celStat">總通關進度：100% · 6 大關卡全破</div>
+    <button class="hub-btn" id="closeCelBtn">領取守護者徽章</button>
+  </div>
+  <canvas class="confetti" id="confetti"></canvas>
+</div>
+
+<script>
+(function(){
+"use strict";
+
+var LET = ["A","B","C","D"];
+
+// ==================== 題庫資料 ====================
+
+// 第 1 關：海洋垂直分層與生物歸位
+var MC1 = [
+  {
+    q: "Which part of the ocean is near the top and receives plenty of sunlight?",
+    zh: "海洋的哪一個部分靠近頂部且能接收到充足的陽光？",
+    o: ["The twilight zone", "The sunlit zone", "The midnight zone", "The ocean trench"],
+    a: 1,
+    e: "課本 P8：陽光層（sunlit zone）靠近海洋頂部，光線充足，許多海洋生物因此聚集在這一層。",
+    p: "near the top + like the light -> sunlit zone (0 ~ 137m)"
+  },
+  {
+    q: "How deep does the sunlit zone go down into the ocean?",
+    zh: "陽光層（sunlit zone）大約向海洋下方延伸到多深？",
+    o: ["Down to about 137 meters (450 ft.)", "Down to about 1,000 meters (3,300 ft.)", "Down to 5,000 meters", "Down to the ocean floor"],
+    a: 0,
+    e: "課本 P8：陽光層的深度大約到 137 公尺（450 呎）為止。",
+    p: "sunlit zone depth: about 137 meters (450 ft.)"
+  },
+  {
+    q: "Why is the middle layer of the ocean called the 'twilight zone'?",
+    zh: "為什麼海洋的中間層被稱為『暮色/微光層（twilight zone）』？",
+    o: [
+      "Because there is no water there.",
+      "Because there isn't much light reaching this layer.",
+      "Because the water is boiling hot.",
+      "Because it is full of green trees."
+    ],
+    a: 1,
+    e: "課本 P8：中間層之所以稱為暮光層（twilight zone），是因為這裡的光線已經非常微弱。",
+    p: "twilight zone -> isn't much light (137m ~ 1,000m)"
+  },
+  {
+    q: "Which of the following animals is specifically mentioned in the textbook as living in the twilight zone?",
+    zh: "課本中特別提到生活在微光層（twilight zone）的代表性動物是誰？",
+    o: ["A harbor seal", "An eagle", "The octopus", "A camel"],
+    a: 2,
+    e: "課本 P8：暮光層生物稀少，章魚（octopus）是課本特別提到會生活在此層的代表動物。",
+    p: "twilight zone inhabitant: octopus"
+  },
+  {
+    q: "Why is the bottom layer called the 'midnight zone'?",
+    zh: "為什麼海洋底層被稱作『午夜層（midnight zone）』？",
+    o: [
+      "Because the clock always shows midnight there.",
+      "Because it is cold, black, and the sun doesn't reach below 1,000 meters.",
+      "Because fish only sleep at night.",
+      "Because sharks only hunt after 12 o'clock."
+    ],
+    a: 1,
+    e: "課本 P8：海洋最底層寒冷漆黑，稱為午夜層（midnight zone），因為陽光完全到不了 1,000 公尺以下的深度。",
+    p: "midnight zone -> cold and black, sun doesn't reach (> 1,000m)"
+  },
+  {
+    q: "What important warning does the textbook give if we don't protect the oceans?",
+    zh: "如果人類不保護海洋，課本給予了什麼嚴正的警告？",
+    o: [
+      "The ocean water will turn into orange juice.",
+      "These important marine resources will disappear.",
+      "All fish will immediately grow wings and fly away.",
+      "The depth of the oceans will become shallow."
+    ],
+    a: 1,
+    e: "課本 P8：課文提醒大家必須保護海洋，否則這些珍貴的資源將會消失。",
+    p: "If we don't protect -> resources will disappear"
+  }
+];
+
+// 第 2 關：義務與禁止天平（快速二分類）
+var SORT2 = [
+  { s: "Throw plastic bags and trash into the ocean.", zh: "把塑膠袋與垃圾丟入海中。", t: "no", exp: "絕對禁止！You can't throw trash into the ocean." },
+  { s: "Keep the oceans clean and healthy.", zh: "保持海洋清潔與健康生態。", t: "yes", exp: "必須義務！We have to keep the oceans clean." },
+  { s: "Leave leftover food and garbage on the beach.", zh: "把吃剩的食物和垃圾遺留在沙灘上。", t: "no", exp: "絕對禁止！Don't leave food on the beach." },
+  { s: "Use cell phones during class without permission.", zh: "課堂上擅自使用智慧型手機。", t: "no", exp: "校規禁止！In many schools, students can't use cell phones in class." },
+  { s: "Clean up after ourselves at home and school.", zh: "在學校與家裡主動整理收拾環境。", t: "yes", exp: "必須義務！We must clean up at home." },
+  { s: "Protect precious marine resources and habitats.", zh: "保護珍貴的海洋生物資源與棲息地。", t: "yes", exp: "必須義務！We must protect the oceans." },
+  { s: "Let oil tanker accidents cause oil spills in water.", zh: "放任油輪事故造成石油外洩污染水質。", t: "no", exp: "絕對禁止！We must prevent oil spills." },
+  { s: "Help our parents and teachers with daily chores.", zh: "在日常中幫忙父母與師長分擔家務工作。", t: "yes", exp: "必須義務！Students have to help with chores." }
+];
+
+// 第 3 關：五彩珊瑚科普探究
+var MC3 = [
+  {
+    q: "What is the fundamental scientific truth about corals?",
+    zh: "關於珊瑚，課本開宗明義點出的科學真相是什麼？",
+    o: [
+      "Corals are underwater plants with leaves.",
+      "Corals are not plants! They're animals.",
+      "Corals are non-living rocks formed by sea salt.",
+      "Corals are giant colorful mushrooms."
+    ],
+    a: 1,
+    e: "課本 P14：珊瑚雖然外觀像水底的繽紛花園，但課文特別強調——珊瑚其實是動物，不是植物！",
+    p: "Truth: Not plants! They're animals."
+  },
+  {
+    q: "What are the small individual animals that make up a coral structure called?",
+    zh: "組成珊瑚構造的微小動物個體稱為什麼？",
+    o: ["Polyps", "Tadpoles", "Shrimps", "Sea urchins"],
+    a: 0,
+    e: "課本 P14：每一株珊瑚，都是由無數微小的珊瑚蟲（polyps）所組成。",
+    p: "Coral unit: polyps (珊瑚蟲)"
+  },
+  {
+    q: "What body parts do coral polyps have to catch and digest food?",
+    zh: "珊瑚蟲具有哪些身體構造來捕獲並消化食物？",
+    o: [
+      "Wings and sharp teeth",
+      "Fins, gills, and scales",
+      "A mouth, stomach, and tentacles",
+      "Claws, legs, and a beak"
+    ],
+    a: 2,
+    e: "課本 P14：珊瑚蟲擁有口、胃與觸手（tentacles）等構造，用來捕捉並消化食物。",
+    p: "Anatomy: mouth, stomach, and tentacles"
+  },
+  {
+    q: "How does a magnificent coral reef grow and form over time?",
+    zh: "一座宏偉的珊瑚礁是如何隨時間生長累積形成的？",
+    o: [
+      "Humans plant coral seeds under the sand.",
+      "As old corals die, new polyps grow on top of them.",
+      "Volcanic lava cools down and turns colorful.",
+      "Fish pile up empty sea shells into reefs."
+    ],
+    a: 1,
+    e: "課本 P14：珊瑚群聚生長，舊珊瑚死去後，新的珊瑚蟲會在遺骸上繼續生長，經年累月堆疊，就形成了珊瑚礁。",
+    p: "Reef formation: Old corals die -> new polyps grow on top"
+  },
+  {
+    q: "What alarming crisis do scientists predict about coral reefs by the year 2050?",
+    zh: "科學家對 2050 年的全球珊瑚礁提出了什麼怵目驚心的預測？",
+    o: [
+      "All corals will turn into gold.",
+      "Corals will grow twice as fast.",
+      "Only 30 percent of the world's corals will exist.",
+      "Corals will migrate to frozen polar seas."
+    ],
+    a: 2,
+    e: "課本 P14：由於污染，全球珊瑚礁正不斷消失，有學者預估到了 2050 年，全世界僅剩三成的珊瑚還能存在。",
+    p: "2050 crisis: Only 30% of corals will exist!"
+  }
+];
+
+// 第 4 關：點擊原句關鍵線索（句子為自編改寫，非課本原句逐字引用；僅保留會考常見詞彙與因果線索結構）
+var CLUE4 = [
+  {
+    s: "Scientists say we need to [protect] our oceans because they are [home to countless living things].",
+    tar: "protect",
+    clue: "home to countless living things",
+    opts: ["Scientists say", "protect", "our oceans", "home to countless living things"],
+    hint: "推導目標字『protect（保護）』：為什麼需要保護海洋？後面説明了什麼理由？點擊因果線索！"
+  },
+  {
+    s: "Scientists named the ocean's middle layer the [twilight] zone, simply because [sunlight barely reaches it].",
+    tar: "twilight",
+    clue: "sunlight barely reaches it",
+    opts: ["middle layer", "twilight", "named by scientists", "sunlight barely reaches it"],
+    hint: "推導目標字『twilight（暮色/微光）』：後面的子句說明了這一層有什麼光線特徵？"
+  },
+  {
+    s: "Huge ships known as [tankers] are built to [carry oil] from one place to another.",
+    tar: "tankers",
+    clue: "carry oil",
+    opts: ["Huge ships", "tankers", "carry oil", "from one place to another"],
+    hint: "推導目標字『tankers（油輪）』：句子說明這種大型船隻的主要任務是什麼？"
+  },
+  {
+    s: "Because paper is [biodegradable], it slowly [breaks down and disappears] over time.",
+    tar: "biodegradable",
+    clue: "breaks down and disappears",
+    opts: ["Because paper is", "biodegradable", "breaks down and disappears", "over time"],
+    hint: "推導目標字『biodegradable（可生物分解的）』：紙張隨著時間經過會發生什麼現象？"
+  },
+  {
+    s: "Pollution is causing coral reefs to [vanish] so quickly that only [30 percent] may survive by the year 2050.",
+    tar: "vanish",
+    clue: "30 percent",
+    opts: ["Pollution", "vanish", "coral reefs", "30 percent"],
+    hint: "推導目標字『vanish（消失）』：後面哪一組具體統計數字印證了消亡危機？"
+  }
+];
+
+// 第 5 關：L59 複合字族密碼
+var MC5 = [
+  {
+    q: "In Lesson 59, what long vowel sound do the words 'soon' and 'spoon' share?",
+    zh: "在 L59 學習單中，單字 'soon' 和 'spoon' 共同擁有哪一個長母音發音？",
+    o: ["Long a (/eɪ/)", "Long e (/iː/)", "Long i (/aɪ/)", "Long u (/uː/)"],
+    a: 3,
+    e: "學習單 Q1, Q7：複合音圖 <b>-oon</b> 發 Long u（/uː/）音，如 soon、spoon、moon。",
+    p: "-oon -> Long u (/uː/)"
+  },
+  {
+    q: "Which complex phonogram in 'shield' and 'yield' produces the Long e (/iː/) sound?",
+    zh: "單字 'shield'（盾牌）和 'yield'（讓路）中，發出長母音 Long e (/iː/) 的複合音圖是？",
+    o: ["-ield", "-ight", "-oom", "-eigh"],
+    a: 0,
+    e: "學習單 Q2, Q9：音圖 <b>-ield</b> 中的 ie 符合 'i before e' 規則，發長母音 Long e（/iː/）。",
+    p: "-ield -> Long e (/iː/)"
+  },
+  {
+    q: "In words like 'thigh', 'might', and 'sigh', why does the 'igh' make a Long i sound?",
+    zh: "在 'thigh'、'might' 與 'sigh' 中，字母組合 'igh' 為何會發長母音 Long i？",
+    o: [
+      "Because the letters 'gh' are completely silent, leaving 'i' as a long vowel.",
+      "Because 'gh' sounds like a barking dog.",
+      "Because 'gh' is pronounced as an 'f'.",
+      "Because it is a printing mistake in old dictionaries."
+    ],
+    a: 0,
+    e: "學習單 Q3, Q5, Q11：在現代英語中 <b>gh 為不發音的默音（Silent Letters）</b>，使前面的母音 i 延長發雙母音 /aɪ/。",
+    p: "-igh / -ight: gh is silent -> Long i (/aɪ/)"
+  },
+  {
+    q: "Which pair of words both belong to the Long e (/iː/) word family spelled with '-ief'?",
+    zh: "下列哪一組單字均屬於以 '-ief' 拼寫且發 Long e (/iː/) 的字族？",
+    o: ["soon and broom", "brief and thief", "eight and freight", "vein and rein"],
+    a: 1,
+    e: "學習單 Q4, Q6：<b>brief</b>（簡短的）與 <b>thief</b>（小偷）皆屬於 -ief 字族，發 /iː/ 音。",
+    p: "-ief -> brief & thief (Long e /iː/)"
+  },
+  {
+    q: "The words 'eight' and 'freight' both belong to which long vowel sound family?",
+    zh: "單字 'eight'（八）和 'freight'（貨運）共同屬於哪一個長母音字族？",
+    o: ["Long a (/eɪ/)", "Long e (/iː/)", "Long i (/aɪ/)", "Long u (/uː/)"],
+    a: 0,
+    e: "學習單 Q10, Q14：複合字母組合 <b>-eigh / -eight</b> 發長母音 Long a（/eɪ/）。",
+    p: "-eigh -> eight & freight (Long a /eɪ/)"
+  },
+  {
+    q: "【會考發音陷阱辨析】下列四個含有 'eigh' 的單字中，哪一個字的發音與其他三個完全不同？",
+    zh: "會考經典陷阱：下列哪一個單字的母音讀音是異類？",
+    o: ["eight (/eɪt/)", "weight (/weɪt/)", "freight (/freɪt/)", "height (/haɪt/)"],
+    a: 3,
+    e: "會考超級考點！eight, weight, freight 的 -eigh 皆發 /eɪ/；但 <b>height（高度）發長母音 /aɪ/（/haɪt/）</b>，為全英語最著名發音特例！",
+    p: "TRAP: height is /haɪt/ (Long i), NOT /eɪt/!"
+  }
+];
+
+// 第 6 關：會考文法與素養診斷室
+var MC6 = [
+  {
+    q: "Students ________ swim in this pond. The water is deep and dangerous! (Select the correct modal)",
+    zh: "學生_____在這座池塘游泳。水深危險！（請選出最適切的情態助動詞）",
+    o: ["don't have to", "can't / must not", "have to", "can"],
+    a: 1,
+    e: "會考核心考點！表達『法令或安全上的絕對禁止』必須使用 <b>can't 或 must not</b>；don't have to 是『不必』，語氣不符危險警示。",
+    p: "Prohibition rule: can't / must not (禁止)"
+  },
+  {
+    q: "Tomorrow is Sunday. We don't have school, so we ________ get up early.",
+    zh: "明天是星期天，我們不用上學，所以我們_____早起。",
+    o: ["must not", "can't", "don't have to", "have to"],
+    a: 2,
+    e: "會考易錯題！不用上學表示『沒有義務、不必』早起，應填入 <b>don't have to</b>（若你想早起也可以，並非違法或禁止）。",
+    p: "Lack of obligation: don't have to (不必)"
+  },
+  {
+    q: "The suffix '-able' in 'biodegradable' and 'reusable' means: ",
+    zh: "單字 'biodegradable' 和 'reusable' 中的字尾後綴 '-able' 表示什麼意義？",
+    o: ["Without or lacking", "Able to be done (能夠被…的)", "A person who teaches", "Very painful"],
+    a: 1,
+    e: "構詞法解析：字尾 <b>-able</b> 表示『能夠被…的（capable of being...）』，如 recyclable（可回收的）、washable（可洗的）。",
+    p: "Suffix -able: capable of / able to be"
+  },
+  {
+    q: "The prefix 'dis-' in 'disappear' and 'disconnect' conveys the meaning of: ",
+    zh: "單字 'disappear'（消失）和 'disconnect'（斷線）中的字首 'dis-' 具有什麼涵義？",
+    o: ["Again / Repeat", "Opposite / Not / Away (相反、否定或離去)", "Before / Earlier", "Under / Below"],
+    a: 1,
+    e: "構詞法解析：字首 <b>dis-</b> 表否定或反向動作，appear（出現）+ dis- -> disappear（消失）。",
+    p: "Prefix dis-: opposite / reverse action"
+  },
+  {
+    q: "According to Dr. Sylvia Earle: 'With every breath you take, you're connected to the ocean.' What does this imply?",
+    zh: "根據探險家 Sylvia Earle 所言：『你的每一次呼吸，都與海洋緊密相連。』這句話深層意涵為何？",
+    o: [
+      "Humans can breathe underwater without air tanks.",
+      "The ocean produces a major part of the Earth's oxygen, sustaining all human life.",
+      "People must swim every day to stay healthy.",
+      "Only people living on islands need to care about the sea."
+    ],
+    a: 1,
+    e: "閱讀素養推論：海洋中的微細藻類與浮游植物透過光合作用產生了地球超過一半的氧氣，無論人類住在陸地何處，生命均仰賴海洋供氧。",
+    p: "Ocean produces over 50% of the planet's oxygen."
+  },
+  {
+    q: "Why are plastic bottles and bags much more dangerous to sea life than paper?",
+    zh: "為什麼塑膠瓶與塑膠袋對海洋生物的危害遠大於紙張？",
+    o: [
+      "Because plastic tastes much better to fish.",
+      "Because paper is biodegradable and dissolves, while plastic takes hundreds of years to break down.",
+      "Because plastic is lighter than seawater.",
+      "Because plastic makes the water warmer."
+    ],
+    a: 1,
+    e: "課本 P11 科普素養：紙張屬於可生物分解材質，會隨時間自然分解消失；但塑膠瓶與塑膠袋不會自然分解，會在海洋中殘留數百年，碎裂成微塑膠危害整個食物鏈。",
+    p: "Paper is biodegradable; plastic is NOT biodegradable."
+  }
+];
+
+// ==================== 音效模組 (Web Audio API) ====================
+var AC = null;
+var sndOn = true;
+function getAC() {
+  if (!AC) {
+    var AudioContext = window.AudioContext || window.webkitAudioContext;
+    if (AudioContext) AC = new AudioContext();
+  }
+  return AC;
+}
+
+function play(kind) {
+  if (!sndOn) return;
+  try {
+    var ctx = getAC();
+    if (!ctx) return;
+    if (ctx.state === "suspended") ctx.resume();
+    var t = ctx.currentTime;
+    function tone(freq, start, dur, type, vol, slide) {
+      var o = ctx.createOscillator(), g = ctx.createGain();
+      o.type = type || "sine";
+      o.frequency.setValueAtTime(freq, t + start);
+      if (slide) o.frequency.exponentialRampToValueAtTime(slide, t + start + dur);
+      g.gain.setValueAtTime(0.0001, t + start);
+      g.gain.exponentialRampToValueAtTime(vol || 0.2, t + start + 0.015);
+      g.gain.exponentialRampToValueAtTime(0.0001, t + start + dur);
+      o.connect(g); g.connect(ctx.destination);
+      o.start(t + start); o.stop(t + start + dur + 0.05);
+    }
+    if (kind === "ok") {
+      tone(784, 0, 0.12, "triangle", 0.22);
+      tone(1175, 0.09, 0.25, "triangle", 0.25);
+    } else if (kind === "no") {
+      tone(180, 0, 0.25, "sawtooth", 0.18, 110);
+    } else if (kind === "clear") {
+      tone(523, 0, 0.12, "triangle", 0.2);
+      tone(659, 0.1, 0.12, "triangle", 0.2);
+      tone(784, 0.2, 0.15, "triangle", 0.25);
+      tone(1046, 0.32, 0.4, "triangle", 0.3);
+    } else if (kind === "fanfare") {
+      [523, 659, 784, 1046, 1318].forEach(function(f, i){
+        tone(f, i * 0.12, 0.35, "triangle", 0.25);
+      });
+    }
+  } catch(e){}
+}
+
+// ==================== 進度存取 (localStorage) ====================
+var SKEY = "ourworld-u01-game-save-v1";
+var prog = { s1: 0, s2: 0, s3: 0, s4: 0, s5: 0, s6: 0 };
+try {
+  var raw = localStorage.getItem(SKEY);
+  if (raw) prog = Object.assign(prog, JSON.parse(raw));
+} catch(e){}
+
+function save() {
+  try { localStorage.setItem(SKEY, JSON.stringify(prog)); } catch(e){}
+  refreshNav();
+}
+
+// ==================== UI 元素與導航 ====================
+var navBtns = document.querySelectorAll("#nav button");
+var stages = document.querySelectorAll("section.stage");
+var curStage = 1;
+
+function showStage(n) {
+  curStage = n;
+  stages.forEach(function(s){ s.classList.remove("on"); });
+  navBtns.forEach(function(b){ b.classList.remove("on"); });
+  var s = document.querySelector('section.stage[data-stage="' + n + '"]');
+  var b = document.querySelector('#nav button[data-go="' + n + '"]');
+  if (s) s.classList.add("on");
+  if (b) b.classList.add("on");
+  window.scrollTo({ top: 0, behavior: "smooth" });
+}
+
+navBtns.forEach(function(b){
+  b.addEventListener("click", function(){
+    showStage(parseInt(this.getAttribute("data-go"), 10));
+  });
+});
+
+function refreshNav() {
+  var allDone = true;
+  for (var i = 1; i <= 6; i++) {
+    var key = "s" + i;
+    var b = document.querySelector('#nav button[data-go="' + i + '"]');
+    var isDone = false;
+    if (i === 1 && prog.s1 >= MC1.length) isDone = true;
+    if (i === 2 && prog.s2 >= SORT2.length) isDone = true;
+    if (i === 3 && prog.s3 >= MC3.length) isDone = true;
+    if (i === 4 && prog.s4 >= CLUE4.length) isDone = true;
+    if (i === 5 && prog.s5 >= MC5.length) isDone = true;
+    if (i === 6 && prog.s6 >= MC6.length) isDone = true;
+    if (b) {
+      if (isDone) b.classList.add("done");
+      else { b.classList.remove("done"); allDone = false; }
+    }
+  }
+  return allDone;
+}
+
+// ==================== 渲染器：選擇題 ====================
+function renderMC(boxId, pbarId, textId, clearId, data, pkey, stageNum) {
+  var box = document.getElementById(boxId);
+  var pbar = document.getElementById(pbarId);
+  var ptxt = document.getElementById(textId);
+  var clr = document.getElementById(clearId);
+  box.innerHTML = "";
+
+  var doneCount = 0;
+  data.forEach(function(item, idx){
+    var div = document.createElement("div");
+    div.className = "q";
+    div.innerHTML = '<div class="stem"><span class="num">Q' + (idx + 1) + '.</span>' + item.q + '</div>' +
+                    '<div class="zh">' + item.zh + '</div>' +
+                    '<div class="opts"></div>' +
+                    '<div class="fb"></div>';
+    var optsDiv = div.querySelector(".opts");
+    var fbDiv = div.querySelector(".fb");
+
+    item.o.forEach(function(optText, oIdx){
+      var btn = document.createElement("button");
+      btn.className = "opt";
+      btn.innerHTML = '<b>(' + LET[oIdx] + ')</b> ' + optText;
+      btn.addEventListener("click", function(){
+        getAC();
+        if (oIdx === item.a) {
+          play("ok");
+          btn.classList.add("right");
+          fbDiv.className = "fb show ok";
+          fbDiv.innerHTML = '<b>🎯 正確無誤！</b> ' + item.e + '<span class="para">📌 關鍵提煉：' + item.p + '</span>';
+          var allOpts = optsDiv.querySelectorAll(".opt");
+          allOpts.forEach(function(b){ b.disabled = true; });
+          if (!div.dataset.solved) {
+            div.dataset.solved = "1";
+            doneCount++;
+            updateProgress();
+          }
+        } else {
+          play("no");
+          btn.classList.add("wrong");
+          fbDiv.className = "fb show no";
+          fbDiv.innerHTML = '<b>❌ 再想想看！</b> ' + item.e;
+          setTimeout(function(){ btn.classList.remove("wrong"); }, 600);
+        }
+      });
+      optsDiv.appendChild(btn);
+    });
+    box.appendChild(div);
+  });
+
+  function updateProgress() {
+    prog[pkey] = doneCount;
+    save();
+    var pct = Math.round((doneCount / data.length) * 100);
+    pbar.style.width = pct + "%";
+    ptxt.innerText = doneCount + " / " + data.length;
+    if (doneCount >= data.length) {
+      clr.classList.add("show");
+      play("clear");
+      checkAllDoneCelebration();
+    }
+  }
+  pbar.style.width = Math.round((prog[pkey] / data.length) * 100) + "%";
+  ptxt.innerText = prog[pkey] + " / " + data.length;
+  if (prog[pkey] >= data.length) clr.classList.add("show");
+}
+
+// ==================== 渲染器：第 2 關 二分類 ====================
+function renderSort2() {
+  var box = document.getElementById("qbox2");
+  var pbar = document.getElementById("pb2");
+  var ptxt = document.getElementById("pt2");
+  var clr = document.getElementById("clr2");
+  box.innerHTML = "";
+
+  var doneCount = 0;
+  SORT2.forEach(function(item, idx){
+    var div = document.createElement("div");
+    div.className = "q";
+    div.innerHTML = '<div class="stem"><span class="num">項目 ' + (idx + 1) + '.</span>' + item.s + '</div>' +
+                    '<div class="zh">' + item.zh + '</div>' +
+                    '<div class="sort-btns">' +
+                      '<button class="opt" data-choice="yes">【義務必須 (Must / Have to)】</button>' +
+                      '<button class="opt" data-choice="no">【絕對禁止 (Can\'t / Don\'t)】</button>' +
+                    '</div>' +
+                    '<div class="fb"></div>';
+    var btns = div.querySelectorAll(".sort-btns .opt");
+    var fbDiv = div.querySelector(".fb");
+
+    btns.forEach(function(btn){
+      btn.addEventListener("click", function(){
+        getAC();
+        var choice = this.getAttribute("data-choice");
+        if (choice === item.t) {
+          play("ok");
+          btn.classList.add("right");
+          fbDiv.className = "fb show ok";
+          fbDiv.innerHTML = '<b>🎯 正確！</b> ' + item.exp;
+          btns.forEach(function(b){ b.disabled = true; });
+          if (!div.dataset.solved) {
+            div.dataset.solved = "1";
+            doneCount++;
+            prog.s2 = doneCount;
+            save();
+            pbar.style.width = Math.round((doneCount / SORT2.length) * 100) + "%";
+            ptxt.innerText = doneCount + " / " + SORT2.length;
+            if (doneCount >= SORT2.length) {
+              clr.classList.add("show");
+              play("clear");
+              checkAllDoneCelebration();
+            }
+          }
+        } else {
+          play("no");
+          btn.classList.add("wrong");
+          fbDiv.className = "fb show no";
+          fbDiv.innerHTML = '<b>❌ 語氣分類不對喔！</b> ' + item.exp;
+          setTimeout(function(){ btn.classList.remove("wrong"); }, 600);
+        }
+      });
+    });
+    box.appendChild(div);
+  });
+  pbar.style.width = Math.round((prog.s2 / SORT2.length) * 100) + "%";
+  ptxt.innerText = prog.s2 + " / " + SORT2.length;
+  if (prog.s2 >= SORT2.length) clr.classList.add("show");
+}
+
+// ==================== 渲染器：第 4 關 點擊線索 ====================
+function renderClue4() {
+  var box = document.getElementById("qbox4");
+  var pbar = document.getElementById("pb4");
+  var ptxt = document.getElementById("pt4");
+  var clr = document.getElementById("clr4");
+  box.innerHTML = "";
+
+  var doneCount = 0;
+  CLUE4.forEach(function(item, idx){
+    var div = document.createElement("div");
+    div.className = "q";
+    var optsHtml = item.opts.map(function(w){
+      return '<span class="ch" data-w="' + w + '">' + w + '</span>';
+    }).join(" ");
+    div.innerHTML = '<div class="stem"><span class="num">線索 ' + (idx + 1) + '.</span>請找出支持 <b>' + item.tar + '</b> 的上下文線索：</div>' +
+                    '<div class="zh">💡 ' + item.hint + '</div>' +
+                    '<div class="sent">' + optsHtml + '</div>' +
+                    '<div class="fb"></div>';
+    var chs = div.querySelectorAll(".sent .ch");
+    var fbDiv = div.querySelector(".fb");
+
+    chs.forEach(function(ch){
+      ch.addEventListener("click", function(){
+        getAC();
+        var word = this.getAttribute("data-w");
+        if (word === item.clue) {
+          play("ok");
+          this.classList.add("hit");
+          fbDiv.className = "fb show ok";
+          fbDiv.innerHTML = '<b>🎯 漂亮！成功鎖定核心線索：</b> 『' + item.clue + '』！正是此處的情境資訊揭示了目標字義！';
+          chs.forEach(function(c){ c.style.pointerEvents = "none"; });
+          if (!div.dataset.solved) {
+            div.dataset.solved = "1";
+            doneCount++;
+            prog.s4 = doneCount;
+            save();
+            pbar.style.width = Math.round((doneCount / CLUE4.length) * 100) + "%";
+            ptxt.innerText = doneCount + " / " + CLUE4.length;
+            if (doneCount >= CLUE4.length) {
+              clr.classList.add("show");
+              play("clear");
+              checkAllDoneCelebration();
+            }
+          }
+        } else {
+          play("no");
+          this.classList.add("miss");
+          var el = this;
+          setTimeout(function(){ el.classList.remove("miss"); }, 500);
+        }
+      });
+    });
+    box.appendChild(div);
+  });
+  pbar.style.width = Math.round((prog.s4 / CLUE4.length) * 100) + "%";
+  ptxt.innerText = prog.s4 + " / " + CLUE4.length;
+  if (prog.s4 >= CLUE4.length) clr.classList.add("show");
+}
+
+// ==================== 慶祝彩帶與通關確認 ====================
+function checkAllDoneCelebration() {
+  if (refreshNav()) {
+    setTimeout(function(){
+      play("fanfare");
+      document.getElementById("celBox").style.display = "flex";
+      runConfetti();
+    }, 400);
+  }
+}
+
+document.getElementById("closeCelBtn").addEventListener("click", function(){
+  document.getElementById("celBox").style.display = "none";
+});
+
+function runConfetti() {
+  var cvs = document.getElementById("confetti");
+  if (!cvs) return;
+  var ctx = cvs.getContext("2d");
+  var w = cvs.width = window.innerWidth;
+  var h = cvs.height = window.innerHeight;
+  var parts = [];
+  var colors = ["#0284c7", "#38bdf8", "#fbbf24", "#34d399", "#fb7185", "#ffffff"];
+  for (var i = 0; i < 90; i++) {
+    parts.push({
+      x: Math.random() * w,
+      y: Math.random() * h - h,
+      vx: (Math.random() - 0.5) * 3,
+      vy: Math.random() * 4 + 2,
+      sz: Math.random() * 8 + 4,
+      c: colors[Math.floor(Math.random() * colors.length)],
+      rot: Math.random() * 360,
+      vrot: (Math.random() - 0.5) * 8
+    });
+  }
+  var frames = 0;
+  function loop() {
+    ctx.clearRect(0, 0, w, h);
+    parts.forEach(function(p){
+      p.x += p.vx; p.y += p.vy; p.rot += p.vrot;
+      ctx.save();
+      ctx.translate(p.x, p.y);
+      ctx.rotate(p.rot * Math.PI / 180);
+      ctx.fillStyle = p.c;
+      ctx.fillRect(-p.sz/2, -p.sz/2, p.sz, p.sz);
+      ctx.restore();
+    });
+    frames++;
+    if (frames < 200) requestAnimationFrame(loop);
+    else ctx.clearRect(0, 0, w, h);
+  }
+  loop();
+}
+
+// ==================== 按鈕事件 ====================
+document.getElementById("themeBtn").addEventListener("click", function(){
+  var cur = document.documentElement.getAttribute("data-theme");
+  var next = cur === "dark" ? "light" : "dark";
+  document.documentElement.setAttribute("data-theme", next);
+});
+
+document.getElementById("sndBtn").addEventListener("click", function(){
+  sndOn = !sndOn;
+  this.innerText = sndOn ? "🔊" : "🔇";
+});
+
+document.getElementById("resetBtn").addEventListener("click", function(){
+  if (confirm("確定要清除所有通關進度重新挑戰嗎？")) {
+    prog = { s1: 0, s2: 0, s3: 0, s4: 0, s5: 0, s6: 0 };
+    save();
+    initGame();
+    window.location.reload();
+  }
+});
+
+// ==================== 啟動遊戲 ====================
+function initGame() {
+  renderMC("qbox1", "pb1", "pt1", "clr1", MC1, "s1", 1);
+  renderSort2();
+  renderMC("qbox3", "pb3", "pt3", "clr3", MC3, "s3", 3);
+  renderClue4();
+  renderMC("qbox5", "pb5", "pt5", "clr5", MC5, "s5", 5);
+  renderMC("qbox6", "pb6", "pt6", "clr6", MC6, "s6", 6);
+  refreshNav();
+  showStage(1);
+}
+
+initGame();
+
+})();
+</script>
+</body>
+</html>
