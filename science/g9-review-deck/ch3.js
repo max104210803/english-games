@@ -330,6 +330,81 @@ window.DECK = window.DECK || [];
           ans: '\\(24\\) kgw'
         }
       },
+      {
+        sec: '3-3', secName: '力矩與槓桿題型',
+        title: '不等臂天平秤兩次：真正的質量是兩次讀數相乘再開根號',
+        points: [
+          '天平兩臂不等長時，物體放左盤、放右盤各秤一次，讀數會<b>一大一小</b>。',
+          '兩次都用槓桿原理：\\(m\\times a=R_1\\times b\\)、\\(R_2\\times a=m\\times b\\)，相乘消去臂長。',
+          '拖滑桿改臂長比：兩次讀數相乘永遠是 \\(60^{2}\\)；直接平均會<span class="k">偏大</span>。'
+        ],
+        formula: { label: '不等臂天平', tex: 'm=\\sqrt{R_{1}\\times R_{2}}' },
+        visual: (h) => {
+          const R = [ [1, 1], [9, 10], [4, 5], [3, 4], [2, 3] ];
+          h.innerHTML = `<div style="width:100%"><div id="fig"></div>
+            <div class="ictrl"><label>左臂 a：右臂 b ＝ <span class="ival" id="rv">4：5</span></label>
+            <input type="range" id="rs" min="0" max="4" step="1" value="2"></div></div>`;
+          const draw = () => {
+            const [a, b] = R[+h.querySelector('#rs').value];
+            h.querySelector('#rv').textContent = `${a}：${b}`;
+            const Lx = 70, Rx = 370, px = Lx + 300 * a / (a + b), r1 = 60 * a / b, r2 = 60 * b / a;
+            const beam = (y, labL, colL, labR, colR, msg) =>
+              `<rect x="${Lx - 6}" y="${y - 5}" width="${Rx - Lx + 12}" height="10" rx="5" fill="#b45309" stroke="#78350f" stroke-width="2"/>` +
+              PIV(px, y + 5, 10) + SV.seg(Lx, y + 5, Lx, y + 24, INK, 2) + SV.seg(Rx, y + 5, Rx, y + 24, INK, 2) +
+              MASS(Lx, y + 24, 56, labL, colL) + MASS(Rx, y + 24, 56, labR, colR) +
+              TX((Lx + px) / 2, y - 12, 'a', { fs: 14, c: BLU, anchor: 'middle' }) + TX((px + Rx) / 2, y - 12, 'b', { fs: 14, c: VIO, anchor: 'middle' }) +
+              TX(220, y + 54, msg, { fs: 13, c: INK, anchor: 'middle' });
+            let s = beam(62, '物 60 g', '#fde68a', `${fmt(r1)} g`, '#bfdbfe', `放左盤：右盤讀 R₁ ＝ ${fmt(r1)} g`);
+            s += beam(178, `${fmt(r2)} g`, '#bfdbfe', '物 60 g', '#fde68a', `放右盤：左盤讀 R₂ ＝ ${fmt(r2)} g`);
+            s += TX(220, 264, `√(${fmt(r1)} × ${fmt(r2)}) ＝ 60 g ✓`, { fs: 17, c: GRN, anchor: 'middle' });
+            s += TX(220, 286, a === b ? '兩臂等長：兩次讀數一樣' : `直接平均 ＝ ${fmt((r1 + r2) / 2)} g ✗ 偏大`, { fs: 14, c: a === b ? GRY : RED, anchor: 'middle' });
+            h.querySelector('#fig').innerHTML = svg('0 0 440 294', s);
+          };
+          h.querySelector('#rs').oninput = draw; draw();
+        },
+        caption: '臂長比越不平均，兩次讀數差越多；但相乘開根號一定回到 60 g。',
+        example: {
+          q: '某天平兩臂不等長。物體放左盤時，右盤要放 16 g 砝碼才平衡；放右盤時，左盤要放 25 g。物體真正的質量是多少？',
+          steps: ['\\(m^{2}=16\\times25=400\\)。', '\\(m=20\\) g（不是平均的 20.5 g）。'],
+          ans: '\\(20\\) g'
+        }
+      },
+      {
+        sec: '3-3', secName: '力矩與槓桿題型',
+        title: '粗細不同的木棒：兩端各抬一次，兩個力相加就是棒重',
+        points: [
+          '抬起 A 端時，B 端著地當<span class="k">支點</span>；反過來抬 B 端，支點換成 A。',
+          '兩次的力矩式相加：\\((F_A+F_B)\\times L=W\\times L\\)，所以 \\(W=F_A+F_B\\)。',
+          '拖滑桿移動重心：重心越靠近哪一端，抬那一端越吃力。'
+        ],
+        formula: { label: '兩端各抬一次', tex: 'W=F_{A}+F_{B}' },
+        visual: (h) => {
+          h.innerHTML = `<div style="width:100%"><div id="fig"></div>
+            <div class="ictrl"><label>重心距粗端 A ＝ <span class="ival" id="xv">0.6</span> m</label>
+            <input type="range" id="xs" min="4" max="10" step="1" value="6"></div></div>`;
+          const draw = () => {
+            const x = +h.querySelector('#xs').value / 10, FA = 40 * (2 - x), FB = 40 * x;
+            h.querySelector('#xv').textContent = x.toFixed(1);
+            const Ax = 60, Bx = 380, gx = Ax + 320 * x / 2;
+            const rod = (y) => SV.poly([ [Ax, y - 12], [Bx, y - 5], [Bx, y + 5], [Ax, y + 12] ], '#d6a26a', '#78350f', 2) +
+              ARW(gx, y + 2, gx, y + 40, AMB, 3) + TX(gx + 8, y + 38, 'W 80', { fs: 12, c: AMB });
+            let s = rod(86) + PIV(Bx, 91, 10) + ARW(Ax, 72, Ax, 72 - FA * 0.6, RED, 4);
+            s += TX(90, 46, `① 抬起 A 端（B 著地）：要 ${fmt(FA)} kgw`, { fs: 13, c: RED });
+            s += TX(Ax, 132, 'A 粗端', { fs: 12, c: INK, anchor: 'middle' }) + TX(Bx, 132, 'B 細端', { fs: 12, c: INK, anchor: 'middle' });
+            s += rod(200) + PIV(Ax, 212, 10) + ARW(Bx, 193, Bx, 193 - FB * 0.6, RED, 4);
+            s += TX(90, 162, `② 抬起 B 端（A 著地）：要 ${fmt(FB)} kgw`, { fs: 13, c: RED });
+            s += TX(220, 276, `棒重 ＝ ${fmt(FA)} ＋ ${fmt(FB)} ＝ 80 kgw`, { fs: 17, c: GRN, anchor: 'middle' });
+            h.querySelector('#fig').innerHTML = svg('0 0 440 290', s);
+          };
+          h.querySelector('#xs').oninput = draw; draw();
+        },
+        caption: '棒長 2 m、重 80 kgw。粗的那端比較重，重心比較靠近它，所以抬粗端比較吃力。',
+        example: {
+          q: '一根長 1.6 m 的木棒平放地上，抬起 A 端要 36 kgw，抬起 B 端要 24 kgw。木棒多重？重心距 A 端多遠？',
+          steps: ['\\(W=36+24=60\\) kgw。', '抬 B 端時支點在 A：\\(24\\times1.6=60\\times x\\)，\\(x=0.64\\) m。'],
+          ans: '\\(60\\) kgw；重心距 A 端 \\(0.64\\) m'
+        }
+      },
 
       /* ---------- 3-4 簡單機械題型 ---------- */
       {
@@ -689,6 +764,88 @@ window.DECK = window.DECK || [];
           q: '直升機停在空中吊掛救人，升力和重力是作用力與反作用力嗎？往前的推力要多大？',
           steps: ['升力、重力都作用在直升機上 → 是一對平衡力，不是作用與反作用。', '不前進 → 往前的推力為 0。'],
           ans: '是平衡力；推力為 0'
+        }
+      },
+      {
+        sec: '3-4', secName: '簡單機械題型',
+        title: '咬合的齒輪：轉向相反，「圈數 × 齒數」兩邊相等',
+        points: [
+          '兩個齒輪咬在一起，一邊轉過一齒，另一邊也轉過一齒 → <span class="k">圈數 × 齒數</span>相等。',
+          '齒數少的轉得快、圈數多；咬合的兩輪轉動方向<b>相反</b>。',
+          '中間多夾一個齒輪：頭尾的圈數比不變，只是方向再翻一次。'
+        ],
+        formula: { label: '咬合齒輪（n 圈數、N 齒數）', tex: 'n_{1}\\times N_{1}=n_{2}\\times N_{2}' },
+        visual: (h) => {
+          h.innerHTML = `<div style="width:100%"><div id="fig"></div>
+            <div class="ictrl"><label>小齒輪齒數 ＝ <span class="ival" id="nv">12</span> 齒</label>
+            <input type="range" id="ns" min="0" max="3" step="1" value="0"></div></div>`;
+          const opts = [12, 18, 24, 36];
+          const gear = (cx, cy, N, col) => {
+            const r = N * 2.2;
+            let s = `<circle cx="${cx}" cy="${cy}" r="${r}" fill="${col}" stroke="#475569" stroke-width="2"/>`;
+            for (let i = 0; i < N; i++) {
+              const t = 2 * Math.PI * i / N, c = Math.cos(t), sn = Math.sin(t);
+              s += SV.seg(cx + r * c, cy + r * sn, cx + (r + 7) * c, cy + (r + 7) * sn, i === 0 ? RED : '#475569', 5);
+            }
+            return s + SV.dot(cx, cy, INK, 4);
+          };
+          const draw = () => {
+            const N2 = opts[+h.querySelector('#ns').value], n2 = 36 * 2 / N2;
+            h.querySelector('#nv').textContent = N2;
+            const c1 = 120, cy = 108, r1 = 36 * 2.2, r2 = N2 * 2.2, c2 = c1 + r1 + r2 + 7;
+            let s = gear(c1, cy, 36, '#ddd6fe') + gear(c2, cy, N2, '#bbf7d0');
+            s += TX(c1, cy + r1 + 30, '大齒輪 36 齒 ↻ 順時鐘', { fs: 13, c: VIO, anchor: 'middle' });
+            s += TX(c2, cy + r2 + 30, `${N2} 齒 ↺ 逆時鐘`, { fs: 13, c: GRN, anchor: 'middle' });
+            s += TX(220, 262, `大輪轉 2 圈：36 × 2 ＝ ${N2} × ${fmt(n2)}`, { fs: 17, c: INK, anchor: 'middle' });
+            s += TX(220, 286, `小齒輪轉 ${fmt(n2)} 圈，方向相反`, { fs: 15, c: RED, anchor: 'middle' });
+            h.querySelector('#fig').innerHTML = svg('0 0 440 296', s);
+          };
+          h.querySelector('#ns').oninput = draw; draw();
+        },
+        caption: '紅色那一齒是記號：大輪轉 2 圈，一共有 72 齒經過咬合處，小輪也就轉過 72 齒。',
+        example: {
+          q: '36 齒的主動齒輪轉 5 圈，帶動咬合的 12 齒齒輪。從動齒輪轉幾圈？轉向如何？',
+          steps: ['\\(36\\times5=12\\times n\\)。', '\\(n=15\\) 圈，轉向和主動齒輪相反。'],
+          ans: '\\(15\\) 圈，方向相反'
+        }
+      },
+      {
+        sec: '3-4', secName: '簡單機械題型',
+        title: '物體泡在水裡拉：機械要對付的是「重量 − 浮力」',
+        points: [
+          '水中的物體受到向上的<span class="k">浮力</span>，繩子只要撐住剩下的部分。',
+          '先算物體真正拉繩子的力：重量 − 浮力，再乘上機械的倍率。',
+          '拖滑桿把物體慢慢拉出水面：露出越多，浮力越小，手越吃力。'
+        ],
+        formula: { label: '水中的抗力', tex: 'F_{\\text{抗}}=W-B' },
+        visual: (h) => {
+          h.innerHTML = `<div style="width:100%"><div id="fig"></div>
+            <div class="ictrl"><label>露出水面 <span class="ival" id="fv">0</span>%</label>
+            <input type="range" id="fs" min="0" max="4" step="1" value="0"></div></div>`;
+          const draw = () => {
+            const f = +h.querySelector('#fs').value / 4, B = 20 * (1 - f), F = (50 - B) / 2;
+            h.querySelector('#fv').textContent = Math.round(f * 100);
+            const top = 190 - 60 * f, py = top - 42, ox = 220;
+            let s = `<rect x="150" y="10" width="70" height="10" fill="#94a3b8"/>`;
+            s += SV.seg(202, 20, 202, py, INK, 2.5) + SV.seg(238, py, 238, 40, INK, 2.5);
+            s += `<circle cx="${ox}" cy="${py}" r="18" fill="#e2e8f0" stroke="#475569" stroke-width="2.5"/>` + SV.dot(ox, py, INK, 4);
+            s += SV.seg(ox, py, ox, top, INK, 2.5);
+            s += ARW(238, 40, 238, 12, RED, 4) + TX(248, 28, `F ＝ ${fmt(F)}`, { fs: 14, c: RED });
+            s += `<rect x="${ox - 36}" y="${top}" width="72" height="60" rx="6" fill="#a8a29e" stroke="#57534e" stroke-width="2.5"/>`;
+            s += TX(ox, top + 26, '50 kgw', { fs: 13, c: '#fff', anchor: 'middle' }) + TX(ox, top + 44, '20 L', { fs: 12, c: '#fff', anchor: 'middle' });
+            s += `<rect x="110" y="190" width="220" height="84" fill="rgba(56,189,248,.35)" stroke="#0284c7" stroke-width="2"/>`;
+            s += TX(122, 210, '水', { fs: 13, c: '#0369a1' });
+            if (B > 0) s += ARW(ox + 52, top + 60, ox + 52, top + 60 - B * 2.4, BLU, 3.5) + TX(ox + 60, top + 50, `浮力 ${fmt(B)}`, { fs: 13, c: BLU });
+            s += TX(220, 292, `手 F ＝ (50 − ${fmt(B)}) ÷ 2 ＝ ${fmt(F)} kgw`, { fs: 16, c: INK, anchor: 'middle' });
+            h.querySelector('#fig').innerHTML = svg('0 0 440 300', s);
+          };
+          h.querySelector('#fs').oninput = draw; draw();
+        },
+        caption: '不計滑輪重與水的阻力、緩慢拉起：全在水中 15 kgw，完全出水 25 kgw。',
+        example: {
+          q: '重 40 kgw、體積 10 L 的石塊完全浸在水中，用定滑輪緩慢拉起（還沒出水），手要出多少力？',
+          steps: ['排開 10 L 的水，浮力 \\(=10\\) kgw。', '定滑輪不省力：\\(F=40-10=30\\) kgw。'],
+          ans: '\\(30\\) kgw'
         }
       },
       {
