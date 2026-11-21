@@ -48,7 +48,9 @@
       const host = vis.querySelector('.visual-host');
       // 視覺欄一律等比縮放：把「圖＋滑桿／按鈕」當成一整組縮到欄內，
       // 確保矮螢幕下滑桿也不會被裁掉或被推到看不見（原本只縮靜態圖，互動頁會爆版）
-      if (host) fitEl(host, host);
+      // 縮放對象是 host 裡面那一層：host 自己有 overflow:hidden，縮 host 本身時
+      // 超出的部分會先在 host 的座標裡被裁掉，再整塊縮小，底部步驟說明仍被切（2026-11-21 修正）
+      if (host) fitEl(host, host.children.length === 1 ? host.firstElementChild : host);
     }
   }
   // MathJax 排版完成後才量高縮放（公式高度需排版後才確定）
