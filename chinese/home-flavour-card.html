@@ -1,0 +1,551 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#f4efe3">
+  <title>家鄉味・五格觀察寫作卡</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --paper: #f1f3f4;
+      --paper-deep: #e3e7e9;
+      --card: #fbfcfc;
+      --ink: #292d2e;
+      --muted: #687071;
+      --line: #d6dddf;
+      --leaf: #315f4c;
+      --leaf-soft: #e3eee5;
+      --tomato: #b84c36;
+      --tomato-soft: #f5e4dc;
+      --mustard: #b27a22;
+      --mustard-soft: #f6edcf;
+      --blue: #507c8b;
+      --blue-soft: #e4eff0;
+      --shadow: 0 14px 38px #43351b12, 0 2px 6px #43351b0a;
+      --serif: "Noto Serif TC", "Source Han Serif TC", "PMingLiU", serif;
+      --sans: "Noto Sans TC", "PingFang TC", "Microsoft JhengHei", sans-serif;
+    }
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      color: var(--ink);
+      background:
+        radial-gradient(ellipse at 8% 3%, #e5ece7 0, transparent 26rem),
+        radial-gradient(ellipse at 95% 14%, #e9eceb 0, transparent 24rem),
+        repeating-linear-gradient(0deg, transparent 0 31px, #89969812 32px),
+        var(--paper);
+      font: 16px/1.75 var(--sans);
+    }
+    button, input, textarea { font: inherit; }
+    button { color: inherit; }
+    button:focus-visible, input:focus-visible, textarea:focus-visible, a:focus-visible {
+      outline: 3px solid #b27a22;
+      outline-offset: 3px;
+    }
+    .wrap { width: min(1040px, calc(100% - 32px)); margin: 0 auto; padding: 28px 0 64px; }
+    .masthead {
+      display: flex; align-items: center; justify-content: space-between; gap: 16px;
+      color: var(--muted); font-size: 13px; letter-spacing: .12em;
+      border-bottom: 1px solid var(--line); padding-bottom: 13px;
+    }
+    .mast-mark { display: flex; align-items: center; gap: 9px; font-weight: 800; }
+    .seed { display: inline-grid; place-items: center; width: 28px; height: 28px;
+      border-radius: 50% 50% 50% 8px; transform: rotate(-35deg); background: var(--leaf); color: white;
+      font-size: 14px; letter-spacing: 0; }
+    .mast-note { letter-spacing: .02em; }
+    .hero { display: grid; grid-template-columns: 1fr auto; gap: 24px; align-items: end; padding: 32px 0 24px; }
+    .eyebrow { color: var(--tomato); font-size: 13px; font-weight: 900; letter-spacing: .16em; }
+    h1 { margin: 7px 0 9px; font: 800 clamp(32px, 5vw, 52px)/1.15 var(--serif); letter-spacing: .02em; }
+    .hero p { max-width: 650px; color: var(--muted); margin: 0; }
+    .stamp {
+      width: 106px; height: 106px; border: 2px solid var(--tomato); border-radius: 50%;
+      color: var(--tomato); display: grid; place-items: center; text-align: center;
+      font: 900 13px/1.4 var(--serif); transform: rotate(8deg); padding: 12px;
+      box-shadow: inset 0 0 0 4px var(--paper), inset 0 0 0 5px #b84c364d;
+    }
+    .prompt {
+      display: grid; grid-template-columns: auto 1fr; gap: 14px; align-items: start;
+      background: var(--ink); color: #fffaf0; padding: 16px 20px; border-radius: 4px 18px 4px 18px;
+      box-shadow: var(--shadow); margin-bottom: 22px;
+    }
+    .prompt-icon { font-size: 24px; line-height: 1.3; }
+    .prompt b { display: block; color: #e9c77f; letter-spacing: .06em; }
+    .prompt p { margin: 3px 0 0; color: #f6f0e3; line-height: 1.65; }
+    .tabs {
+      display: grid; grid-template-columns: repeat(4, 1fr); gap: 9px; margin: 0 0 18px;
+    }
+    .tab {
+      border: 1px solid var(--line); border-radius: 12px; background: #fbfcfce8;
+      padding: 11px 12px; text-align: left; cursor: pointer; transition: transform .18s, border-color .18s, background .18s;
+    }
+    .tab:hover { transform: translateY(-2px); border-color: var(--leaf); }
+    .tab[aria-selected="true"] { border-color: var(--leaf); background: var(--leaf); color: white; box-shadow: 0 6px 16px #315f4c25; }
+    .tab small { display: block; opacity: .7; font-size: 11px; letter-spacing: .07em; }
+    .tab strong { font: 800 15px/1.5 var(--serif); }
+    #panel { min-height: 420px; }
+    .sheet {
+      position: relative; background: var(--card); border: 1px solid var(--line);
+      border-radius: 18px 5px 18px 5px; box-shadow: var(--shadow); overflow: hidden;
+      animation: arrive .35s ease both;
+    }
+    .sheet::before {
+      content: ""; position: absolute; left: 0; top: 0; bottom: 0; width: 7px;
+      background: linear-gradient(var(--tomato), #d89156 48%, var(--leaf));
+    }
+    .sheet-inner { padding: clamp(20px, 4vw, 34px); }
+    .example-head { display: flex; align-items: start; justify-content: space-between; gap: 16px; margin-bottom: 20px; }
+    .kicker { color: var(--leaf); font-size: 12px; font-weight: 900; letter-spacing: .14em; }
+    h2 { margin: 3px 0 5px; font: 800 clamp(24px, 3.5vw, 34px)/1.3 var(--serif); }
+    .subhead { margin: 0; color: var(--muted); }
+    .number { color: var(--paper-deep); font: 800 56px/.9 var(--serif); }
+    .five-grid { display: grid; grid-template-columns: repeat(6, 1fr); gap: 10px; }
+    .cell {
+      grid-column: span 3; min-height: 130px; border-radius: 12px; padding: 15px 16px;
+      background: #faf7ef; border: 1px solid var(--line);
+    }
+    .cell.wide { grid-column: span 6; min-height: 100px; }
+    .cell:nth-child(1) { background: var(--mustard-soft); border-color: #ead9a8; }
+    .cell:nth-child(2) { background: var(--blue-soft); border-color: #cbdfe1; }
+    .cell:nth-child(3) { background: var(--leaf-soft); border-color: #cbdccf; }
+    .cell:nth-child(4) { background: var(--tomato-soft); border-color: #ebcfc4; }
+    .cell:nth-child(5) { background: #eee8f2; border-color: #ddd1e5; }
+    .cell-label { display: flex; align-items: center; gap: 8px; margin-bottom: 7px; font-size: 12px; font-weight: 900; letter-spacing: .08em; }
+    .cell-label span { display: grid; place-items: center; width: 22px; height: 22px; border: 1px solid currentColor; border-radius: 50%; font-size: 11px; }
+    .cell p { margin: 0; line-height: 1.75; }
+    .story-block { display: grid; grid-template-columns: 160px 1fr; gap: 22px; margin-top: 18px; padding-top: 20px; border-top: 1px dashed var(--line); }
+    .story-label { color: var(--tomato); font: 900 13px/1.5 var(--serif); letter-spacing: .1em; }
+    .story-label small { display: block; color: var(--muted); font: 500 12px/1.5 var(--sans); letter-spacing: 0; margin-top: 5px; }
+    .story p { margin: 0 0 11px; }
+    .story p:last-child { margin-bottom: 0; }
+    .example-actions, .actions { display: flex; flex-wrap: wrap; gap: 9px; margin-top: 20px; }
+    .btn {
+      border: 0; border-radius: 999px; padding: 10px 16px; background: var(--leaf); color: white;
+      font-weight: 800; cursor: pointer; box-shadow: 0 4px 10px #315f4c1c; transition: transform .15s, filter .15s;
+    }
+    .btn:hover { transform: translateY(-1px); filter: brightness(1.07); }
+    .btn.secondary { color: var(--leaf); background: transparent; border: 1px solid var(--leaf); box-shadow: none; }
+    .btn.warn { color: var(--tomato); background: transparent; border: 1px solid #d6aa9e; box-shadow: none; }
+    .howto { margin-top: 26px; }
+    .howto-head { display: flex; align-items: end; justify-content: space-between; gap: 14px; margin: 0 0 12px; }
+    .howto h2 { font-size: 24px; }
+    .howto-head p { margin: 0; color: var(--muted); font-size: 14px; }
+    .steps { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; }
+    .step { background: #fbfcfcbf; border: 1px solid var(--line); border-top: 3px solid var(--leaf); border-radius: 4px 12px 4px 12px; padding: 12px 14px; }
+    .step:nth-child(2) { border-top-color: var(--mustard); }
+    .step:nth-child(3) { border-top-color: var(--tomato); }
+    .step:nth-child(4) { border-top-color: var(--blue); }
+    .step b { display: block; font: 900 15px var(--serif); margin-bottom: 3px; }
+    .step p { margin: 0; color: var(--muted); font-size: 13px; line-height: 1.6; }
+    .write-intro { padding: 15px 17px; background: var(--leaf-soft); border-radius: 12px; margin-bottom: 16px; }
+    .write-intro b { color: var(--leaf); }
+    .write-intro p { margin: 3px 0 0; color: #465c4b; font-size: 14px; }
+    .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+    .field { border: 1px solid var(--line); background: #fffefa; border-radius: 12px; padding: 14px; }
+    .field.wide { grid-column: 1 / -1; }
+    .field label { display: flex; align-items: center; gap: 8px; font-weight: 900; font: 800 16px var(--serif); }
+    .field label span { display: grid; place-items: center; width: 24px; height: 24px; border-radius: 50%; color: white; background: var(--leaf); font: 700 12px var(--sans); }
+    .field small { display: block; color: var(--muted); margin: 5px 0 8px; font-size: 12px; }
+    .field input, .field textarea {
+      width: 100%; border: 1px solid var(--line); background: #f7f9f9; border-radius: 8px;
+      padding: 10px 11px; color: var(--ink); line-height: 1.65;
+    }
+    .field textarea { min-height: 88px; resize: vertical; }
+    .field input:focus, .field textarea:focus { outline: 2px solid #315f4c45; border-color: var(--leaf); }
+    .chips { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
+    .chip {
+      border: 1px solid var(--line); border-radius: 999px; padding: 3px 9px; background: var(--paper);
+      color: var(--muted); font-size: 12px; cursor: pointer;
+    }
+    .chip:hover { border-color: var(--leaf); color: var(--leaf); }
+    .save-status { margin-left: auto; color: var(--muted); font-size: 12px; align-self: center; }
+    .result { margin-top: 16px; border: 1px dashed var(--leaf); border-radius: 13px; background: #f8fafa; padding: 17px 18px; }
+    .result-head { display: flex; justify-content: space-between; gap: 10px; align-items: center; margin-bottom: 7px; }
+    .result h3 { margin: 0; color: var(--leaf); font: 900 20px var(--serif); }
+    .count { color: var(--muted); font-size: 12px; }
+    #output { white-space: pre-wrap; line-height: 1.9; margin: 0; min-height: 60px; }
+    .privacy { color: var(--muted); font-size: 12px; margin: 10px 0 0; }
+    footer { margin-top: 28px; padding-top: 14px; border-top: 1px solid var(--line); color: var(--muted); font-size: 12px; display: flex; justify-content: space-between; gap: 10px; flex-wrap: wrap; }
+    footer strong { color: var(--leaf); }
+    .sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; border: 0; }
+    @keyframes arrive { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+    @media (max-width: 740px) {
+      .hero { grid-template-columns: 1fr; }
+      .stamp { display: none; }
+      .tabs { grid-template-columns: repeat(2, 1fr); }
+      .steps { grid-template-columns: repeat(2, 1fr); }
+      .story-block { grid-template-columns: 1fr; gap: 7px; }
+    }
+    @media (max-width: 520px) {
+      .wrap { width: min(100% - 22px, 1040px); padding-top: 16px; }
+      .mast-note { display: none; }
+      .five-grid { grid-template-columns: 1fr; }
+      .cell, .cell.wide { grid-column: 1; min-height: 0; }
+      .form-grid { grid-template-columns: 1fr; }
+      .field.wide { grid-column: 1; }
+      .howto-head { display: block; }
+      .howto-head p { margin-top: 4px; }
+      .steps { gap: 7px; }
+      .step { padding: 10px; }
+      .save-status { width: 100%; margin-left: 0; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { scroll-behavior: auto !important; animation-duration: .01ms !important; transition-duration: .01ms !important; }
+    }
+    @media print {
+      body { background: white; }
+      .masthead, .prompt, .tabs, .actions, .example-actions, footer, .privacy { display: none !important; }
+      .wrap { width: 100%; padding: 0; }
+      .sheet { box-shadow: none; }
+      .hero { padding: 10px 0; }
+      .result { break-inside: avoid; }
+    }
+  </style>
+</head>
+<body>
+  <main class="wrap">
+    <div class="masthead">
+      <div class="mast-mark"><span class="seed" aria-hidden="true">味</span><span>寫作練習室</span></div>
+      <div class="mast-note">五、六年級・觀察 × 故事 × 感受</div>
+    </div>
+
+    <header class="hero">
+      <div>
+        <div class="eyebrow">LOCAL FLAVOUR · 五格觀察</div>
+        <h1>一味一故事</h1>
+        <p>從一口熟悉的家鄉味開始，先觀察，再回想，最後把感覺寫成一篇有畫面的短文。</p>
+      </div>
+      <div class="stamp" aria-label="五格寫作卡">看見一味<br>記住一刻<br>寫成故事</div>
+    </header>
+
+    <section class="prompt" aria-label="寫作任務">
+      <div class="prompt-icon" aria-hidden="true">🍽️</div>
+      <div>
+        <b>今天的任務</b>
+        <p>選一種你吃過或熟悉的、珍珠奶茶以外的台灣好滋味。把它的外觀、氣味、聲音和口感放進一次真實經驗，最後寫出它讓你想到什麼。</p>
+      </div>
+    </section>
+
+    <nav class="tabs" id="tabs" role="tablist" aria-label="選擇範例或開始寫作">
+      <button class="tab" id="tab-0" role="tab" aria-selected="true" aria-controls="panel" data-index="0"><small>範例 01</small><strong>夜市臭豆腐</strong></button>
+      <button class="tab" id="tab-1" role="tab" aria-selected="false" aria-controls="panel" data-index="1" tabindex="-1"><small>範例 02</small><strong>熱騰蚵仔煎</strong></button>
+      <button class="tab" id="tab-2" role="tab" aria-selected="false" aria-controls="panel" data-index="2" tabindex="-1"><small>範例 03</small><strong>一口鳳梨酥</strong></button>
+      <button class="tab" id="tab-write" role="tab" aria-selected="false" aria-controls="panel" data-write="true" tabindex="-1"><small>換你試試</small><strong>我的家鄉味</strong></button>
+    </nav>
+
+    <section id="panel" role="tabpanel" aria-live="polite" aria-labelledby="tab-0"></section>
+
+    <section class="howto" id="structure">
+      <div class="howto-head">
+        <div><div class="eyebrow">STORY PATH · 文章架構</div><h2>一篇小故事，四步走</h2></div>
+        <p>五格先蒐集材料，四步再把材料排成文章。</p>
+      </div>
+      <div class="steps">
+        <article class="step"><b>01　起因・帶入</b><p>時間、地點、人物先出場，讓讀者知道這一味從哪裡開始。</p></article>
+        <article class="step"><b>02　經過・特寫</b><p>挑兩三種感官細節：顏色、香氣、聲音、溫度或口感。</p></article>
+        <article class="step"><b>03　感受・轉折</b><p>寫一件小事，還有你當時的反應或想法變化。</p></article>
+        <article class="step"><b>04　收尾・回味</b><p>把味道連回家人、回憶或家鄉，寫下它為什麼特別。</p></article>
+      </div>
+    </section>
+
+    <footer>
+      <span><strong>小提醒：</strong>範例是寫作示範，請換成自己熟悉的食物與感受。</span>
+      <span>草稿只存在這台裝置的瀏覽器，不會上傳。</span>
+    </footer>
+  </main>
+
+  <script>
+    "use strict";
+    const KEY = "ch-home-flavour-five-card-v1";
+    const FIELDS = [
+      { key: "food", label: "描寫對象", hint: "選一樣你真的吃過或熟悉的台灣小吃。", placeholder: "例如：蚵仔煎", chips: ["臭豆腐", "蚵仔煎", "鳳梨酥", "我想寫的食物"] },
+      { key: "look", label: "外觀", hint: "顏色、形狀、大小、配料，看起來像什麼？", placeholder: "例如：外皮金黃，旁邊有翠綠的青菜。", chips: ["金黃色", "熱氣冒出來", "整齊排好", "配上酸甜醬汁"] },
+      { key: "feature", label: "特色", hint: "氣味、聲音、溫度、口感，挑兩三個最有印象的。", placeholder: "例如：鍋子滋滋作響，吃起來外酥內軟。", chips: ["香氣飄過來", "滋滋作響", "外酥內軟", "酸酸甜甜"] },
+      { key: "experience", label: "相關經驗", hint: "哪一天、在哪裡、和誰一起？發生了什麼事？", placeholder: "例如：星期六晚上，我和爸爸在夜市第一次點了這道小吃。", chips: ["有一次", "和家人一起", "我先聞到", "我咬下第一口"] },
+      { key: "thought", label: "聯想與感受", hint: "這個味道讓你想起誰、哪段回憶，或什麼心情？", placeholder: "例如：它讓我想起和家人逛夜市的快樂時光。", chips: ["讓我想起", "我原本以為", "沒想到", "每次想起"] }
+    ];
+    const EXAMPLES = [
+      {
+        name: "夜市裡的臭豆腐", subtitle: "從「不敢靠近」到「想再吃一口」",
+        cells: [
+          ["描寫對象", "夜市裡的臭豆腐"],
+          ["外觀", "外皮金黃酥脆，裡面軟軟嫩嫩，旁邊配著酸甜泡菜。"],
+          ["特色", "炸的時候發出「滋滋」聲；氣味很特別，入口後卻有豆香。"],
+          ["相關經驗", "星期六晚上和家人逛夜市，媽媽問我要不要試試看，我捏著鼻子點了點頭。"],
+          ["聯想與感受", "味道比想像中好，讓我想起和家人逛夜市的快樂時光。"]
+        ],
+        story: [
+          "星期六晚上，我和家人到夜市散步。遠遠地，我聞到一股特別的味道，原來是有人正在炸臭豆腐。媽媽問我要不要試試看，我捏著鼻子，點了點頭。",
+          "臭豆腐放進油鍋後，發出「滋滋」的聲音。炸好以後，外皮變得金黃酥脆，裡面卻軟軟嫩嫩的。老闆放上酸甜的泡菜，我咬了一小口，先吃到酥脆，再嚐到豆腐的香味。",
+          "我本來以為臭豆腐一定很難吃，沒想到味道比想像中好。它聞起來很特別，吃起來卻讓人回味。下次到夜市，我還想再買一份，和家人分享這份難忘的台灣味。"
+        ],
+        tip: "用一個小小的心情轉變，讓食物變成故事。"
+      },
+      {
+        name: "熱騰騰的蚵仔煎", subtitle: "把煎台上的聲音和香氣寫出來",
+        cells: [
+          ["描寫對象", "夜市裡的蚵仔煎"],
+          ["外觀", "金黃的蛋包著青菜和蚵仔，旁邊有一層軟軟的粉皮。"],
+          ["特色", "鍋子「滋滋」作響，蛋香、菜的清甜和蚵仔的鮮味混在一起。"],
+          ["相關經驗", "有一次和爸爸到夜市吃晚餐，我看著老闆把材料放進鍋裡，再淋上粉漿。"],
+          ["聯想與感受", "和爸爸逛夜市的快樂時光，總和熱騰騰的香味一起回來。"]
+        ],
+        story: [
+          "有一次，我和爸爸到夜市吃晚餐。走到小吃攤前，我看見老闆把蚵仔、青菜和蛋放進鍋裡，接著淋上粉漿。鍋子立刻傳來「滋滋」的聲音，香味也飄了過來。",
+          "不一會兒，蚵仔煎就端上桌了。金黃的蛋包著青菜和蚵仔，旁邊還有一層軟軟的粉皮。我先吹了吹熱氣，再沾一點甜甜的醬汁。咬下去時，有蛋香、菜的清甜，還有蚵仔鮮鮮的味道。",
+          "爸爸笑著問我好不好吃，我一邊點頭，一邊把最後一口也吃光。每次想起那股熱騰騰的香味，我就想起和爸爸逛夜市的快樂時光。"
+        ],
+        tip: "不只寫「好吃」，把一口裡的不同味道分開來描寫。"
+      },
+      {
+        name: "一口鳳梨酥", subtitle: "讓點心帶出家人分享的溫度",
+        cells: [
+          ["描寫對象", "放學後和家人分享的鳳梨酥"],
+          ["外觀", "金黃色的小點心整整齊齊地排在盒子裡。"],
+          ["特色", "外皮酥酥的，鳳梨餡酸酸甜甜，越嚼越有果香。"],
+          ["相關經驗", "放學回家時，媽媽帶回一盒鳳梨酥，還泡茶和我們一起慢慢品嘗。"],
+          ["聯想與感受", "一塊小點心讓平常的午後變得特別，也讓我感到溫暖。"]
+        ],
+        story: [
+          "放學回家時，桌上放著一盒鳳梨酥，是媽媽帶回來和我們分享的。我打開盒子，聞到淡淡的奶香，金黃色的小點心整整齊齊地排在裡面。",
+          "我拿起一個，輕輕咬下去，外皮酥酥的，立刻掉下幾片碎屑；裡面的鳳梨餡酸酸甜甜，越嚼越有果香。媽媽泡了一壺茶，我們坐在桌邊慢慢品嘗，窗外的雨聲也變得柔和起來。",
+          "小小一塊鳳梨酥，讓平常的放學午後變得特別。它不只是好吃的點心，也讓我感受到家人一起分享的溫暖。"
+        ],
+        tip: "用最後的感受，把食物和家人、回憶連在一起。"
+      }
+    ];
+    const panel = document.getElementById("panel");
+    const tabs = Array.from(document.querySelectorAll(".tab"));
+    let draft = readDraft();
+    let activeField = "look";
+
+    function readDraft() {
+      try { return JSON.parse(localStorage.getItem(KEY) || "{}"); }
+      catch (_) { return {}; }
+    }
+    function storeDraft() {
+      try {
+        localStorage.setItem(KEY, JSON.stringify(draft));
+        const status = document.getElementById("save-status");
+        if (status) status.textContent = "草稿已保存在這台裝置";
+      } catch (_) {
+        const status = document.getElementById("save-status");
+        if (status) status.textContent = "瀏覽器未開放本機儲存，請下載文字備份";
+      }
+    }
+    function node(tag, cls, text) {
+      const item = document.createElement(tag);
+      if (cls) item.className = cls;
+      if (text !== undefined) item.textContent = text;
+      return item;
+    }
+    function setTab(index, writing) {
+      tabs.forEach((tab, i) => {
+        const selected = writing ? tab.dataset.write === "true" : Number(tab.dataset.index) === index;
+        tab.setAttribute("aria-selected", selected ? "true" : "false");
+        tab.tabIndex = selected ? 0 : -1;
+      });
+      document.getElementById("panel").setAttribute("aria-labelledby", writing ? "tab-write" : "tab-" + index);
+    }
+    function renderExample(index) {
+      setTab(index, false);
+      const item = EXAMPLES[index];
+      panel.replaceChildren();
+      const sheet = node("article", "sheet");
+      const inner = node("div", "sheet-inner");
+      const head = node("div", "example-head");
+      const heading = node("div");
+      heading.append(node("div", "kicker", "五格觀察 · 範例 0" + (index + 1)));
+      heading.append(node("h2", "", item.name));
+      heading.append(node("p", "subhead", item.subtitle));
+      head.append(heading, node("div", "number", "0" + (index + 1)));
+      inner.append(head);
+
+      const grid = node("div", "five-grid");
+      item.cells.forEach((cell, i) => {
+        const box = node("section", "cell" + (i === 3 ? " wide" : ""));
+        const label = node("div", "cell-label");
+        label.append(node("span", "", String(i + 1)), document.createTextNode(cell[0]));
+        box.append(label, node("p", "", cell[1]));
+        grid.append(box);
+      });
+      inner.append(grid);
+
+      const storyBlock = node("div", "story-block");
+      const storyLabel = node("div", "story-label", "把五格接成故事");
+      storyLabel.append(node("small", "", item.tip));
+      const story = node("div", "story");
+      item.story.forEach(paragraph => story.append(node("p", "", paragraph)));
+      storyBlock.append(storyLabel, story);
+      inner.append(storyBlock);
+
+      const actions = node("div", "example-actions");
+      const use = node("button", "btn", "用這個例子開始寫");
+      use.type = "button";
+      use.addEventListener("click", () => loadExample(index));
+      actions.append(use);
+      inner.append(actions);
+      sheet.append(inner);
+      panel.append(sheet);
+    }
+    function loadExample(index) {
+      const hasDraft = FIELDS.some(field => (draft[field.key] || "").trim());
+      if (hasDraft && !window.confirm("載入範例會取代目前五格草稿，確定繼續嗎？")) return;
+      draft = {
+        food: EXAMPLES[index].cells[0][1],
+        look: EXAMPLES[index].cells[1][1],
+        feature: EXAMPLES[index].cells[2][1],
+        experience: EXAMPLES[index].cells[3][1],
+        thought: EXAMPLES[index].cells[4][1]
+      };
+      storeDraft();
+      renderWrite();
+      document.getElementById("field-food").focus();
+    }
+    function appendChip(key, text) {
+      const current = (draft[key] || "").trim();
+      draft[key] = current ? current + "，" + text : text;
+      renderWrite();
+      const input = document.getElementById("field-" + key);
+      input.focus();
+      input.setSelectionRange(input.value.length, input.value.length);
+      storeDraft();
+    }
+    function compose() {
+      const val = key => (draft[key] || "").trim();
+      const food = val("food");
+      const look = val("look");
+      const feature = val("feature");
+      const experience = val("experience");
+      const thought = val("thought");
+      const paragraphs = [];
+      if (food || look) paragraphs.push((food ? "我想介紹的是「" + food + "」。" : "") + (look ? "它的外觀是" + look.replace(/[。！!？?]+$/, "") + "。" : ""));
+      if (feature || experience) paragraphs.push((feature ? "它最特別的是" + feature.replace(/[。！!？?]+$/, "") + "。" : "") + experience);
+      if (thought) paragraphs.push("這份味道讓我想起" + thought.replace(/[。！!？?]+$/, "") + "。");
+      return paragraphs.join("\n\n");
+    }
+    function renderWrite() {
+      setTab(-1, true);
+      panel.replaceChildren();
+      const sheet = node("article", "sheet");
+      const inner = node("div", "sheet-inner");
+      const head = node("div", "example-head");
+      const heading = node("div");
+      heading.append(node("div", "kicker", "換你試試 · 我的寫作草稿"));
+      heading.append(node("h2", "", "把一味，寫成一篇小故事"));
+      heading.append(node("p", "subhead", "先寫詞語或句子都可以；每格抓一兩個重點，別急著一次寫完。"));
+      head.append(heading, node("div", "number", "✎"));
+      inner.append(head);
+
+      const intro = node("div", "write-intro");
+      intro.append(node("b", "", "五格提示"));
+      intro.append(node("p", "", "先選食物，再記外觀和特色；接著回想一次經驗，最後寫下它帶給你的聯想。範例故事不一定是你的經驗，請改成自己的。"));
+      inner.append(intro);
+
+      const grid = node("div", "form-grid");
+      FIELDS.forEach((field, i) => {
+        const wrap = node("div", "field" + (i === 3 ? " wide" : ""));
+        const label = node("label", "", "");
+        label.htmlFor = "field-" + field.key;
+        label.append(node("span", "", String(i + 1)), document.createTextNode(field.label));
+        wrap.append(label, node("small", "", field.hint));
+        const control = i === 0 ? document.createElement("input") : document.createElement("textarea");
+        control.id = "field-" + field.key;
+        control.placeholder = field.placeholder;
+        control.value = draft[field.key] || "";
+        control.setAttribute("aria-label", field.label);
+        control.addEventListener("focus", () => { activeField = field.key; });
+        control.addEventListener("input", () => { draft[field.key] = control.value; storeDraft(); });
+        wrap.append(control);
+        const chips = node("div", "chips");
+        field.chips.forEach(text => {
+          const chip = node("button", "chip", "+ " + text);
+          chip.type = "button";
+          chip.addEventListener("click", () => appendChip(field.key, text));
+          chips.append(chip);
+        });
+        wrap.append(chips);
+        grid.append(wrap);
+      });
+      inner.append(grid);
+
+      const actions = node("div", "actions");
+      const composeButton = node("button", "btn", "把五格接成短文");
+      composeButton.type = "button";
+      composeButton.addEventListener("click", () => {
+        const output = document.getElementById("output");
+        const result = compose();
+        output.textContent = result || "先填一兩格，再按「把五格接成短文」。";
+        const count = result.replace(/\s/g, "").length;
+        document.getElementById("count").textContent = result ? count + " 字（不含空白）" : "";
+      });
+      const copyButton = node("button", "btn secondary", "複製短文");
+      copyButton.type = "button";
+      copyButton.addEventListener("click", async () => {
+        const text = compose();
+        if (!text) { document.getElementById("output").textContent = "先填一兩格，再複製短文。"; return; }
+        try {
+          await navigator.clipboard.writeText(text);
+          copyButton.textContent = "已複製";
+          window.setTimeout(() => { copyButton.textContent = "複製短文"; }, 1500);
+        } catch (_) {
+          document.getElementById("output").textContent = text + "\n\n（瀏覽器未開放剪貼簿，請手動選取複製。）";
+        }
+      });
+      const downloadButton = node("button", "btn secondary", "下載文字檔");
+      downloadButton.type = "button";
+      downloadButton.addEventListener("click", () => {
+        const text = compose();
+        if (!text) { document.getElementById("output").textContent = "先填一兩格，再下載短文。"; return; }
+        const blob = new Blob([text], { type: "text/plain;charset=utf-8" });
+        const link = document.createElement("a");
+        link.href = URL.createObjectURL(blob);
+        link.download = "我的家鄉味作文.txt";
+        link.click();
+        URL.revokeObjectURL(link.href);
+      });
+      const clearButton = node("button", "btn warn", "清空草稿");
+      clearButton.type = "button";
+      clearButton.addEventListener("click", () => {
+        if (!window.confirm("確定清空五格草稿嗎？")) return;
+        draft = {};
+        storeDraft();
+        renderWrite();
+      });
+      const status = node("span", "save-status", "草稿會自動保存在這台裝置");
+      status.id = "save-status";
+      actions.append(composeButton, copyButton, downloadButton, clearButton, status);
+      inner.append(actions);
+
+      const result = node("section", "result");
+      const resultHead = node("div", "result-head");
+      resultHead.append(node("h3", "", "我的短文"), node("span", "count", ""));
+      const output = node("p", "", "按下「把五格接成短文」，這裡就會出現你的草稿。");
+      output.id = "output";
+      result.append(resultHead, output, node("p", "privacy", "小提醒：文字只存在目前瀏覽器的本機儲存空間。若使用公用電腦，完成後請清空草稿。"));
+      resultHead.lastChild.id = "count";
+      inner.append(result);
+      sheet.append(inner);
+      panel.append(sheet);
+    }
+
+    tabs.forEach((tab, index) => {
+      tab.addEventListener("click", () => tab.dataset.write === "true" ? renderWrite() : renderExample(Number(tab.dataset.index)));
+      tab.addEventListener("keydown", event => {
+        const current = tabs.indexOf(tab);
+        let next = current;
+        if (event.key === "ArrowRight") next = (current + 1) % tabs.length;
+        else if (event.key === "ArrowLeft") next = (current - 1 + tabs.length) % tabs.length;
+        else if (event.key === "Home") next = 0;
+        else if (event.key === "End") next = tabs.length - 1;
+        else return;
+        event.preventDefault();
+        tabs[next].focus();
+        tabs[next].click();
+      });
+    });
+    renderExample(0);
+  </script>
+</body>
+</html>
