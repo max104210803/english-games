@@ -1,0 +1,412 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>神祕的天空闖關</title>
+<!-- 五上自然 神祕的天空 闖關（網站版，2026-11-21）：只有模擬器、遊戲與自編題。由 build_nat_quest.py 產生。 -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&family=Noto+Serif+TC:wght@700;900&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#f3f6fa; --paper:#ffffff; --ink:#1f2a37; --muted:#5f6b7a; --line:#dbe3ec;
+  --red:#c8463d; --red-soft:#fbe9e6; --yellow:#e8b730; --yellow-soft:#fdf3d4;
+  --blue:#2f6fbf; --blue-soft:#e4eefa; --green:#2f8a57; --green-soft:#e3f3e9;
+  --purple:#7a54b8; --purple-soft:#efe8fa;
+  --shadow:0 2px 0 rgba(31,42,55,.06), 0 8px 24px rgba(31,42,55,.06);
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#141a21; --paper:#1d252f; --ink:#e8eef5; --muted:#a3b0bf; --line:#334050;
+    --red:#ec7b70; --red-soft:#3b2422; --yellow:#e9c04e; --yellow-soft:#3a3220;
+    --blue:#7eaee8; --blue-soft:#1d2c40; --green:#5cc08a; --green-soft:#1b3326;
+    --purple:#b49be2; --purple-soft:#2c2440; --shadow:0 2px 0 rgba(0,0,0,.3);
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#141a21; --paper:#1d252f; --ink:#e8eef5; --muted:#a3b0bf; --line:#334050;
+  --red:#ec7b70; --red-soft:#3b2422; --yellow:#e9c04e; --yellow-soft:#3a3220;
+  --blue:#7eaee8; --blue-soft:#1d2c40; --green:#5cc08a; --green-soft:#1b3326;
+  --purple:#b49be2; --purple-soft:#2c2440; --shadow:0 2px 0 rgba(0,0,0,.3);
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:17px/1.8 "Noto Sans TC","Microsoft JhengHei","PingFang TC",sans-serif}
+.wrap{max-width:860px;margin:0 auto;padding:20px 16px 80px}
+header h1{font-family:"Noto Serif TC",serif;font-weight:900;font-size:clamp(26px,5vw,38px);margin:8px 0 2px}
+header p{margin:0;color:var(--muted);font-size:15px}
+.topbar{display:flex;justify-content:space-between;align-items:center;gap:8px}
+.theme{border:2px solid var(--line);background:var(--paper);color:var(--ink);border-radius:10px;padding:4px 10px;font:inherit;font-size:14px;cursor:pointer}
+nav{display:flex;gap:8px;flex-wrap:wrap;margin:18px 0 22px;position:sticky;top:0;background:var(--bg);padding:10px 0;z-index:5;border-bottom:1px solid var(--line)}
+nav button{flex:1 1 auto;min-width:96px;border:2px solid var(--line);background:var(--paper);color:var(--ink);border-radius:12px;padding:8px 10px;font:inherit;font-size:15px;cursor:pointer}
+nav button .st{color:var(--line);margin-left:4px}
+nav button.done .st{color:var(--yellow)}
+nav button.on{border-color:var(--blue);box-shadow:inset 0 -3px 0 var(--blue)}
+section.stage{display:none}
+section.stage.on{display:block;animation:fade .25s ease}
+@keyframes fade{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+.badge{display:inline-block;background:var(--blue);color:#fff;border-radius:999px;padding:2px 12px;font-size:14px;font-weight:700}
+.badge.ext{background:var(--purple)}
+h2{font-family:"Noto Serif TC",serif;font-size:clamp(24px,4.4vw,32px);margin:8px 0 4px}
+h3{font-size:19px;margin:0 0 8px}
+img.hero{display:block;width:100%;max-width:560px;height:auto;margin:10px auto 14px;border-radius:18px;box-shadow:var(--shadow)}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]) img.hero{filter:brightness(.88)}}
+:root[data-theme="dark"] img.hero{filter:brightness(.88)}
+.card{background:var(--paper);border:1px solid var(--line);border-radius:16px;padding:18px;margin:16px 0;box-shadow:var(--shadow)}
+.motto{background:var(--yellow-soft);border-left:6px solid var(--yellow);border-radius:12px;padding:12px 16px;font-weight:700}
+.small{font-size:14px;color:var(--muted)}
+.q{margin:6px 0 4px}
+.q .num{font-weight:700;color:var(--blue);margin-right:6px}
+.q .stem{font-weight:500;margin-bottom:8px}
+.q .zh{font-size:14px;color:var(--muted);margin:-4px 0 8px}
+.opts{display:flex;flex-direction:column;gap:8px}
+.opts.row{flex-direction:row;flex-wrap:wrap}
+.opt{text-align:left;border:2px solid var(--line);background:var(--paper);color:var(--ink);border-radius:12px;padding:10px 14px;font:inherit;cursor:pointer;transition:transform .1s}
+.opt:hover{border-color:var(--blue)}
+.opt.right{border-color:var(--green);background:var(--green-soft)}
+.opt.wrong{border-color:var(--red);background:var(--red-soft);animation:shake .3s}
+.opt:disabled{cursor:default}
+@keyframes shake{25%{transform:translateX(-4px)}75%{transform:translateX(4px)}}
+.fb{margin-top:8px;font-size:15px;border-radius:10px;padding:8px 12px;display:none}
+.fb.show{display:block}
+.fb.ok{background:var(--green-soft)} .fb.no{background:var(--red-soft)}
+.para{display:block;margin-top:6px;font-size:14px;background:var(--blue-soft);border-radius:8px;padding:6px 10px}
+.btn{border:none;background:var(--blue);color:#fff;border-radius:10px;padding:8px 16px;font:inherit;font-weight:700;cursor:pointer;margin:8px 8px 0 0}
+.btn.ghost{background:transparent;color:var(--ink);border:2px solid var(--line)}
+.btn:disabled{opacity:.45;cursor:not-allowed}
+.pills{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
+.pill{font:inherit;font-size:14px;border-radius:999px;padding:3px 12px;background:var(--paper);color:var(--muted);border:1.5px solid var(--line);cursor:pointer}
+.pill:hover{border-color:var(--blue);color:var(--ink)}
+.pill.sel{background:var(--blue-soft);border-color:var(--blue);color:var(--ink)}
+.tipbox{display:none;margin-top:10px;border-radius:12px;padding:10px 14px;background:var(--blue-soft);font-size:15px;border-left:5px solid var(--blue)}
+.tipbox.show{display:block;animation:fade .2s ease}
+.reveal{display:none;margin-top:10px;background:var(--green-soft);border-radius:12px;padding:10px 14px}
+.reveal.show{display:block;animation:fade .2s ease}
+.clear{display:none;text-align:center;background:var(--yellow-soft);border:2px solid var(--yellow);border-radius:16px;padding:16px;margin:20px 0;font-weight:700;font-size:18px}
+.clear.show{display:block;animation:pop .35s ease}
+@keyframes pop{0%{transform:scale(.9)}70%{transform:scale(1.03)}100%{transform:scale(1)}}
+.score{font-size:14px;color:var(--muted);text-align:right}
+/* Watch / Warning */
+.sort{display:flex;gap:8px;flex-wrap:wrap;margin-top:6px}
+.sort .opt{flex:1 1 140px;text-align:center;font-weight:700}
+.wbox{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.wbox > div{border-radius:12px;padding:12px 14px}
+.wbox .w1{background:var(--yellow-soft);border-left:6px solid var(--yellow)}
+.wbox .w2{background:var(--red-soft);border-left:6px solid var(--red)}
+@media (max-width:600px){.wbox{grid-template-columns:1fr} nav{position:static}}
+/* 點線索 */
+.sent{line-height:2.3;font-size:18px}
+.sent .ch{cursor:pointer;border-radius:6px;padding:2px 3px;border:1.5px dashed transparent;transition:background .15s}
+.sent .ch:hover{border-color:var(--blue);background:var(--blue-soft)}
+.sent .ch.hit{background:var(--green-soft);border:1.5px solid var(--green)}
+.sent .ch.miss{background:var(--red-soft);border:1.5px solid var(--red)}
+.sent u{text-decoration-thickness:2px;font-weight:700}
+textarea{width:100%;min-height:110px;border:2px solid var(--line);border-radius:12px;padding:12px;font:inherit;background:var(--paper);color:var(--ink);resize:vertical}
+textarea:focus{outline:none;border-color:var(--blue)}
+label.chk{display:block;margin:4px 0;cursor:pointer}
+.starter{font-size:14px;color:var(--muted);margin:4px 0 8px}
+.starter code{background:var(--blue-soft);color:var(--ink);border-radius:6px;padding:1px 6px;font-family:inherit}
+table.vt{width:100%;border-collapse:collapse;font-size:15px}
+table.vt td,table.vt th{border-bottom:1px solid var(--line);padding:6px 8px;text-align:left;vertical-align:top}
+table.vt th{color:var(--muted);font-weight:500}
+footer{margin-top:30px;font-size:13px;color:var(--muted)}
+/* 拖拉分類框 */
+.bins{display:grid;grid-template-columns:1fr 1fr;gap:10px;position:sticky;z-index:4;background:var(--bg);padding:8px 0}
+.bin{border:3px dashed var(--line);border-radius:14px;padding:10px;text-align:center;font-weight:700;transition:transform .15s,background .15s}
+.bin small{font-weight:400;color:var(--muted)}
+.bin[data-v="Watch"]{background:var(--yellow-soft);border-color:var(--yellow)}
+.bin[data-v="Warning"]{background:var(--red-soft);border-color:var(--red)}
+.bin.over{transform:scale(1.04);border-style:solid}
+.grip{display:inline-block;touch-action:none;-webkit-user-select:none;user-select:none;cursor:grab;background:var(--blue-soft);border:1.5px solid var(--blue);border-radius:8px;padding:0 8px;margin-right:6px;font-size:14px}
+.dragghost{position:fixed;z-index:60;pointer-events:none;max-width:320px;background:var(--paper);border:2px solid var(--blue);border-radius:12px;padding:8px 12px;font-size:14px;box-shadow:0 10px 24px rgba(0,0,0,.25);transform:rotate(-2deg)}
+.card.dragging{opacity:.4}
+/* 進度與鼓勵 */
+.pbar{position:relative;height:22px;background:var(--line);border-radius:999px;margin:6px 0 10px;overflow:hidden}
+.pbar i{position:absolute;inset:0 auto 0 0;width:0;background:linear-gradient(90deg,var(--green),var(--yellow));border-radius:999px;transition:width .5s ease}
+.pbar span{position:relative;display:block;text-align:center;font-size:13px;line-height:22px;font-weight:700;color:var(--ink)}
+.toast{position:fixed;left:50%;bottom:28px;transform:translateX(-50%);z-index:70;background:var(--ink);color:var(--bg);padding:10px 20px;border-radius:999px;font-weight:700;box-shadow:var(--shadow);transition:opacity .4s}
+.toast.bye{opacity:0}
+.celebrate{position:fixed;inset:0;z-index:80;background:rgba(10,15,25,.55);display:flex;align-items:center;justify-content:center;padding:16px;animation:fade .25s ease}
+.cbox{background:var(--paper);border-radius:22px;max-width:440px;width:100%;padding:24px 22px;text-align:center;box-shadow:0 20px 50px rgba(0,0,0,.3);animation:pop .4s ease}
+.cemo{font-size:64px;line-height:1.1;animation:bounce 1s ease infinite alternate}
+@keyframes bounce{to{transform:translateY(-8px) rotate(-6deg)}}
+.ctitle{font-family:"Noto Serif TC",serif;font-weight:900;font-size:24px;margin:6px 0}
+.cstars{font-size:38px;color:var(--yellow);letter-spacing:4px}
+.cstars span{display:inline-block;animation:pop .45s ease both}
+.cstars .dim{color:var(--line);animation:none}
+.cen{font-size:22px;font-weight:700;color:var(--blue);margin-top:4px}
+.czh{margin:2px 0 10px}
+.cstat{font-size:14px;color:var(--muted);margin-bottom:8px}
+.crest{background:var(--yellow-soft);border-radius:10px;padding:8px 12px;font-size:14px;margin-bottom:6px}
+canvas.confetti{position:fixed;inset:0;z-index:90;pointer-events:none}
+
+.sim{background:var(--paper);border:2px solid var(--line);border-radius:16px;padding:14px;margin:0 0 16px;box-shadow:var(--shadow)}
+.simrow{display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin:4px 0}
+.simrow .lab{font-weight:700;min-width:44px}
+.simrow input[type=range]{flex:1;min-width:160px;accent-color:var(--blue)}
+.chip{border:2px solid var(--line);background:var(--bg);color:var(--ink);border-radius:999px;padding:2px 12px;font:inherit;font-size:15px;cursor:pointer}
+.chip.on{background:var(--blue);border-color:var(--blue);color:#fff}
+.views{display:grid;grid-template-columns:3fr 2fr;gap:10px;margin-top:8px}
+.views svg{width:100%;height:auto;background:var(--bg);border-radius:12px}
+.vcap{font-size:13px;color:var(--muted);text-align:center}
+.readout{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:6px;margin-top:10px}
+.readout div{background:var(--bg);border-radius:10px;padding:4px 10px;font-size:15px}
+.readout b{color:var(--blue)}
+.pl{display:inline-flex;align-items:center;gap:6px;border:2px solid var(--line);background:var(--bg);color:var(--ink);border-radius:999px;padding:3px 12px 3px 4px;margin:4px;font:inherit;font-size:16px;cursor:pointer}
+.pl i{display:inline-block;border-radius:50%}
+.pl.used{opacity:.25;pointer-events:none}
+.pl.shake{animation:shk .35s}
+@keyframes shk{25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
+.slots{display:flex;flex-wrap:wrap;gap:6px;margin:8px 0;align-items:center}
+.slot{min-width:64px;min-height:36px;border:2px dashed var(--line);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:15px}
+.slot.fill{border-style:solid;border-color:var(--green);background:var(--green-soft);font-weight:700}
+.gmsg{min-height:1.8em;font-weight:700}
+.big{font-size:22px;font-weight:900;margin:6px 0}
+@media (max-width:640px){.views{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header>
+  <div class="topbar">
+    <span class="badge"><a href="../index.html" style="color:inherit;text-decoration:none">← 回學習小站</a></span>
+    <span><button class="theme" id="sndBtn" title="音效開關">🔊</button> <button class="theme" id="themeBtn" title="切換深淺色">🌓</button></span>
+  </div>
+  <h1>神祕的天空闖關</h1>
+  <p>四關：先用太陽模擬器看太陽一年四季怎麼走，再答題；接著幫八大行星排隊、分類，最後答題。答錯可以再選，「第一次就答對」才算分。</p>
+</header>
+<nav id="nav"></nav>
+<div id="stages"></div>
+<footer>
+  題目與模擬器為自編內容，地點以北緯 23.5 度計算。進度存在這台電腦的瀏覽器。
+  <button class="btn ghost" id="resetBtn" style="font-size:13px;padding:2px 10px">清除進度</button>
+</footer>
+</div>
+<script>
+(function(){
+"use strict";
+var STAGES=[{"name": "太陽模擬器", "kind": "sun", "tag": "動手觀察", "widget": "<div class=\"sim\" id=\"sunsim\">\n  <div class=\"simrow\"><span class=\"lab\">日期</span>\n    <button class=\"chip\" data-day=\"80\">春分</button><button class=\"chip\" data-day=\"172\">夏至</button>\n    <button class=\"chip\" data-day=\"266\">秋分</button><button class=\"chip\" data-day=\"356\">冬至</button>\n    <input type=\"range\" id=\"dayR\" min=\"1\" max=\"365\" step=\"1\" value=\"172\"><span id=\"dayL\" style=\"min-width:80px\"></span></div>\n  <div class=\"simrow\"><span class=\"lab\">時間</span>\n    <input type=\"range\" id=\"hourR\" min=\"5\" max=\"19\" step=\"0.25\" value=\"9\"><span id=\"hourL\" style=\"min-width:56px\"></span></div>\n  <div class=\"views\">\n    <div><svg id=\"dome\" viewBox=\"-1.45 -1.12 2.9 1.82\"></svg><div class=\"vcap\">圓頂帳篷：北在左、南在右、東在前；灰虛線＝夏至、春秋分、冬至的路線</div></div>\n    <div><svg id=\"map\" viewBox=\"-1.5 -1.5 3 3\"></svg><div class=\"vcap\">從上往下看竿子：上北、右東</div></div>\n  </div>\n  <div class=\"readout\" id=\"sunRead\"></div>\n  <div class=\"vcap\">地點：北緯 23.5 度（嘉義）。時間用太陽時，和手錶可能差幾分鐘。</div>\n</div>", "list": [{"q": "按「冬至」，時間拉到 12:00。太陽高度角大約幾度？", "o": ["約 90 度", "約 66 度", "約 43 度", "約 20 度"], "a": 2, "e": "冬至中午太陽<b>最低</b>，約 43 度；夏至中午 90 度、春分秋分約 66 度。"}, {"q": "按「夏至」，看「日出方位」那一格。夏至的太陽從哪裡升起？", "o": ["東偏北", "正東", "東偏南", "正南"], "a": 0, "e": "夏至從<b>東偏北</b>升起、西偏北落下。"}, {"q": "按「春分」，看日出和日落方位。春分的太陽怎麼走？", "o": ["東偏北升、西偏北落", "正東升、正西落", "東偏南升、西偏南落", "正南升、正北落"], "a": 1, "e": "春分、秋分：<b>正東升、正西落</b>，白天和黑夜差不多一樣長。"}, {"q": "按「冬至」，時間拉到 10:00。竿子的影子指向哪一個方位？", "o": ["東南", "西北", "東北", "西南"], "a": 1, "e": "這時太陽在<b>東南</b>，影子在相反的<b>西北</b>。"}, {"q": "時間停在 12:00，依序按「夏至 → 春分 → 冬至」。影子長度怎麼變？", "o": ["越來越短", "越來越長", "都一樣長", "先變長再變短"], "a": 1, "e": "太陽越來越低，影子就<b>越來越長</b>：夏高冬低。"}, {"q": "按「夏至」，把時間從早上拖到傍晚。影子什麼時候最短？", "o": ["早上 6 時", "上午 9 時", "中午 12 時", "傍晚 18 時"], "a": 2, "e": "中午太陽最高，影子<b>最短</b>；早晚太陽低，影子很長。"}], "motto": "拖拖看：日期換季節、時間從早到晚，看太陽和影子怎麼跑。", "emo": "🧭", "cheer": ["模擬器達人！", "你親眼看到太陽一年四季怎麼走。"]}, {"name": "太陽與四季", "tag": "選擇題", "list": [{"q": "中午時，太陽高度角最大的季節是哪一個？", "o": ["春季", "夏季", "秋季", "冬季"], "a": 1, "e": "夏季中午太陽最高，高度角最大，影子也最短。", "p": "夏高冬低，不要記反"}, {"q": "從早上到中午，太陽高度角通常怎麼變化？", "o": ["越來越小", "先變大再變小", "越來越大", "完全不會改變"], "a": 2, "e": "從日出到中午，太陽越升越高，高度角就越來越大。", "p": "中午最大，之後才慢慢變小"}, {"q": "嘉義在夏至中午時，太陽高度角大約是多少？", "o": ["90 度，剛好在頭頂上", "66 度", "約 43 度", "0 度，貼在地平線上"], "a": 0, "e": "嘉義位在北回歸線上，夏至中午太陽直射，高度角是 90 度。", "p": "冬至中午只有 43 度"}, {"q": "太陽在東南方的時候，影子會落在哪一個方位？", "o": ["東南方", "西北方", "西南方", "正北方"], "a": 1, "e": "影子和太陽的方位相反，太陽在東南，影子就落在西北。", "p": "影子和太陽唱反調"}, {"q": "小明上午站在操場，看到自己的影子落在西方，太陽大約在哪一方？", "o": ["北方", "南方", "西方", "東方"], "a": 3, "e": "影子在西方，太陽就在相反的東方，所以當時是上午。", "p": "影子在哪邊，太陽就在反方向"}, {"q": "一年之中，太陽從最偏北的方位升起是哪一天？", "o": ["春分", "秋分", "夏至", "冬至"], "a": 2, "e": "夏至日出東偏北、日落西偏北，是全年最偏北的時候。", "p": "夏北冬南，想想太陽偏哪邊"}, {"q": "冬至那天的太陽，從哪一個方位升起？", "o": ["東偏南", "東偏北", "正東", "正南方"], "a": 0, "e": "冬至日出東偏南、日落西偏南，是全年最偏南的時候。", "p": "夏北冬南，方位不要顛倒"}, {"q": "一年中，白晝時間最長的是哪一天？", "o": ["春分", "秋分", "冬至", "夏至"], "a": 3, "e": "夏至的白天最長、夜晚最短，以嘉義為例大約 13.5 小時。", "p": "冬至剛好相反，白天最短"}, {"q": "冬季時，白天和夜晚的長短有什麼特色？", "o": ["晝夜一樣長", "晝短夜長", "晝長夜短", "白天比夜晚長很多"], "a": 1, "e": "冬天日出較晚、日落較早，所以白天短、夜晚長。", "p": "夏天剛好反過來"}, {"q": "地球上有四季，主要是因為下列哪一個原因？", "o": ["地球每天自轉一圈", "月球繞著地球運行", "地軸傾斜，陽光直射的緯度不同", "地球離太陽有時近有時遠"], "a": 2, "e": "地球公轉時地軸傾斜，陽光直射的緯度改變，才有四季。", "p": "距離遠近不是四季的主因"}, {"q": "冬至時，地球離太陽是比較近還是比較遠？", "o": ["比較近，位在近日點", "比較遠，位在遠日點", "和夏至一樣近", "每天都不一樣"], "a": 0, "e": "冬至時地球位在近日點，可見四季不是距離遠近造成的。", "p": "冬天反而離太陽比較近"}, {"q": "二十四節氣是怎麼訂出來的？", "o": ["依月亮的圓缺排出來", "依每天日出的時間排出來", "依星星的亮度排出來", "依地球在公轉軌道上的位置排出來"], "a": 3, "e": "古人依地球在公轉軌道上的位置，把一年分成 24 份。", "p": "節氣看太陽，不看月亮"}, {"q": "關於二十四節氣，下列哪一個說法<b>錯誤</b>？", "o": ["古人依地球在公轉軌道上的位置訂出節氣", "節氣常被用在農業和傳統習俗上", "節氣是依月亮的圓缺訂出來的", "節氣把一年分成 24 份"], "a": 2, "e": "節氣是依地球在公轉軌道上的位置訂的，和月亮圓缺無關。", "p": "節氣跟著地球公轉，不看月亮"}], "motto": "新題：影子和太陽唱反調；四季靠公轉，晝夜靠自轉。", "emo": "🌏", "cheer": ["新題也過關！", "影子、高度角、四季成因都難不倒你。"]}, {"name": "行星排隊與分類", "kind": "planets", "tag": "遊戲", "widget": "<div class=\"sim\" id=\"plsim\">\n  <div class=\"big\">遊戲 1：幫八大行星排隊</div>\n  <div>從<b>離太陽最近</b>的開始，依序點下去。</div>\n  <div class=\"slots\" id=\"slots\"><span style=\"font-size:26px\">☀️</span></div>\n  <div id=\"pool\"></div>\n  <div class=\"gmsg\" id=\"msg1\"></div>\n  <hr style=\"border:0;border-top:2px dashed var(--line);margin:14px 0\">\n  <div class=\"big\">遊戲 2：類地還是類木？</div>\n  <div id=\"sortQ\" class=\"big\" style=\"font-size:20px\"></div>\n  <div><button class=\"btn\" id=\"btnT\">類地行星</button> <button class=\"btn\" id=\"btnJ\">類木行星</button></div>\n  <div class=\"gmsg\" id=\"msg2\"></div>\n</div>", "games": ["siteg0", "siteg1"], "motto": "先幫八大行星排隊，再把它們分成類地、類木兩組。", "emo": "🪐", "cheer": ["行星排隊成功！", "水金地火木土天海，一個都沒排錯。"]}, {"name": "太陽系成員", "tag": "選擇題", "list": [{"q": "太陽為什麼被稱為恆星？", "o": ["因為它在天空中看起來最亮", "因為它自己會發光和發熱", "因為它繞著地球運行", "因為它的體積最大"], "a": 1, "e": "恆星就是本身會發光和發熱的星體，太陽正是這樣。", "p": "亮不等於會自己發光"}, {"q": "夜晚看到的行星會發亮，主要原因是什麼？", "o": ["行星自己會發光", "行星表面有火在燃燒", "行星被閃電照亮", "行星反射太陽的光"], "a": 3, "e": "行星和衛星自己不會發光，看起來亮是因為反射太陽光。", "p": "只有恆星會自己發光"}, {"q": "從太陽往外數，第一顆行星是哪一顆？", "o": ["水星", "金星", "地球", "火星"], "a": 0, "e": "水星離太陽最近，體積也是八大行星中最小的。", "p": "地球是第三顆，不是第一顆"}, {"q": "前四顆行星由近到遠的排列，下列哪一項<b>正確</b>？", "o": ["水星、火星、地球、金星", "水星、地球、金星、火星", "水星、金星、地球、火星", "地球、水星、金星、火星"], "a": 2, "e": "前四顆依序是水星、金星、地球、火星，再往外是木土天海。", "p": "水金地火木土天海"}, {"q": "距離太陽最遠的行星是哪一顆？", "o": ["土星", "海王星", "天王星", "木星"], "a": 1, "e": "海王星位在八大行星的最外圍，表面是藍色。", "p": "天王星也很遠，但海王星更外圈"}, {"q": "八大行星中，體積最大的是哪一顆？", "o": ["地球", "土星", "海王星", "木星"], "a": 3, "e": "木星體積最大，表面有不同顏色的條紋。", "p": "體積第二大的是土星"}, {"q": "八大行星中，表面溫度最高的是哪一顆？", "o": ["金星", "水星", "火星", "地球"], "a": 0, "e": "金星最熱，表面溫度可達 480 ℃，雖然它不是離太陽最近的。", "p": "最近不等於最熱"}, {"q": "有一顆行星表面是橘紅色的，它是哪一顆？", "o": ["金星", "木星", "火星", "水星"], "a": 2, "e": "火星表面是橘紅色，是它最好認的特色。", "p": "木星是彩色條紋，不是橘紅"}, {"q": "八大行星中，最冷的是哪一顆？", "o": ["海王星", "天王星", "土星", "木星"], "a": 1, "e": "天王星最冷，表面是藍綠色。", "p": "最遠的是海王星，最冷的是天王星"}, {"q": "月球是哪一顆行星的衛星？", "o": ["金星", "火星", "水星", "地球"], "a": 3, "e": "月球繞著地球運行，所以月球是地球的衛星。", "p": "衛星繞行星，行星繞太陽"}, {"q": "關於月球，下列哪一個說法<b>正確</b>？", "o": ["月球是地球的衛星", "月球是一顆恆星", "月球自己會發出強光", "月球直接繞著太陽運行"], "a": 0, "e": "月球繞地球運行，是地球的衛星，自己不會發光。", "p": "月球繞的是地球，不是太陽"}, {"q": "類地行星包含下面哪一組？", "o": ["木星、土星、天王星、海王星", "水星、金星、木星、火星", "地球、火星、木星、土星", "水星、金星、地球、火星"], "a": 3, "e": "類地行星是水星、金星、地球、火星，離太陽比較近。", "p": "以火星、木星為界分兩組"}, {"q": "類木行星和類地行星比起來，哪一項特色<b>正確</b>？", "o": ["類木行星的體積比較小", "類木行星的密度比較大", "類木行星沒有固態表面", "類木行星的衛星比較少"], "a": 2, "e": "類木行星體積大、密度小、沒有固態表面，衛星也比較多。", "p": "類地小又密，類木大又疏"}], "motto": "新題：最小最近水星、最大木星、最熱金星、最冷天王星、最遠海王星。", "emo": "🚀", "cheer": ["新題也過關！", "八大行星的特色都記住了。"]}];
+var KEY="nat51-sky-site-v1", prog={};
+try{ prog=JSON.parse(localStorage.getItem(KEY)||"{}")||{}; }catch(e){ prog={}; }
+function save(){ try{ localStorage.setItem(KEY, JSON.stringify(prog)); }catch(e){} }
+prog.ans=prog.ans||{}; prog.first=prog.first||{}; prog.done=prog.done||{};
+function $(id){return document.getElementById(id)}
+function el(html){var d=document.createElement("div"); d.innerHTML=html; return d.firstElementChild}
+var LET="①②③④";
+var AC=null;
+function sfx(kind){
+  if(prog.mute) return;
+  try{
+    AC=AC||new (window.AudioContext||window.webkitAudioContext)();
+    if(AC.state==="suspended") AC.resume();
+    var t=AC.currentTime;
+    function tone(freq,start,dur,type,vol,slide){
+      var o=AC.createOscillator(), g=AC.createGain();
+      o.type=type||"sine"; o.frequency.setValueAtTime(freq,t+start);
+      if(slide) o.frequency.exponentialRampToValueAtTime(slide,t+start+dur);
+      g.gain.setValueAtTime(0.0001,t+start);
+      g.gain.exponentialRampToValueAtTime(vol||0.2,t+start+0.015);
+      g.gain.exponentialRampToValueAtTime(0.0001,t+start+dur);
+      o.connect(g); g.connect(AC.destination); o.start(t+start); o.stop(t+start+dur+0.05);
+    }
+    if(kind==="ok"){ tone(784,0,0.14,"triangle",0.22); tone(1175,0.1,0.28,"triangle",0.22) }
+    else if(kind==="no"){ tone(220,0,0.18,"square",0.07,180); tone(165,0.16,0.26,"square",0.07,130) }
+    else if(kind==="win"){ [523,659,784,1047].forEach(function(f,i){ tone(f,i*0.12,i===3?0.5:0.16,"triangle",0.2) }) }
+  }catch(e){}
+}
+function sndIcon(){ $("sndBtn").textContent=prog.mute?"🔇":"🔊" }
+
+
+
+function buildSun(){
+  var LAT=23.5*Math.PI/180, T=0.5, K=Math.sqrt(1-T*T), NS="http://www.w3.org/2000/svg";
+  var D8=["北","東北","東","東南","南","西南","西","西北"], NAMED={80:"春分",172:"夏至",266:"秋分",356:"冬至"};
+  var dayR=$("dayR"), hourR=$("hourR"), dome=$("dome"), map=$("map");
+  function decl(N){ for(var k in NAMED){ if(Math.abs(N-k)<=2) return {80:0,172:23.44,266:0,356:-23.44}[k]; }
+    return -23.44*Math.cos(2*Math.PI*(N+10)/365); }
+  function sunAt(dec,hour){ var d=dec*Math.PI/180, H=(hour-12)*15*Math.PI/180;
+    var sh=Math.sin(LAT)*Math.sin(d)+Math.cos(LAT)*Math.cos(d)*Math.cos(H);
+    var e=-Math.cos(d)*Math.sin(H), n=Math.cos(LAT)*Math.sin(d)-Math.sin(LAT)*Math.cos(d)*Math.cos(H);
+    var az=(Math.atan2(e,n)*180/Math.PI+360)%360; return {h:Math.asin(sh)*180/Math.PI, az:az}; }
+  function P(h,az){ var a=h*Math.PI/180,z=az*Math.PI/180, e=Math.cos(a)*Math.sin(z), n=Math.cos(a)*Math.cos(z), u=Math.sin(a);
+    return [-n, -(u*K-e*T)]; }
+  function mk(tag,attr,par){ var el=document.createElementNS(NS,tag); for(var k in attr) el.setAttribute(k,attr[k]); (par||dome).appendChild(el); return el; }
+  function dateText(N){ var md=[31,28,31,30,31,30,31,31,30,31,30,31], m=0; while(N>md[m]){N-=md[m];m++;} return (m+1)+" 月 "+N+" 日"; }
+  function hm(x){ var h=Math.floor(x+1e-9), m=Math.round((x-h)*60); if(m===60){h++;m=0} return h+":"+(m<10?"0":"")+m; }
+  function dir8(az){ return D8[Math.round(az/45)%8]; }
+  function draw(){
+    var N=+dayR.value, hour=+hourR.value, dec=decl(N), s=sunAt(dec,hour);
+    document.querySelectorAll("#sunsim .chip").forEach(function(b){ b.classList.toggle("on", Math.abs(N-b.dataset.day)<=2) });
+    $("dayL").textContent=dateText(N)+(NAMED[N]?"（"+NAMED[N]+"）":""); $("hourL").textContent=hm(hour);
+    var cosH0=-Math.tan(LAT)*Math.tan(dec*Math.PI/180), H0=Math.acos(Math.max(-1,Math.min(1,cosH0)))*180/Math.PI/15;
+    var riseAz=Math.acos(Math.sin(dec*Math.PI/180)/Math.cos(LAT))*180/Math.PI;
+    dome.innerHTML="";
+    mk("ellipse",{cx:0,cy:0,rx:1,ry:T,fill:"rgba(92,192,138,.22)",stroke:"#2f8a57","stroke-width":.012});
+    mk("path",{d:"M -1 0 A 1 1 0 0 1 1 0",fill:"none",stroke:"#94a3b8","stroke-width":.01,"stroke-dasharray":".04 .03"});
+    [["北",-1.2,0.04],["南",1.2,0.04],["東",0,T+0.14],["西",0.22,-T-0.06]].forEach(function(t){
+      var x=mk("text",{x:t[1],y:t[2],"font-size":0.13,"text-anchor":"middle",fill:"currentColor","font-weight":700}); x.textContent=t[0]; });
+    [23.44,0,-23.44].forEach(function(dd){ var cH=-Math.tan(LAT)*Math.tan(dd*Math.PI/180), h0=Math.acos(cH)*180/Math.PI/15, rp=[];
+      for(var i=0;i<=60;i++){ var q=sunAt(dd,12-h0+2*h0*i/60), p=P(Math.max(q.h,0),q.az); rp.push(p[0].toFixed(3)+","+p[1].toFixed(3)); }
+      mk("polyline",{points:rp.join(" "),fill:"none",stroke:"#94a3b8","stroke-width":.008,"stroke-dasharray":".03 .025",opacity:.8}); });
+    var pts=[]; for(var i=0;i<=120;i++){ var hh=12-H0+2*H0*i/120, q=sunAt(dec,hh), p=P(Math.max(q.h,0),q.az); pts.push(p[0].toFixed(3)+","+p[1].toFixed(3)); }
+    mk("polyline",{points:pts.join(" "),fill:"none",stroke:"#e8b730","stroke-width":.025});
+    mk("circle",{cx:0,cy:0,r:.035,fill:"#ea580c"});
+    if(s.h>0){ var p=P(s.h,s.az); mk("circle",{cx:p[0],cy:p[1],r:.075,fill:"#fbbf24",stroke:"#f59e0b","stroke-width":.015}); }
+    map.innerHTML="";
+    mk("circle",{cx:0,cy:0,r:1.05,fill:"rgba(126,174,232,.12)",stroke:"#94a3b8","stroke-width":.015},map);
+    D8.forEach(function(nm,k){ var a=k*45*Math.PI/180, r=k%2?1.2:1.28;
+      var t=mk("text",{x:(r*Math.sin(a)).toFixed(3),y:(-r*Math.cos(a)+0.06).toFixed(3),"font-size":k%2?0.15:0.19,"text-anchor":"middle",fill:"currentColor","font-weight":k%2?400:700},map); t.textContent=nm; });
+    var read=$("sunRead");
+    if(s.h>0){
+      var L=1/Math.tan(s.h*Math.PI/180), sl=Math.min(L,3.2)*0.32, sa=(s.az+180)*Math.PI/180, za=s.az*Math.PI/180;
+      if(s.h<89.5) mk("line",{x1:0,y1:0,x2:(sl*Math.sin(sa)).toFixed(3),y2:(-sl*Math.cos(sa)).toFixed(3),stroke:"#475569","stroke-width":.09,"stroke-linecap":"round",opacity:.75},map);
+      mk("circle",{cx:(0.85*Math.sin(za)).toFixed(3),cy:(-0.85*Math.cos(za)).toFixed(3),r:.12,fill:"#fbbf24",stroke:"#f59e0b","stroke-width":.02},map);
+      mk("circle",{cx:0,cy:0,r:.06,fill:"#ea580c"},map);
+      read.innerHTML='<div>高度角：<b>'+Math.round(s.h)+' 度</b></div><div>太陽方位：<b>'+(s.h>89.5?"頭頂上":dir8(s.az))+'</b></div>'+
+        '<div>影子方位：<b>'+(s.h>89.5?"幾乎沒有影子":dir8((s.az+180)%360))+'</b></div><div>影子長：<b>'+(s.h>89.5?"0":L.toFixed(1))+' 倍竿高</b></div>';
+    }else{
+      mk("circle",{cx:0,cy:0,r:.06,fill:"#ea580c"},map);
+      read.innerHTML='<div><b>'+(hour<12?"太陽還沒升起":"太陽已經下山")+'</b></div><div>沒有影子</div>';
+    }
+    var riseTxt=Math.abs(riseAz-90)<1.5?"正東":(riseAz<90?"東偏北":"東偏南"), setTxt=Math.abs(riseAz-90)<1.5?"正西":(riseAz<90?"西偏北":"西偏南");
+    read.innerHTML+='<div>日出方位：<b>'+riseTxt+'</b></div><div>日落方位：<b>'+setTxt+'</b></div>'+
+      '<div>日出約 <b>'+hm(12-H0)+'</b>、日落約 <b>'+hm(12+H0)+'</b></div><div>白天約 <b>'+(2*H0).toFixed(1)+' 小時</b></div>';
+  }
+  dayR.oninput=draw; hourR.oninput=draw;
+  document.querySelectorAll("#sunsim .chip").forEach(function(b){ b.onclick=function(){ dayR.value=b.dataset.day; draw(); } });
+  draw();
+}
+
+
+function buildPlanets(gid0, gid1){
+  var PL=[["水星","#9ca3af","體積最小、離太陽最近"],["金星","#f59e0b","最熱，可達 480 ℃"],["地球","#3b82f6","目前所知唯一有生命"],["火星","#dc2626","表面橘紅色"],
+          ["木星","#d6a36b","體積最大、有彩色條紋"],["土星","#eab308","體積第二大、有最大最亮的環"],["天王星","#22d3ee","最冷、藍綠色"],["海王星","#2563eb","離太陽最遠、藍色"]];
+  var SZ=[12,16,16,13,30,27,21,21];
+  function shuffle(a){ a=a.slice(); for(var i=a.length-1;i>0;i--){ var j=Math.floor(Math.random()*(i+1)), t=a[i]; a[i]=a[j]; a[j]=t } return a }
+  var slots=$("slots"), pool=$("pool"), next=0, miss1=0;
+  PL.forEach(function(){ slots.insertAdjacentHTML("beforeend",'<span class="slot">?</span>') });
+  function fillAll(){ slots.querySelectorAll(".slot").forEach(function(s,i){ s.textContent=PL[i][0]; s.classList.add("fill") });
+    $("msg1").textContent="🎉 排好了：水金地火木土天海！"; }
+  if(prog.ans[gid0]!==undefined){ fillAll(); }
+  else shuffle(PL.map(function(_,i){return i})).forEach(function(i){
+    var b=el('<button class="pl"><i style="width:'+SZ[i]+'px;height:'+SZ[i]+'px;background:'+PL[i][1]+'"></i>'+PL[i][0]+'</button>');
+    b.onclick=function(){
+      if(i===next){ b.classList.add("used"); var s=slots.querySelectorAll(".slot")[next]; s.textContent=PL[i][0]; s.classList.add("fill");
+        $("msg1").textContent="✅ 第 "+(next+1)+" 顆："+PL[i][0]+"（"+PL[i][2]+"）"; sfx("ok"); next++;
+        if(next===8){ fillAll(); markGame(gid0, miss1===0); } }
+      else{ miss1++; b.classList.remove("shake"); void b.offsetWidth; b.classList.add("shake"); sfx("no");
+        $("msg1").textContent="❌ 不是它喔。第 "+(next+1)+" 顆要比"+(next?PL[next-1][0]:"太陽")+"再遠一點。"; }
+    };
+    pool.appendChild(b);
+  });
+  var order=shuffle([0,1,2,3,4,5,6,7]), k=0, miss2=0;
+  function ask(){ if(k>=8){ $("sortQ").textContent="🎉 全部分好了！"; $("msg2").innerHTML="類地：水金地火（近、小、密度大、有固態表面）；類木：木土天海（遠、大、密度小、沒有固態表面）。";
+      $("btnT").disabled=$("btnJ").disabled=true; return true }
+    $("sortQ").textContent="第 "+(k+1)+" / 8 顆："+PL[order[k]][0]+" 是哪一類？"; return false }
+  function pick(j){ var i=order[k], ok=(i>=4)===j;
+    if(ok){ sfx("ok"); $("msg2").textContent="✅ "+PL[i][0]+"是"+(j?"類木":"類地")+"行星："+PL[i][2]; k++; if(ask()) markGame(gid1, miss2===0); }
+    else{ miss2++; sfx("no"); $("msg2").textContent="❌ 再想想：水金地火是類地，木土天海是類木。"; } }
+  $("btnT").onclick=function(){pick(false)}; $("btnJ").onclick=function(){pick(true)};
+  if(prog.ans[gid1]!==undefined){ k=8; ask(); } else ask();
+}
+
+var N=STAGES.length, IDS={};
+STAGES.forEach(function(S,si){
+  var st=si+1;
+  $("nav").insertAdjacentHTML("beforeend",'<button data-go="'+st+'">第'+st+'關 '+S.name+'<span class="st">★</span></button>');
+  var sec=el('<section class="stage" data-stage="'+st+'"><span class="badge">第 '+st+' 關</span>'+(S.tag?' <span class="badge ext">'+S.tag+'</span>':'')+
+    '<h2>'+S.name+'</h2><div class="pbar" id="pb'+st+'"><i></i><span></span></div><div class="card"><div class="motto">'+S.motto+'</div></div>'+
+    (S.widget||"")+'<div id="mc'+st+'"></div><div class="score" id="sc'+st+'"></div><div class="clear" data-clear="'+st+'">'+S.emo+' 第 '+st+' 關過關！</div></section>');
+  $("stages").appendChild(sec);
+  IDS[st]=S.games ? S.games.slice() : S.list.map(function(_,i){return "s"+st+"q"+i});
+});
+function renderMC(st, list){
+  var box=$("mc"+st);
+  list.forEach(function(it,i){
+    var id="s"+st+"q"+i;
+    var c=el('<div class="card q">'+
+      '<div class="stem"><span class="num">'+(i+1)+'.</span>'+it.q+'</div>'+
+      '<div class="opts"></div><div class="fb"></div></div>');
+    var opts=c.querySelector(".opts"), fb=c.querySelector(".fb");
+    it.o.forEach(function(t,k){ var b=el('<button class="opt">'+(it.ox?t:LET[k]+' '+t)+'</button>'); b.onclick=function(){ choose(k,true) }; opts.appendChild(b); });
+    function choose(k,user){
+      var bs=opts.querySelectorAll(".opt");
+      if(k===it.a){
+        bs.forEach(function(x,j){ x.disabled=true; if(j===it.a) x.classList.add("right") });
+        fb.className="fb show ok"; fb.innerHTML="✅ "+(user?praise()+" ":"答對了！")+it.e+(it.p?'<span class="para">📌 陷阱：'+it.p+'</span>':"");
+        if(user){ sfx("ok"); if(!(id in prog.first)) prog.first[id]=true; prog.ans[id]=k; save(); check(st,true) }
+      }else{
+        bs[k].classList.add("wrong"); bs[k].disabled=true; fb.className="fb show no"; fb.innerHTML="❌ 再想想，"+(STAGES[st-1].widget?"用上面的模擬器試試看。":"回想筆記的重點。");
+        if(user){ sfx("no"); if(!(id in prog.first)) prog.first[id]=false; save() }
+      }
+    }
+    box.appendChild(c);
+    if(prog.ans[id]!==undefined) choose(prog.ans[id],false);
+  });
+}
+function markGame(id, firstOK){ var st=+Object.keys(IDS).filter(function(s){return IDS[s].indexOf(id)>=0})[0];
+  if(!(id in prog.first)) prog.first[id]=firstOK; prog.ans[id]=1; save(); check(st,true); }
+function check(st,user){
+  var ids=IDS[st], fin=ids.filter(function(id){ return prog.ans[id]!==undefined }).length, tot=ids.length, ok=fin===tot, was=!!prog.done[st],
+      first=ids.filter(function(id){ return prog.first[id]===true }).length;
+  $("sc"+st).textContent=(STAGES[st-1].games?"一次就完成的遊戲：":"第一次就答對：")+first+" / "+tot;
+  var pb=$("pb"+st); pb.querySelector("i").style.width=Math.round(fin/tot*100)+"%"; pb.querySelector("span").textContent="本關進度 "+fin+" / "+tot+(ok?"　⭐ 完成":"");
+  var c=document.querySelector('[data-clear="'+st+'"]'); if(ok){ c.classList.add("show"); prog.done[st]=true; save() }
+  var nb=document.querySelector('nav [data-go="'+st+'"]'); if(nb) nb.classList.toggle("done", !!prog.done[st]);
+  if(user && ok && !was) celebrate(st, first, tot);
+}
+var PRAISE=["太棒了！","好厲害！","漂亮！","答對了！","很會喔！","讚！"];
+var FIN=["神祕天空探險家！", "太陽、四季和八大行星都難不倒你。"], T0=Date.now();
+function praise(){ return PRAISE[Math.floor(Math.random()*PRAISE.length)] }
+function celebrate(st, first, tot){
+  var stars=first===tot?3:(first>=tot*0.6?2:1), mins=Math.max(1,Math.round((Date.now()-T0)/60000)),
+      all=STAGES.every(function(_,i){return prog.done[i+1]}), S=STAGES[st-1], starHtml="";
+  for(var i=0;i<3;i++) starHtml+= i<stars ? '<span style="animation-delay:'+(0.25+i*0.25)+'s">★</span>' : '<span class="dim">★</span>';
+  var nextSt=st<N?st+1:0;
+  var m=el('<div class="celebrate"><div class="cbox"><div class="cemo">'+(all?"🏆":S.emo)+'</div>'+
+    '<div class="ctitle">'+(all?"全部過關！":"第 "+st+" 關「"+S.name+"」過關！")+'</div><div class="cstars">'+starHtml+'</div>'+
+    '<div class="cen">'+(all?FIN[0]:S.cheer[0])+'</div><div class="czh">'+(all?FIN[1]:S.cheer[1])+'</div>'+
+    '<div class="cstat">'+(S.games?"一次就完成 ":"第一次就答對 ")+'<b>'+first+' / '+tot+'</b>　·　這次練了 <b>'+mins+'</b> 分鐘</div>'+
+    (mins>=15?'<div class="crest">☕ 已經練超過 15 分鐘了，起來喝口水、看看遠方，再回來繼續。</div>':'')+
+    '<div>'+(nextSt?'<button class="btn" data-next>下一關 →</button>':'')+'<button class="btn ghost" data-close>'+(nextSt?'先休息一下':'關閉')+'</button></div></div></div>');
+  document.body.appendChild(m); confetti(); sfx("win");
+  var nx=m.querySelector("[data-next]"); if(nx) nx.onclick=function(){ m.remove(); go(nextSt); window.scrollTo({top:0,behavior:"smooth"}) };
+  m.querySelector("[data-close]").onclick=function(){ m.remove() }; m.onclick=function(e){ if(e.target===m) m.remove() };
+}
+function confetti(){
+  if(window.matchMedia && matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+  var cv=document.createElement("canvas"), x=cv.getContext("2d"), W=cv.width=innerWidth, H=cv.height=innerHeight, P=[], col=["#e8b730","#2f6fbf","#c8463d","#2f8a57","#7a54b8","#f08cb4"];
+  cv.className="confetti"; document.body.appendChild(cv);
+  for(var i=0;i<140;i++) P.push({x:W/2+(Math.random()-.5)*W*.3, y:H*.35, vx:(Math.random()-.5)*14, vy:-Math.random()*13-4, r:Math.random()*6+4, c:col[i%col.length], a:Math.random()*6, s:(Math.random()-.5)*.3});
+  var t0=performance.now();
+  (function f(t){ var k=Math.max(0,(t-t0)/1000); x.clearRect(0,0,W,H);
+    P.forEach(function(p){ p.vy+=.35; p.vx*=.99; p.x+=p.vx; p.y+=p.vy; p.a+=p.s; x.save(); x.globalAlpha=Math.max(0,1-k/2.6); x.translate(p.x,p.y); x.rotate(p.a); x.fillStyle=p.c; x.fillRect(-p.r/2,-p.r/4,p.r,p.r/2); x.restore() });
+    if(k<2.6) requestAnimationFrame(f); else cv.remove() })(t0);
+}
+
+
+function go(n){
+  document.querySelectorAll("section.stage").forEach(function(s){ s.classList.toggle("on", s.dataset.stage==n) });
+  document.querySelectorAll("nav button").forEach(function(b){ b.classList.toggle("on", b.dataset.go==n) });
+  prog.cur=n; save();
+}
+document.addEventListener("click",function(e){ var g=e.target.closest("[data-go]"); if(g){ go(g.dataset.go); window.scrollTo({top:0,behavior:"smooth"}) } });
+$("themeBtn").onclick=function(){
+  var r=document.documentElement, dark=r.dataset.theme ? r.dataset.theme==="dark" : matchMedia("(prefers-color-scheme: dark)").matches;
+  r.dataset.theme = dark ? "light" : "dark"; prog.theme=r.dataset.theme; save();
+};
+if(prog.theme) document.documentElement.dataset.theme=prog.theme;
+$("sndBtn").onclick=function(){ prog.mute=!prog.mute; save(); sndIcon(); if(!prog.mute) sfx("ok") };
+sndIcon();
+$("resetBtn").onclick=function(){ if(confirm("確定要清除所有作答進度嗎？")){ try{localStorage.removeItem(KEY)}catch(e){} location.reload() } };
+STAGES.forEach(function(S,si){
+  var st=si+1;
+  if(S.kind==="sun") buildSun();
+  if(S.kind==="planets") buildPlanets(S.games[0], S.games[1]);
+  if(S.list) renderMC(st, S.list);
+  check(st,false);
+});
+go(prog.cur||1);
+})();
+</script>
+</body>
+</html>
