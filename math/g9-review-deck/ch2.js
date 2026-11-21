@@ -1,8 +1,9 @@
 /* ============ 第 2 章　圓 ============
-   節次：2-1 點、直線與圓（位置關係、切線 ⊥ 半徑）、2-1 切線段、2-1 弦與弦心距
+   節次：2-1 點、直線與圓（位置關係、切線 ⊥ 半徑）、2-1 切線段、2-1 弦與弦心距、
+         2-2 圓心角與圓周角、2-2 圓內接四邊形與平行弦（2026-11-21 新增）、圖形速查四頁（2-1＋2-2 常見圖案）
    內容：例題數字全部自編並以程式驗算。
-   課綱邊界（本章刻意不放）：2-2 圓心角與圓周角（含「直徑所對的角是直角」）、三角比（sin／cos／tan，Ch.3 才教）、
-     三角形的內心／外心／重心名稱（3-2 才教，內切圓只說「圓心 O」）、點到直線距離公式、弧度。
+   課綱邊界（本章刻意不放）：三角比（sin／cos／tan，Ch.3 才教）、
+     三角形的內心／外心／重心名稱（3-2 才教，內切圓只說「圓心 O」）、點到直線距離公式、弧度（radian）。
    ============================================================ */
 window.DECK = window.DECK || [];
 (function () {
@@ -62,11 +63,39 @@ window.DECK = window.DECK || [];
       </div>`).join('') + `</div>`;
   }
 
+  // ---- 2-2 與圖形速查用小工具（2026-11-21 新增）----
+  // 圓上一段弧（數學角度 d0 逆時針到 d1）加粗上色
+  const ARC = (o, r, d0, d1, c, w = 6) =>
+    `<polyline points="${SV.arcPoints(o[0], o[1], r, d0, d1)}" fill="none" stroke="${c}" stroke-width="${w}" stroke-linecap="round" opacity=".6"/>`;
+  // 頂點 v、兩邊指向 a、b 的角度（度）
+  const angAt = (v, a, b) => {
+    const u = sub(a, v), w = sub(b, v);
+    return Math.acos(Math.max(-1, Math.min(1, (u[0] * w[0] + u[1] * w[1]) / Math.hypot(u[0], u[1]) / Math.hypot(w[0], w[1])))) * 180 / Math.PI;
+  };
+  // 角弧標記（自動取小於 180° 的那一側）
+  const AM = (v, a, b, rr = 22, c = AMB, lab = '', fs = 14) => {
+    let a0 = SV.angleOf(v[0], v[1], a[0], a[1]), a1 = SV.angleOf(v[0], v[1], b[0], b[1]);
+    if ((a1 - a0 + 360) % 360 > 180) { const t = a0; a0 = a1; a1 = t; }
+    return SV.angle(v[0], v[1], rr, a0, a1, c, lab, { fs, lr: 13, w: 2.2 });
+  };
+  // 圓上點的標籤放在圓外側
+  const LBo = (o, p, t, c = INK, dd = 17, fs = 16) => {
+    const u = sub(p, o), m = Math.hypot(u[0], u[1]) || 1, q = add(p, mul(u, dd / m));
+    return TX(q[0], q[1] + fs * 0.35, t, { anchor: 'middle', fs, c });
+  };
+  const OL = (o, dy = 22) => TX(o[0], o[1] + dy, 'O', { anchor: 'middle', fs: 16 });
+  const gcd = (a, b) => b ? gcd(b, a % b) : a;
+  const frac = (n, d) => { const g = gcd(n, d); n /= g; d /= g; return d === 1 ? (n === 1 ? '' : String(n)) : n + '/' + d; };
+  // 速查頁右側結論框
+  const QB = (lines, c = RED, y = 40) =>
+    boxText(284, y, 152, 13 + lines.length * 21, lines.map(t => typeof t === 'string' ? { t, c, fs: 13 } : t), c);
+  const AUX = (a, b) => L(a, b, RED, 2.4, '6 4');   // 輔助線：紅色虛線
+
   window.DECK.push({
     ch: 2,
     title: '圓',
     color: C,
-    sections: ['2-1 點、直線與圓', '2-1 切線段', '2-1 弦與弦心距'],
+    sections: ['2-1 點、直線與圓', '2-1 切線段', '2-1 弦與弦心距', '2-2 圓心角與圓周角', '2-2 圓內接四邊形與平行弦', '速查 常見圖形'],
     slides: [
 
       /* ================= 2-1 點、直線與圓 ================= */
@@ -602,6 +631,574 @@ window.DECK = window.DECK || [];
           ]);
         },
         caption: '看到圓心和弦，就作垂線、連半徑：直角三角形一出現，題目就解了一半。'
+      },
+
+      /* ================= 2-2 圓心角與圓周角（2026-11-21 新增） ================= */
+      {
+        sec: '2-2', secName: '圓心角與圓周角',
+        title: '圓心角＝弧的度數；弧長和扇形面積才看半徑',
+        points: [
+          '頂點在<b>圓心</b>的角叫<span class="k">圓心角</span>，它的度數就是所對<b>弧的度數</b>。',
+          '整圈 360°、半圓 180°；小於半圓叫<span class="k">劣弧</span>，大於半圓叫<span class="k">優弧</span>。',
+          '弧的度數和半徑無關；<b>弧長</b>、<b>扇形面積</b>才要乘上半徑。'
+        ],
+        formula: { label: '弧長、扇形面積', tex: '2\\pi r\\times\\frac{\\theta}{360},\\quad \\pi r^2\\times\\frac{\\theta}{360}' },
+        visual: (h) => {
+          h.innerHTML = slider(h, 'th', '圓心角 θ ＝', 20, 340, 10, 80);
+          const draw = () => {
+            const th = +h.querySelector('#th').value; h.querySelector('#thv').textContent = th + '°';
+            const O = [125, 150], r = 100, d0 = 90 - th / 2, d1 = 90 + th / 2, A = pol(O, r, d1), B = pol(O, r, d0);
+            const kind = th < 180 ? ['劣弧', GRN] : th === 180 ? ['半圓', AMB] : ['優弧', RED];
+            let s = CIR(O, r, GRY, 'none', 2);
+            s += `<polygon points="${f(O[0])},${f(O[1])} ${SV.arcPoints(O[0], O[1], r, d0, d1)}" fill="rgba(124,58,237,.14)"/>`;
+            s += ARC(O, r, d0, d1, kind[1], 7) + L(O, A, C) + L(O, B, C);
+            s += SV.angle(O[0], O[1], 22, d0, d1, VIO, th + '°', { fs: 14, lr: 13, w: 2.2 });
+            s += D(O) + D(A) + D(B) + OL(O) + LBo(O, A, 'A') + LBo(O, B, 'B');
+            s += boxText(262, 46, 172, 97, [{ t: `θ = ${th}°：${kind[0]}`, c: kind[1], fs: 15 }, { t: '設半徑 r = 6' },
+              { t: `弧長 = ${frac(th, 30)}π`, c: VIO, fs: 15 }, { t: `扇形面積 = ${frac(th, 10)}π`, c: VIO, fs: 15 }], VIO);
+            h.querySelector('.fig').innerHTML = svg('0 0 440 290', s);
+          };
+          h.querySelector('#th').oninput = draw; draw();
+        },
+        caption: '拖到 180° 變成半圓；超過 180° 就是優弧。',
+        example: {
+          q: '半徑 9 的圓，圓心角 80° 的扇形，求弧長和扇形面積。',
+          steps: ['弧長 \\(=2\\pi\\times9\\times\\frac{80}{360}=4\\pi\\)。', '扇形面積 \\(=\\pi\\times9^2\\times\\frac{80}{360}=18\\pi\\)。'],
+          ans: '弧長 \\(4\\pi\\)，扇形面積 \\(18\\pi\\)'
+        }
+      },
+
+      {
+        sec: '2-2', secName: '圓心角與圓周角',
+        title: '圓周角是同弧圓心角的一半：連半徑造等腰',
+        points: [
+          '頂點在<b>圓上</b>、兩邊都是弦的角叫<span class="k">圓周角</span>。',
+          '圓周角＝同一段弧的圓心角的<b>一半</b>。',
+          '證明關鍵：<b>連半徑造等腰三角形</b>，再用外角。'
+        ],
+        formula: { label: '圓周角', tex: '\\angle ACB=\\frac12\\angle AOB' },
+        visual: (h) => {
+          const O = [165, 150], r = 112, Cc = pol(O, r, 180), B = pol(O, r, 0), A = pol(O, r, 54);
+          SV.stepper(h, '0 0 440 290', [
+            { t: '圓周角 \\(\\angle ACB\\)：頂點 C 在圓上；這次 \\(\\overline{CB}\\) 剛好是直徑',
+              d: () => CIR(O, r) + L(Cc, B) + L(Cc, A) + D(O) + D(A) + D(B) + D(Cc) + OL(O) + LBo(O, A, 'A') + LBo(O, B, 'B') + LBo(O, Cc, 'C') + AM(Cc, A, B, 36, RED, 'x') },
+            { t: '連半徑 \\(\\overline{OA}\\)：\\(\\overline{OA}=\\overline{OC}\\)，等腰 → \\(\\angle OAC=x\\)',
+              d: () => L(O, A, BLU, 3) + TK(O, A, 1, BLU) + TK(Cc, O, 1, BLU) + AM(A, Cc, O, 30, RED, 'x') },
+            { t: '\\(\\angle AOB\\) 是 \\(\\triangle OAC\\) 的外角：\\(\\angle AOB=x+x=2x\\)',
+              d: () => `<polygon points="${f(O[0])},${f(O[1])} ${SV.arcPoints(O[0], O[1], r, 0, 54)}" fill="rgba(124,58,237,.16)"/>` + AM(O, A, B, 26, VIO, '2x') },
+            { t: '圓心在角內或角外時，連直徑把角拆成兩塊，相加或相減，結論一樣',
+              d: () => boxText(292, 222, 140, 46, [{ t: '圓周角 = ½ 圓心角', c: VIO, fs: 15 }], VIO) }
+          ]);
+        },
+        caption: '連半徑造等腰，是 2-2 最常用的輔助線。',
+        example: {
+          q: '圓 O 中，\\(\\overline{CB}\\) 是直徑，A 在圓上，\\(\\angle ACB=27^\\circ\\)，求 \\(\\angle AOB\\)。',
+          steps: ['\\(\\overline{OA}=\\overline{OC}\\) → \\(\\angle OAC=27^\\circ\\)。', '外角：\\(\\angle AOB=27^\\circ+27^\\circ=54^\\circ\\)。'],
+          ans: '\\(\\angle AOB=54^\\circ\\)'
+        }
+      },
+
+      {
+        sec: '2-2', secName: '圓心角與圓周角',
+        title: '同一段弧的圓周角都相等：頂點怎麼移都一樣',
+        points: [
+          'C、D 都在弧 AB 的另一側：\\(\\angle ACB=\\angle ADB\\)。',
+          '因為兩個都等於 \\(\\frac12\\angle AOB\\)；等弧所對的圓周角也相等。',
+          '看到兩個圓周角夾同一段弧（像<b>領結</b>），角度可以直接搬過去。'
+        ],
+        formula: { label: '同弧', tex: '\\angle ACB=\\angle ADB=\\frac12\\angle AOB' },
+        visual: (h) => {
+          h.innerHTML = slider(h, 't', '拖動頂點 C：', 0, 100, 1, 45);
+          const draw = () => {
+            const t = +h.querySelector('#t').value;
+            const O = [140, 148], r = 105, A = pol(O, r, 202), B = pol(O, r, 338), Cc = pol(O, r, -10 + 130 * t / 100), Dd = pol(O, r, 160);
+            const ac = Math.round(angAt(Cc, A, B)), ad = Math.round(angAt(Dd, A, B));
+            h.querySelector('#tv').textContent = `∠ACB = ${ac}°`;
+            let s = CIR(O, r) + ARC(O, r, 202, 338, GRN, 7) + L(O, A, VIO, 2, '6 4') + L(O, B, VIO, 2, '6 4');
+            s += L(Cc, A, RED, 2.8) + L(Cc, B, RED, 2.8) + L(Dd, A, BLU, 2.8) + L(Dd, B, BLU, 2.8);
+            s += AM(O, A, B, 20, VIO, '136°') + AM(Cc, A, B, 28, RED, ac + '°') + AM(Dd, A, B, 28, BLU, ad + '°');
+            s += D(O) + D(A) + D(B) + D(Cc, RED, 6) + D(Dd, BLU, 6) + TX(O[0], O[1] - 12, 'O', { anchor: 'middle', fs: 16 });
+            s += LBo(O, A, 'A') + LBo(O, B, 'B') + LBo(O, Cc, 'C', RED) + LBo(O, Dd, 'D', BLU);
+            s += boxText(296, 30, 138, 76, [{ t: '∠AOB = 136°', c: VIO }, { t: `∠ACB = ${ac}°`, c: RED }, { t: `∠ADB = ${ad}°`, c: BLU }], VIO);
+            h.querySelector('.fig').innerHTML = svg('0 0 440 290', s);
+          };
+          h.querySelector('#t').oninput = draw; draw();
+        },
+        caption: '拖滑桿：C 跑到哪裡，∠ACB 都是 68°。',
+        example: {
+          q: '圓 O 中 \\(\\angle AOB=136^\\circ\\)，C、D 都在優弧 AB 上，求 \\(\\angle ACB\\)、\\(\\angle ADB\\)。',
+          steps: ['兩個角都對劣弧 AB。', '\\(136^\\circ\\div2=68^\\circ\\)。'],
+          ans: '兩個都是 \\(68^\\circ\\)'
+        }
+      },
+
+      {
+        sec: '2-2', secName: '圓心角與圓周角',
+        title: '直徑所對的圓周角是直角：看到直徑找直角',
+        points: [
+          '直徑對的弧是半圓 180°，圓周角＝180°÷2＝<b>90°</b>。',
+          '反過來：90° 的圓周角，所對的弦一定是<b>直徑</b>。',
+          '口訣：<b>看到直徑找直角，看到直角找直徑</b>，接著用畢氏定理。'
+        ],
+        formula: { label: '半圓', tex: '\\angle ACB=90^\\circ' },
+        visual: (h) => {
+          h.innerHTML = slider(h, 'p', '移動 C：', 15, 165, 5, 135);
+          const draw = () => {
+            const p = +h.querySelector('#p').value;
+            const O = [140, 172], k = 16, r = 6.5 * k, A = pol(O, r, 180), B = pol(O, r, 0), Cc = pol(O, r, p);
+            const ac = 13 * Math.cos(p * Math.PI / 360), bc = 13 * Math.sin(p * Math.PI / 360);
+            h.querySelector('#pv').textContent = `∠ACB = ${Math.round(angAt(Cc, A, B))}°`;
+            let s = CIR(O, r) + PG([A, Cc, B], 'rgba(225,29,72,.08)') + L(A, B, BLU, 3) + L(A, Cc, RED, 3) + L(B, Cc, RED, 3) + RA(Cc, A, B, 12, RED);
+            s += D(O) + D(A) + D(B) + D(Cc) + OL(O) + LBo(O, A, 'A') + LBo(O, B, 'B') + LBo(O, Cc, 'C');
+            s += TX(O[0] + 52, O[1] + 20, '直徑 13', { anchor: 'middle', fs: 13, c: BLU });
+            s += boxText(270, 34, 164, 76, [{ t: `AC ≈ ${ac.toFixed(1)}，BC ≈ ${bc.toFixed(1)}`, fs: 13 },
+              { t: `AC² + BC² = ${Math.round(ac * ac + bc * bc)}`, c: RED }, { t: '= 13²（直角三角形）', c: RED, fs: 13 }], RED);
+            h.querySelector('.fig').innerHTML = svg('0 0 440 290', s);
+          };
+          h.querySelector('#p').oninput = draw; draw();
+        },
+        caption: '拖滑桿：C 在半圓上怎麼移，∠ACB 都是直角。',
+        example: {
+          q: '\\(\\overline{AB}\\) 是圓的直徑，長 13；C 在圓上，\\(\\overline{AC}=5\\)，求 \\(\\overline{BC}\\)。',
+          steps: ['直徑所對的圓周角：\\(\\angle ACB=90^\\circ\\)。', '\\(\\overline{BC}=\\sqrt{13^2-5^2}=12\\)。'],
+          ans: '\\(\\overline{BC}=12\\)'
+        }
+      },
+
+      {
+        sec: '2-2', secName: '圓心角與圓周角',
+        title: '優弧陷阱：頂點在劣弧上，對的是對面的優弧',
+        points: [
+          '圓周角看的是<b>頂點對面</b>那一段弧。',
+          '頂點在<b>劣弧</b>上 → 對的是優弧：\\(\\angle ACB=\\dfrac{360^\\circ-\\angle AOB}{2}\\)。',
+          '一個頂點在劣弧、一個在優弧，兩個角加起來是 180°。'
+        ],
+        formula: { label: '頂點在劣弧', tex: '\\angle ACB=180^\\circ-\\frac12\\angle AOB' },
+        visual: (h) => {
+          h.innerHTML = slider(h, 'th', '∠AOB ＝', 40, 160, 10, 110);
+          const draw = () => {
+            const th = +h.querySelector('#th').value; h.querySelector('#thv').textContent = th + '°';
+            const O = [150, 145], r = 105, A = pol(O, r, th / 2), B = pol(O, r, -th / 2), Cc = pol(O, r, 0), Dd = pol(O, r, 180);
+            let s = CIR(O, r, C, 'none') + ARC(O, r, th / 2, 360 - th / 2, RED, 6) + ARC(O, r, -th / 2, th / 2, GRN, 7);
+            s += L(O, A, VIO, 2, '6 4') + L(O, B, VIO, 2, '6 4') + L(Cc, A, RED, 2.8) + L(Cc, B, RED, 2.8) + L(Dd, A, GRN, 2.8) + L(Dd, B, GRN, 2.8);
+            s += AM(O, A, B, 20, VIO, th + '°') + AM(Cc, A, B, 16, RED, '') + AM(Dd, A, B, 30, GRN, th / 2 + '°');
+            s += TX(Cc[0] - 34, Cc[1] + 5, (180 - th / 2) + '°', { anchor: 'middle', fs: 14, c: RED });
+            s += D(O) + D(A) + D(B) + D(Cc, RED, 6) + D(Dd, GRN, 6) + TX(O[0] - 16, O[1] + 20, 'O', { anchor: 'middle', fs: 16 });
+            s += LBo(O, A, 'A') + LBo(O, B, 'B') + LBo(O, Cc, 'C', RED) + LBo(O, Dd, 'D', GRN);
+            s += boxText(282, 196, 152, 76, [{ t: `∠AOB = ${th}°`, c: VIO }, { t: `D 對劣弧：${th / 2}°`, c: GRN }, { t: `C 對優弧：${180 - th / 2}°`, c: RED }], RED);
+            h.querySelector('.fig').innerHTML = svg('0 0 440 290', s);
+          };
+          h.querySelector('#th').oninput = draw; draw();
+        },
+        caption: '綠色是 D 對的劣弧，紅色是 C 對的優弧；兩個角永遠相加 180°。',
+        example: {
+          q: '圓 O 中 \\(\\angle AOB=110^\\circ\\)，C 在劣弧 AB 上，求 \\(\\angle ACB\\)。',
+          steps: ['C 在劣弧上，對的是優弧：\\(360^\\circ-110^\\circ=250^\\circ\\)。', '\\(\\angle ACB=250^\\circ\\div2=125^\\circ\\)。'],
+          ans: '\\(\\angle ACB=125^\\circ\\)'
+        }
+      },
+
+      {
+        sec: '2-2', secName: '圓心角與圓周角',
+        title: '兩條切線＋圓周角：先求圓心角，再除以 2',
+        points: [
+          '先連 \\(\\overline{OA}\\)、\\(\\overline{OB}\\)：切線 ⊥ 半徑，得兩個直角。',
+          '四邊形 PAOB 內角和 360°：\\(\\angle AOB=180^\\circ-\\angle P\\)。',
+          'C 在優弧上：\\(\\angle ACB=\\dfrac{180^\\circ-\\angle P}{2}\\)。'
+        ],
+        formula: { label: '切線＋圓周角', tex: '\\angle ACB=\\frac{180^\\circ-\\angle P}{2}' },
+        visual: (h) => {
+          h.innerHTML = slider(h, 'p', '∠P ＝', 40, 120, 2, 56);
+          const draw = () => {
+            const P = +h.querySelector('#p').value; h.querySelector('#pv').textContent = P + '°';
+            const O = [118, 138], r = 80, hf = P / 2, Pp = [O[0] + r / Math.sin(hf * Math.PI / 180), O[1]];
+            const A = pol(O, r, 90 - hf), B = pol(O, r, hf - 90), Cc = pol(O, r, 180);
+            let s = CIR(O, r) + L(Pp, A) + L(Pp, B) + L(O, A, BLU, 2.6) + L(O, B, BLU, 2.6) + RA(A, O, Pp, 10) + RA(B, O, Pp, 10);
+            s += L(Cc, A, RED, 2.8) + L(Cc, B, RED, 2.8);
+            s += AM(Pp, A, B, 26, AMB, P + '°') + AM(O, A, B, 18, BLU, (180 - P) + '°') + AM(Cc, A, B, 30, RED, (180 - P) / 2 + '°');
+            s += D(O) + D(A) + D(B) + D(Pp) + D(Cc) + TX(O[0] - 16, O[1] + 22, 'O', { anchor: 'middle', fs: 16 }) + LBo(O, A, 'A') + LBo(O, B, 'B') + LBo(O, Cc, 'C') + TX(Pp[0] + 6, Pp[1] - 8, 'P', { fs: 16 });
+            s += boxText(232, 230, 202, 55, [{ t: `∠AOB = 180° − ${P}° = ${180 - P}°`, c: BLU, fs: 13 }, { t: `∠ACB = ${180 - P}° ÷ 2 = ${(180 - P) / 2}°`, c: RED, fs: 13 }], RED);
+            h.querySelector('.fig').innerHTML = svg('0 0 440 290', s);
+          };
+          h.querySelector('#p').oninput = draw; draw();
+        },
+        caption: '2-1 的切線＋2-2 的圓周角，段考最愛的組合。',
+        example: {
+          q: 'PA、PB 切圓 O 於 A、B，\\(\\angle P=56^\\circ\\)，C 在優弧 AB 上，求 \\(\\angle ACB\\)。',
+          steps: ['\\(\\angle OAP=\\angle OBP=90^\\circ\\) → \\(\\angle AOB=180^\\circ-56^\\circ=124^\\circ\\)。', '\\(\\angle ACB=124^\\circ\\div2=62^\\circ\\)。'],
+          ans: '\\(\\angle ACB=62^\\circ\\)'
+        }
+      },
+
+      /* ================= 2-2 圓內接四邊形與平行弦 ================= */
+      {
+        sec: '2-2', secName: '圓內接四邊形與平行弦',
+        title: '圓內接四邊形：對角互補，外角等於內對角',
+        points: [
+          '四個頂點都在圓上：<b>對角互補</b>，\\(\\angle A+\\angle C=180^\\circ\\)。',
+          '<b>外角＝內對角</b>：延長 \\(\\overline{BC}\\) 到 E，\\(\\angle DCE=\\angle A\\)。',
+          '畫得出外接圓的：正方形、長方形、等腰梯形；一般菱形、平行四邊形不行。'
+        ],
+        formula: { label: '對角互補', tex: '\\angle A+\\angle C=\\angle B+\\angle D=180^\\circ' },
+        visual: (h) => {
+          h.innerHTML = slider(h, 'd', '移動 D：', 40, 160, 10, 100);
+          const draw = () => {
+            const d = +h.querySelector('#d').value;
+            const O = [140, 148], r = 100, A = pol(O, r, 200), B = pol(O, r, 290), Cc = pol(O, r, 10), Dd = pol(O, r, d);
+            const E = add(Cc, mul(sub(Cc, B), 0.45));
+            const a = Math.round(angAt(A, B, Dd)), c = Math.round(angAt(Cc, B, Dd)), e = Math.round(angAt(Cc, Dd, E));
+            h.querySelector('#dv').textContent = `∠A = ${a}°`;
+            let s = CIR(O, r, GRY, 'none', 2) + PG([A, B, Cc, Dd], 'rgba(124,58,237,.10)', C, 2.8) + L(Cc, E, INK, 2.4, '6 4');
+            s += AM(A, B, Dd, 26, RED, a + '°') + AM(Cc, B, Dd, 22, BLU, c + '°') + AM(Cc, Dd, E, 34, RED, e + '°');
+            s += D(A) + D(B) + D(Cc) + D(Dd) + D(E) + LBo(O, A, 'A') + LBo(O, B, 'B') + LBo(O, Cc, 'C') + LBo(O, Dd, 'D') + TX(E[0] + 8, E[1], 'E', { fs: 16 });
+            s += boxText(284, 160, 150, 97, [{ t: `∠A = ${a}°`, c: RED }, { t: `∠C = ${c}°`, c: BLU }, { t: `∠A + ∠C = ${a + c}°` }, { t: `外角 ∠DCE = ${e}°`, c: RED }], RED);
+            h.querySelector('.fig').innerHTML = svg('0 0 440 290', s);
+          };
+          h.querySelector('#d').oninput = draw; draw();
+        },
+        caption: '拖滑桿：∠A、∠C 一起變，但和永遠是 180°；外角永遠等於 ∠A。',
+        example: {
+          q: '四邊形 ABCD 內接於圓，\\(\\angle A:\\angle C=3:2\\)，延長 \\(\\overline{BC}\\) 到 E，求 \\(\\angle A\\) 和 \\(\\angle DCE\\)。',
+          steps: ['\\(3x+2x=180^\\circ\\) → \\(x=36^\\circ\\)，\\(\\angle A=108^\\circ\\)。', '外角＝內對角：\\(\\angle DCE=\\angle A=108^\\circ\\)。'],
+          ans: '\\(\\angle A=108^\\circ\\)，\\(\\angle DCE=108^\\circ\\)'
+        }
+      },
+
+      {
+        sec: '2-2', secName: '圓內接四邊形與平行弦',
+        title: '兩條平行弦，中間夾的兩段弧相等',
+        points: [
+          '\\(\\overline{AB}\\parallel\\overline{CD}\\) → 弧 AC＝弧 BD。',
+          '理由：連 \\(\\overline{AD}\\)，內錯角 \\(\\angle BAD=\\angle ADC\\)，兩個圓周角對的弧就相等。',
+          '四點連起來是<b>等腰梯形</b>；兩組平行弦可以一直推下去。'
+        ],
+        formula: { label: '平行弦', tex: '\\overline{AB}\\parallel\\overline{CD}\\Rightarrow\\overset{\\frown}{AC}=\\overset{\\frown}{BD}' },
+        visual: (h) => {
+          h.innerHTML = slider(h, 'q', '弧 CD ＝', 20, 160, 20, 60);
+          const draw = () => {
+            const q = +h.querySelector('#q').value, ph = q / 2; h.querySelector('#qv').textContent = q + '°';
+            const O = [140, 145], r = 105, A = pol(O, r, 140), B = pol(O, r, 40), Cc = pol(O, r, 270 - ph), Dd = pol(O, r, 270 + ph);
+            const side = 130 - ph, mAC = (140 + 270 - ph) / 2, mBD = (270 + ph + 400) / 2;
+            let s = CIR(O, r, GRY, 'none', 2) + ARC(O, r, 140, 270 - ph, GRN, 7) + ARC(O, r, 270 + ph, 400, GRN, 7);
+            s += L(A, B, INK, 3) + L(Cc, Dd, INK, 3) + L(A, Dd, AMB, 2.4, '6 4');
+            s += AM(A, B, Dd, 26, AMB, '') + AM(Dd, Cc, A, 26, AMB, '');
+            s += D(A) + D(B) + D(Cc) + D(Dd) + LBo(O, A, 'A') + LBo(O, B, 'B') + LBo(O, Cc, 'C') + LBo(O, Dd, 'D');
+            s += LBo(O, pol(O, r, mAC), side + '°', GRN, 26, 15) + LBo(O, pol(O, r, mBD), side + '°', GRN, 26, 15);
+            s += boxText(284, 30, 150, 97, [{ t: '弧 AB = 100°' }, { t: `弧 CD = ${q}°` }, { t: `弧 AC = ${side}°`, c: GRN }, { t: `弧 BD = ${side}°`, c: GRN }], GRN);
+            h.querySelector('.fig').innerHTML = svg('0 0 440 290', s);
+          };
+          h.querySelector('#q').oninput = draw; draw();
+        },
+        caption: '橘色虛線 AD 造出一對內錯角；左右兩段綠色弧永遠一樣長。',
+        example: {
+          q: '\\(\\overline{AB}\\parallel\\overline{CD}\\)，弧 AB＝100°、弧 CD＝60°，求弧 AC。',
+          steps: ['弧 AC＝弧 BD。', '\\((360^\\circ-100^\\circ-60^\\circ)\\div2=100^\\circ\\)。'],
+          ans: '弧 AC＝100°'
+        }
+      },
+
+      {
+        sec: '2-2', secName: '圓內接四邊形與平行弦',
+        title: '等弦：BC＝CD 時，OC 垂直平分 BD',
+        points: [
+          '同圓中：<b>等弦 ⇔ 等弧 ⇔ 等圓心角</b>。',
+          'OB＝OD（半徑）、CB＝CD：O、C 都到 B、D 等距，所以 \\(\\overline{OC}\\) 是 \\(\\overline{BD}\\) 的<b>中垂線</b>。',
+          '兩個直角三角形共用 \\(\\overline{BM}\\)，列兩次畢氏定理。'
+        ],
+        visual: (h) => {
+          const O = [175, 162], r = 125, t1 = 2 * Math.asin(6 / 18) * 180 / Math.PI;
+          const A = pol(O, r, 180), B = pol(O, r, 0), Cc = pol(O, r, t1), Dd = pol(O, r, 2 * t1), M = mul(add(B, Dd), 0.5);
+          const mid = (p, q) => mul(add(p, q), 0.5), mL = pol(M, 17, t1 + 90), oL = pol(mid(O, M), 13, t1 - 90);
+          SV.stepper(h, '0 0 440 300', [
+            { t: '\\(\\overline{AB}\\) 是直徑，\\(\\overline{BC}=\\overline{CD}=12\\)，\\(\\overline{AD}=28\\)，求半徑',
+              d: () => CIR(O, r) + L(A, B) + L(B, Cc) + L(Cc, Dd) + L(Dd, A) + TK(B, Cc, 1, RED) + TK(Cc, Dd, 1, RED) + D(O) + D(A) + D(B) + D(Cc) + D(Dd) + OL(O, 20)
+                + LBo(O, A, 'A') + LBo(O, B, 'B') + LBo(O, Cc, 'C') + LBo(O, Dd, 'D') + LBo(O, mid(B, Cc), '12', RED, 14, 14) + LBo(O, mid(Cc, Dd), '12', RED, 14, 14) + LBo(O, mid(A, Dd), '28', INK, 12, 14) },
+            { t: 'OB＝OD、CB＝CD → O、C 都在 \\(\\overline{BD}\\) 的中垂線上',
+              d: () => L(B, Dd, BLU, 2.4) + L(O, Dd, BLU, 2, '6 4') + AUX(O, Cc) },
+            { t: '\\(\\overline{OC}\\perp\\overline{BD}\\) 於中點 M；O、M 是兩邊中點 → \\(\\overline{OM}=\\frac12\\overline{AD}=14\\)',
+              d: () => RA(M, Cc, B, 10, RED) + D(M, RED) + TX(mL[0], mL[1] + 5, 'M', { fs: 15, c: RED, anchor: 'middle' }) + TX(oL[0], oL[1] + 5, '14', { fs: 14, c: RED, anchor: 'middle' }) },
+            { t: '\\(\\overline{BM}^2=R^2-14^2=12^2-(R-14)^2\\) → \\(R=18\\)',
+              d: () => boxText(292, 238, 144, 55, [{ t: 'R² − 14R − 72 = 0', fs: 13 }, { t: 'R = 18，直徑 36', c: GRN, fs: 15 }], GRN) }
+          ]);
+        },
+        caption: 'C 是弧 BD 的中點，和「OC 垂直平分 BD」是同一件事的兩種說法。',
+        example: {
+          q: '圓 O 中 \\(\\overline{AB}=\\overline{CD}\\)，\\(\\angle AOB=48^\\circ\\)，求 \\(\\angle COD\\) 和弧 CD 的度數。',
+          steps: ['等弦 → 等圓心角：\\(\\angle COD=48^\\circ\\)。', '圓心角＝弧的度數：弧 CD＝48°。'],
+          ans: '\\(\\angle COD=48^\\circ\\)，弧 CD＝48°'
+        }
+      },
+
+      {
+        sec: '2-2', secName: '圓內接四邊形與平行弦',
+        title: '易錯：乘 2 除 2、優弧、外角、外接圓',
+        points: [
+          '圓周角 → 弧要<b>乘 2</b>；弧 → 圓周角要<b>除以 2</b>。',
+          '頂點在劣弧上，對的是<b>優弧</b>。',
+          '外角等於<b>不相鄰</b>的那個內角。'
+        ],
+        visual: (h) => {
+          h.innerHTML = xoRows([
+            { bad: '圓周角 40°，說所對的弧是 40°', good: '弧的度數＝圓周角×2＝80°' },
+            { bad: '頂點在劣弧上，\\(\\angle ACB=\\frac12\\angle AOB\\)', good: '對優弧：\\((360^\\circ-\\angle AOB)\\div2\\)' },
+            { bad: '外角 \\(\\angle DCE\\) 等於相鄰的 \\(\\angle B\\)', good: '外角＝<b>內對角</b> \\(\\angle A\\)' },
+            { bad: '菱形也能畫外接圓', good: '要對角互補；菱形只有正方形可以' },
+            { bad: '兩個圓的弧，度數一樣，弧長就一樣', good: '度數只看圓心角；弧長還要乘半徑' }
+          ]);
+        },
+        caption: '2-2 的題目，先問自己：這個角對的是哪一段弧？'
+      },
+
+      /* ================= 圖形速查（2-1、2-2 常見圖案） ================= */
+      {
+        sec: '速查', secName: '常見圖形',
+        title: '圖形速查①：看到切線，先連圓心到切點',
+        points: [
+          '① 甜筒形：切線段等長、\\(\\angle P+\\angle AOB=180^\\circ\\)。',
+          '② 切線＋過圓心的割線：連半徑得直角，設 r 列畢氏。',
+          '③ 三角形內切圓：切線長＝半周長－對邊。',
+          '④ 圓外切四邊形：兩組對邊的和相等。',
+          '⑤ 直角梯形夾著圓：補一條垂線，用畢氏求直徑。'
+        ],
+        visual: (h) => {
+          const cone = () => {
+            const O = [110, 145], r = 72, P = [262, 145], tg = tangents(O, r, P), A = tg[0], B = tg[1];
+            return CIR(O, r) + L(P, A) + L(P, B) + AUX(O, A) + AUX(O, B) + AUX(O, P) + RA(A, O, P, 10) + RA(B, O, P, 10) + TK(P, A, 1, BLU) + TK(P, B, 1, BLU)
+              + D(O) + D(A) + D(B) + D(P) + OL(O, -10) + LBo(O, A, 'A') + LBo(O, B, 'B') + TX(P[0] + 6, P[1] + 5, 'P', { fs: 16 })
+              + QB(['PA = PB', '∠P + ∠AOB = 180°', 'OP 平分 ∠P']);
+          };
+          const secant = () => {
+            const O = [100, 150], r = 62, P = [262, 150], A = tangents(O, r, P)[0], Cq = [O[0] + r, O[1]], Dq = [O[0] - r, O[1]];
+            return CIR(O, r) + L(P, A) + L(P, Dq) + AUX(O, A) + RA(A, O, P, 10) + D(O) + D(A) + D(P) + D(Cq) + D(Dq)
+              + TX(O[0], O[1] + 20, 'O', { anchor: 'middle', fs: 16 }) + LBo(O, A, 'A') + TX(Cq[0] + 4, Cq[1] + 20, 'C', { fs: 16 }) + TX(Dq[0] - 18, Dq[1] + 5, 'D', { fs: 16 }) + TX(P[0] + 6, P[1] + 5, 'P', { fs: 16 })
+              + QB(['∠OAP = 90°', 'r² + PA² = OP²', 'OP = r + PC']);
+          };
+          const incircle = () => {
+            const T1 = [30, 262], T2 = [262, 262], T3 = [95, 48], a = len(T2, T3), b = len(T1, T3), c = len(T1, T2), per = a + b + c;
+            const I = [(a * T1[0] + b * T2[0] + c * T3[0]) / per, (a * T1[1] + b * T2[1] + c * T3[1]) / per];
+            const area = Math.abs((T2[0] - T1[0]) * (T3[1] - T1[1]) - (T3[0] - T1[0]) * (T2[1] - T1[1])) / 2, ri = 2 * area / per;
+            const F1 = foot(I, T2, T3), F2 = foot(I, T1, T3), F3 = foot(I, T1, T2);
+            return PG([T1, T2, T3], 'none', INK, 2.6) + CIR(I, ri) + TK(T1, F2, 1, RED) + TK(T1, F3, 1, RED) + TK(T2, F1, 2, BLU) + TK(T2, F3, 2, BLU) + TK(T3, F1, 3, GRN) + TK(T3, F2, 3, GRN)
+              + D(F1) + D(F2) + D(F3) + TX(T1[0] - 14, T1[1] + 6, 'A', { fs: 16 }) + TX(T2[0] + 4, T2[1] + 6, 'B', { fs: 16 }) + TX(T3[0] - 6, T3[1] - 8, 'C', { fs: 16 })
+              + QB(['同色刻記的切線段等長', 'A 的切線長', '= 半周長 − BC']);
+          };
+          const quad = () => {
+            const O = [140, 150], r = 72, th = [60, 150, 235, 320], T = th.map(t => pol(O, r, t));
+            const V = (t1, t2) => { const dl = (t2 - t1 + 360) % 360; return pol(O, r / Math.cos(dl / 2 * Math.PI / 180), t1 + dl / 2); };
+            const A = V(60, 150), B = V(150, 235), Cq = V(235, 320), Dq = V(320, 60);
+            return PG([A, B, Cq, Dq], 'none', INK, 2.6) + CIR(O, r) + T.map(p => D(p)).join('')
+              + TK(A, T[0], 1, RED) + TK(A, T[1], 1, RED) + TK(B, T[1], 2, BLU) + TK(B, T[2], 2, BLU) + TK(Cq, T[2], 3, GRN) + TK(Cq, T[3], 3, GRN) + TK(Dq, T[3], 1, AMB) + TK(Dq, T[0], 1, AMB)
+              + LBo(O, A, 'A', INK, 14) + LBo(O, B, 'B', INK, 14) + LBo(O, Cq, 'C', INK, 14) + LBo(O, Dq, 'D', INK, 14)
+              + QB(['AB + CD', '= AD + BC', '（對邊和相等）']);
+          };
+          const trap = () => {
+            const k = 8, O = [95, 145], r = 6 * k, A = [O[0], O[1] - r], B = [O[0], O[1] + r], Dp = [O[0] + 18 * k, A[1]], E = [O[0] + 2 * k, B[1]], Cp = foot(O, Dp, E), H = [E[0], A[1]];
+            return CIR(O, r) + L([30, A[1]], [268, A[1]]) + L([30, B[1]], [268, B[1]]) + L(add(Dp, mul(sub(Dp, E), 0.15)), add(E, mul(sub(E, Dp), 0.2)))
+              + L(A, B, GRY, 1.6, '5 4') + AUX(E, H) + RA(H, E, Dp, 10, RED) + D(A) + D(B) + D(Dp) + D(E) + D(Cp) + D(H)
+              + LB(A, 'A', -10, -8) + LB(B, 'B', -10, 22) + LB(Dp, 'D', 4, -8) + LB(E, 'E', 6, 22) + LB(Cp, 'C', 8, 4) + LB(H, 'H', -6, -8, RED)
+              + QB(['DE = AD + BE', 'DH = AD − BE', 'EH = 直徑（畢氏）']);
+          };
+          SV.stepper(h, '0 0 440 290', [
+            { t: '<b>甜筒形</b>（圓外一點兩條切線）→ 連 \\(\\overline{OA}\\)、\\(\\overline{OB}\\)、\\(\\overline{OP}\\)', d: cone },
+            { t: '<b>切線＋過圓心的割線</b> → 連 \\(\\overline{OA}\\) 得直角，設 r 列畢氏', d: secant },
+            { t: '<b>三角形外面包著圓</b>（內切圓）→ 每個頂點標兩段等長的切線段', d: incircle },
+            { t: '<b>四邊形每一邊都切圓</b> → 四個頂點各有兩段等長的切線段', d: quad },
+            { t: '<b>直角梯形夾著圓</b>（直徑兩端的切線）→ 補一條垂線成直角三角形', d: trap }
+          ], { acc: false });
+        },
+        caption: '拖滑桿換圖案；紅色虛線是要補的輔助線。',
+        example: {
+          q: '從 P 作兩條切線切圓 O 於 A、B，\\(\\angle APB=70^\\circ\\)，求 \\(\\angle AOB\\)。這是哪一個圖案？',
+          steps: ['圖案①甜筒形：連 \\(\\overline{OA}\\)、\\(\\overline{OB}\\) 得兩個直角。', '四邊形 PAOB 內角和 360°：\\(\\angle AOB=180^\\circ-70^\\circ=110^\\circ\\)。'],
+          ans: '圖案①，\\(\\angle AOB=110^\\circ\\)'
+        }
+      },
+
+      {
+        sec: '速查', secName: '常見圖形',
+        title: '圖形速查②：看到弦，先從圓心作弦的垂線',
+        points: [
+          '① 弦＋圓心：作弦心距，半徑²＝弦心距²＋半弦²。',
+          '② 碗、隧道（弓形）：弦心距＝\\(r-h\\)。',
+          '③ 兩條平行弦：同側相減、異側相加。',
+          '④ 同心圓，大圓的弦切小圓：圓環面積＝π×半弦²。',
+          '⑤ 相鄰兩弦等長（BC＝CD）：\\(\\overline{OC}\\) 垂直平分 \\(\\overline{BD}\\)。'
+        ],
+        visual: (h) => {
+          const chord = () => {
+            const O = [130, 135], r = 100, A = pol(O, r, 210), B = pol(O, r, 330), M = mul(add(A, B), 0.5);
+            return CIR(O, r) + L(A, B, INK, 3) + AUX(O, M) + AUX(O, A) + RA(M, O, B, 10, RED) + D(O) + D(A) + D(B) + D(M, RED)
+              + OL(O, -10) + LBo(O, A, 'A') + LBo(O, B, 'B') + TX(M[0] + 4, M[1] + 18, 'M', { fs: 15, c: RED })
+              + TX(O[0] + 6, (O[1] + M[1]) / 2 + 4, 'd', { fs: 15, c: RED }) + TX((O[0] + A[0]) / 2 - 4, (O[1] + A[1]) / 2 - 6, 'r', { fs: 15, c: RED })
+              + QB(['r² = d² + 半弦²', '弦長 = 2 × 半弦']);
+          };
+          const bowl = () => {
+            const O = [140, 80], r = 120, A = pol(O, r, 205), B = pol(O, r, 335), M = mul(add(A, B), 0.5), Bt = [O[0], O[1] + r];
+            return `<polygon points="${SV.arcPoints(O[0], O[1], r, 205, 335)}" fill="rgba(37,99,235,.14)"/>`
+              + `<polyline points="${SV.arcPoints(O[0], O[1], r, 180, 360)}" fill="none" stroke="${INK}" stroke-width="3.4"/>`
+              + L(A, B, BLU, 3) + L(M, Bt, AMB, 2.8) + TX(M[0] + 6, (M[1] + Bt[1]) / 2 + 5, 'h', { fs: 16, c: AMB })
+              + AUX(O, A) + AUX(O, M) + RA(M, O, B, 10, RED) + D(O, RED) + D(A) + D(B) + D(M) + TX(O[0] + 6, O[1] - 6, 'O（補出來）', { fs: 13, c: RED })
+              + TX((O[0] + A[0]) / 2 - 10, (O[1] + A[1]) / 2, 'r', { fs: 15, c: RED })
+              + QB(['弦心距 = r − h', 'r² = 半弦² + (r − h)²'], RED, 160);
+          };
+          const para = () => {
+            const O = [130, 145], r = 100, d1 = 30, d2 = 78, w1 = Math.sqrt(r * r - d1 * d1), w2 = Math.sqrt(r * r - d2 * d2);
+            const M1 = [O[0], O[1] + d1], M2 = [O[0], O[1] + d2];
+            return CIR(O, r) + L([O[0] - w1, M1[1]], [O[0] + w1, M1[1]], INK, 3) + L([O[0] - w2, M2[1]], [O[0] + w2, M2[1]], INK, 3)
+              + AUX([O[0], O[1] - r], [O[0], O[1] + r]) + RA(M1, O, [O[0] + 30, M1[1]], 9, RED) + RA(M2, O, [O[0] + 30, M2[1]], 9, RED)
+              + D(O) + OL(O, -10) + TX(O[0] - 22, O[1] + 20, 'd₁', { fs: 14, c: RED }) + TX(O[0] + 6, M2[1] - 6, 'd₂', { fs: 14, c: RED })
+              + QB(['同側：d₁ − d₂', '異側：d₁ + d₂', '沒給圖 → 兩個答案']);
+          };
+          const ring = () => {
+            const O = [130, 145], R = 105, r = 55, w = Math.sqrt(R * R - r * r), T = [O[0], O[1] + r], A = [O[0] - w, T[1]], B = [O[0] + w, T[1]];
+            return CIR(O, R) + CIR(O, r, BLU, 'rgba(37,99,235,.06)') + L(A, B, INK, 3) + AUX(O, T) + AUX(O, A) + RA(T, O, B, 9, RED)
+              + D(O) + D(T, RED) + D(A) + D(B) + OL(O, -10) + TX(T[0] + 4, T[1] + 18, 'T', { fs: 15, c: RED }) + LBo(O, A, 'A', INK, 12) + LBo(O, B, 'B', INK, 12)
+              + QB(['R² − r² = 半弦²', '圓環 = π × 半弦²']);
+          };
+          const eqc = () => {
+            const O = [130, 160], r = 100, t1 = 2 * Math.asin(6 / 18) * 180 / Math.PI, A = pol(O, r, 180), B = pol(O, r, 0), Cq = pol(O, r, t1), Dq = pol(O, r, 2 * t1), M = mul(add(B, Dq), 0.5);
+            return CIR(O, r) + L(A, B, GRY, 2) + L(B, Cq) + L(Cq, Dq) + TK(B, Cq, 1, BLU) + TK(Cq, Dq, 1, BLU) + L(B, Dq, INK, 2.4) + AUX(O, Cq) + RA(M, Cq, B, 9, RED)
+              + D(O) + D(B) + D(Cq) + D(Dq) + D(M, RED) + OL(O, 20) + LBo(O, B, 'B') + LBo(O, Cq, 'C') + LBo(O, Dq, 'D')
+              + QB(['BC = CD', '→ OC 垂直平分 BD', '（C 是弧 BD 中點）']);
+          };
+          SV.stepper(h, '0 0 440 290', [
+            { t: '<b>弦＋圓心</b> → 作弦心距 \\(\\overline{OM}\\)、連半徑 \\(\\overline{OA}\\)', d: chord },
+            { t: '<b>碗、隧道（弓形）</b> → 先補出圓心，弦心距＝\\(r-h\\)', d: bowl },
+            { t: '<b>兩條平行弦</b> → 過圓心的一條垂線，同時平分兩條弦', d: para },
+            { t: '<b>同心圓，大圓的弦切小圓</b> → 連切點和弦的端點', d: ring },
+            { t: '<b>相鄰兩弦等長</b>（BC＝CD）→ 連 \\(\\overline{OC}\\)，它垂直平分 \\(\\overline{BD}\\)', d: eqc }
+          ], { acc: false });
+        },
+        caption: '弦的題目幾乎都是同一個動作：圓心作垂線＋連半徑，變成直角三角形。',
+        example: {
+          q: '半徑 10 的圓，弦 \\(\\overline{AB}=16\\)，求弦心距。這是哪一個圖案？',
+          steps: ['圖案①：作 \\(\\overline{OM}\\perp\\overline{AB}\\)，半弦＝8。', '\\(\\overline{OM}=\\sqrt{10^2-8^2}=6\\)。'],
+          ans: '圖案①，弦心距 6'
+        }
+      },
+
+      {
+        sec: '速查', secName: '常見圖形',
+        title: '圖形速查③：看到圓上的角，先找它對哪一段弧',
+        points: [
+          '① 直徑＋圓上一點：那個角是 90°。',
+          '② 箭頭形：圓周角＝圓心角÷2。',
+          '③ 領結形：同一段弧的圓周角相等。',
+          '④ 凹進去的角（頂點在劣弧）：對優弧，(360°－圓心角)÷2。',
+          '⑤ 兩條半徑夾一條弦：等腰三角形，底角相等。',
+          '⑥ 兩切線＋圓上一點：先求 ∠AOB＝180°－∠P。'
+        ],
+        visual: (h) => {
+          const O = [130, 148], r = 100;
+          const diam = () => {
+            const A = pol(O, r, 180), B = pol(O, r, 0), Cq = pol(O, r, 118);
+            return CIR(O, r) + L(A, B, BLU, 3) + L(A, Cq) + L(B, Cq) + RA(Cq, A, B, 12, RED) + D(O) + D(A) + D(B) + D(Cq) + OL(O) + LBo(O, A, 'A') + LBo(O, B, 'B') + LBo(O, Cq, 'C')
+              + QB(['∠ACB = 90°', '看到直角也要找直徑'], RED);
+          };
+          const arrow = () => {
+            const A = pol(O, r, 235), B = pol(O, r, 305), Cq = pol(O, r, 90);
+            return CIR(O, r) + ARC(O, r, 235, 305, GRN, 7) + L(Cq, A) + L(Cq, B) + L(O, A, RED, 2.8) + L(O, B, RED, 2.8) + AM(O, A, B, 20, RED, '2x') + AM(Cq, A, B, 34, BLU, 'x')
+              + D(O) + D(A) + D(B) + D(Cq) + TX(O[0] - 18, O[1] + 4, 'O', { fs: 16 }) + LBo(O, A, 'A') + LBo(O, B, 'B') + LBo(O, Cq, 'C')
+              + QB(['∠ACB = ½ ∠AOB', '（同一段弧 AB）'], BLU);
+          };
+          const bow = () => {
+            const A = pol(O, r, 220), B = pol(O, r, 320), Cq = pol(O, r, 55), Dq = pol(O, r, 125);
+            return CIR(O, r) + ARC(O, r, 220, 320, GRN, 7) + L(Cq, A, RED, 2.6) + L(Cq, B, RED, 2.6) + L(Dq, A, BLU, 2.6) + L(Dq, B, BLU, 2.6)
+              + AM(Cq, A, B, 30, RED, 'x') + AM(Dq, A, B, 30, BLU, 'x') + D(A) + D(B) + D(Cq) + D(Dq) + LBo(O, A, 'A') + LBo(O, B, 'B') + LBo(O, Cq, 'C') + LBo(O, Dq, 'D')
+              + QB(['∠ACB = ∠ADB', '（同弧圓周角相等）'], GRN);
+          };
+          const dent = () => {
+            const A = pol(O, r, 50), B = pol(O, r, -50), Cq = pol(O, r, 0);
+            return CIR(O, r, C, 'none') + ARC(O, r, 50, 310, RED, 6) + L(Cq, A, RED, 2.8) + L(Cq, B, RED, 2.8) + L(O, A, VIO, 2, '6 4') + L(O, B, VIO, 2, '6 4')
+              + AM(Cq, A, B, 14, RED, '') + AM(O, A, B, 20, VIO, '') + D(O) + D(A) + D(B) + D(Cq, RED, 6) + OL(O) + LBo(O, A, 'A') + LBo(O, B, 'B') + LBo(O, Cq, 'C', RED)
+              + QB(['C 對紅色優弧', '∠ACB =', '(360° − ∠AOB) ÷ 2'], RED, 180);
+          };
+          const iso = () => {
+            const A = pol(O, r, 200), B = pol(O, r, 330);
+            return CIR(O, r) + L(O, A, BLU, 2.8) + L(O, B, BLU, 2.8) + L(A, B) + TK(O, A, 1, BLU) + TK(O, B, 1, BLU) + AM(A, O, B, 30, RED, 'x') + AM(B, A, O, 30, RED, 'x')
+              + D(O) + D(A) + D(B) + OL(O, -10) + LBo(O, A, 'A') + LBo(O, B, 'B')
+              + QB(['OA = OB（半徑）', '→ 底角相等'], BLU);
+          };
+          const tan2 = () => {
+            const Q = [110, 145], rr = 70, P = [Q[0] + 140, Q[1]], A = pol(Q, rr, 60), B = pol(Q, rr, -60), Cq = pol(Q, rr, 180);
+            return CIR(Q, rr) + L(P, A) + L(P, B) + AUX(Q, A) + AUX(Q, B) + RA(A, Q, P, 9, RED) + RA(B, Q, P, 9, RED) + L(Cq, A, BLU, 2.6) + L(Cq, B, BLU, 2.6)
+              + AM(P, A, B, 24, AMB, '') + AM(Q, A, B, 16, RED, '') + AM(Cq, A, B, 28, BLU, '')
+              + D(Q) + D(A) + D(B) + D(P) + D(Cq) + OL(Q) + LBo(Q, A, 'A') + LBo(Q, B, 'B') + LBo(Q, Cq, 'C') + TX(P[0] + 6, P[1] + 5, 'P', { fs: 16 })
+              + QB(['∠AOB = 180° − ∠P', '∠ACB = ∠AOB ÷ 2'], BLU);
+          };
+          SV.stepper(h, '0 0 440 290', [
+            { t: '<b>直徑＋圓上一點</b> → 那個角是 90°，接著用畢氏', d: diam },
+            { t: '<b>箭頭形</b>（圓心角和圓周角對同一段弧）→ 圓周角是一半', d: arrow },
+            { t: '<b>領結形</b>（兩個圓周角夾同一段弧）→ 兩個角相等', d: bow },
+            { t: '<b>角往圓心凹進去</b>（頂點在劣弧上）→ 它對的是對面的優弧', d: dent },
+            { t: '<b>兩條半徑＋一條弦</b> → 等腰三角形，兩個底角相等', d: iso },
+            { t: '<b>兩切線＋圓上一點</b> → 連 \\(\\overline{OA}\\)、\\(\\overline{OB}\\)，先求圓心角', d: tan2 }
+          ], { acc: false });
+        },
+        caption: '角的題目只有一條主線：角 → 弧 → 角。',
+        example: {
+          q: 'A、B、C 在圓 O 上，C 在劣弧 AB 上，\\(\\angle AOB=80^\\circ\\)，求 \\(\\angle ACB\\)。這是哪一個圖案？',
+          steps: ['圖案④：C 在劣弧上，對的是 \\(360^\\circ-80^\\circ=280^\\circ\\) 的優弧。', '\\(\\angle ACB=280^\\circ\\div2=140^\\circ\\)。'],
+          ans: '圖案④，\\(\\angle ACB=140^\\circ\\)'
+        }
+      },
+
+      {
+        sec: '速查', secName: '常見圖形',
+        title: '圖形速查④：看到圓上的四邊形、交叉的線',
+        points: [
+          '① 圓內接四邊形：對角互補、外角＝內對角。',
+          '② 兩條平行弦：中間夾等弧，四點連成等腰梯形。',
+          '③ 兩弦在圓內交叉：交角＝兩段弧的和÷2。',
+          '④ 兩條割線在圓外交會：夾角＝(遠弧－近弧)÷2。',
+          '⑤ 正六邊形：切成 6 個正三角形，邊長＝半徑。'
+        ],
+        visual: (h) => {
+          const O = [130, 148], r = 100;
+          const cyc = () => {
+            const A = pol(O, r, 200), B = pol(O, r, 290), Cq = pol(O, r, 10), Dq = pol(O, r, 110), E = add(Cq, mul(sub(Cq, B), 0.45));
+            return CIR(O, r, GRY, 'none', 2) + PG([A, B, Cq, Dq], 'rgba(124,58,237,.10)', C, 2.8) + L(Cq, E, INK, 2.2, '6 4')
+              + AM(A, B, Dq, 26, RED, 'x') + AM(Cq, B, Dq, 20, BLU, '') + AM(Cq, Dq, E, 32, RED, 'x')
+              + D(A) + D(B) + D(Cq) + D(Dq) + D(E) + LBo(O, A, 'A') + LBo(O, B, 'B') + LBo(O, Cq, 'C') + LBo(O, Dq, 'D') + TX(E[0] + 8, E[1], 'E', { fs: 16 })
+              + QB(['∠A + ∠C = 180°', '外角 ∠DCE = ∠A'], RED, 180);
+          };
+          const par = () => {
+            const A = pol(O, r, 140), B = pol(O, r, 40), Cq = pol(O, r, 240), Dq = pol(O, r, 300);
+            return CIR(O, r, GRY, 'none', 2) + ARC(O, r, 140, 240, GRN, 7) + ARC(O, r, 300, 400, GRN, 7) + L(A, B, INK, 3) + L(Cq, Dq, INK, 3) + L(A, Cq, GRY, 2, '5 4') + L(B, Dq, GRY, 2, '5 4')
+              + D(A) + D(B) + D(Cq) + D(Dq) + LBo(O, A, 'A') + LBo(O, B, 'B') + LBo(O, Cq, 'C') + LBo(O, Dq, 'D')
+              + QB(['AB ∥ CD', '→ 弧 AC = 弧 BD', '→ 等腰梯形'], GRN);
+          };
+          const cross = () => {
+            const A = pol(O, r, 125), B = pol(O, r, 55), Cq = pol(O, r, -65), Dq = pol(O, r, -115), E = xline(A, Cq, B, Dq);
+            return CIR(O, r, GRY, 'none', 2) + ARC(O, r, 55, 125, GRN, 7) + ARC(O, r, 245, 295, BLU, 7) + L(A, Cq) + L(B, Dq) + AUX(B, Cq)
+              + AM(E, A, B, 18, RED, '') + D(A) + D(B) + D(Cq) + D(Dq) + D(E, RED) + LBo(O, A, 'A') + LBo(O, B, 'B') + LBo(O, Cq, 'C') + LBo(O, Dq, 'D') + TX(E[0] + 10, E[1] + 5, 'E', { fs: 15, c: RED })
+              + QB(['∠AEB =', '(弧 AB + 弧 CD) ÷ 2', '連 BC，用外角'], RED);
+          };
+          const outside = () => {
+            const Q = [182, 148], rr = 82, A = pol(Q, rr, 50), B = pol(Q, rr, -50), Cq = pol(Q, rr, 165), Dq = pol(Q, rr, 195), P = xline(A, Cq, B, Dq);
+            return CIR(Q, rr, GRY, 'none', 2) + ARC(Q, rr, -50, 50, GRN, 7) + ARC(Q, rr, 165, 195, BLU, 7) + L(P, A) + L(P, B) + AUX(A, Dq)
+              + AM(P, A, B, 30, RED, '') + D(A) + D(B) + D(Cq) + D(Dq) + D(P) + LBo(Q, A, 'A') + LBo(Q, B, 'B') + LBo(Q, Cq, 'C', INK, 14) + LBo(Q, Dq, 'D', INK, 14) + TX(P[0] - 4, P[1] - 10, 'P', { fs: 16 })
+              + QB(['∠P =', '(遠弧 AB − 近弧 CD) ÷ 2', '連 AD，用外角'], RED, 196);
+          };
+          const hexa = () => {
+            const V6 = [0, 60, 120, 180, 240, 300].map(t => pol(O, r, t));
+            return CIR(O, r) + PG(V6, 'rgba(37,99,235,.08)', BLU, 2.8) + V6.map(p => AUX(O, p) + D(p)).join('') + D(O) + TK(V6[0], V6[1], 1, BLU) + TK(O, V6[0], 1, BLU) + TK(O, V6[1], 1, BLU)
+              + QB(['6 個正三角形', '邊長 = 半徑', '每個內角 120°'], BLU);
+          };
+          SV.stepper(h, '0 0 440 290', [
+            { t: '<b>四個頂點都在圓上</b> → 對角互補、外角＝內對角', d: cyc },
+            { t: '<b>兩條平行弦</b> → 中間夾的兩段弧相等', d: par },
+            { t: '<b>兩弦在圓內交叉</b> → 連一條弦，用三角形的外角', d: cross },
+            { t: '<b>兩條割線在圓外交會</b> → 連 \\(\\overline{AD}\\)，外角相減', d: outside },
+            { t: '<b>正六邊形和圓</b> → 圓心連到每個頂點，切成 6 個正三角形', d: hexa }
+          ], { acc: false });
+        },
+        caption: '③、④ 不用背公式：連一條弦，用「三角形外角＝兩內角和」就推得出來。',
+        example: {
+          q: '兩弦 \\(\\overline{AC}\\)、\\(\\overline{BD}\\) 交於 E，弧 AB＝70°、弧 CD＝50°，求 \\(\\angle AEB\\)。',
+          steps: ['圖案③：連 \\(\\overline{BC}\\)，\\(\\angle ACB=35^\\circ\\)、\\(\\angle DBC=25^\\circ\\)。', '\\(\\angle AEB\\) 是 \\(\\triangle EBC\\) 的外角：\\(35^\\circ+25^\\circ=60^\\circ\\)。'],
+          ans: '圖案③，\\(\\angle AEB=60^\\circ\\)'
+        }
       }
 
     ]

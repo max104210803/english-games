@@ -5,8 +5,14 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>國中數學 九上數學複習</title>
   <meta name="description" content="國中數學 九上數學複習：圓（切線段、弦心距）" />
-  <link rel="stylesheet" href="style.css?v=20261108-2" />
-  <link rel="stylesheet" href="theme-dark.css?v=20261108-2" />
+  <link rel="stylesheet" href="style.css?v=20261121-3" />
+  <link rel="stylesheet" href="theme-dark.css?v=20261121-3" />
+  <style>
+    /* 本 deck 專用：右側圖解欄與圖解放大層改淺灰底，白色數值框與滑桿面板較好分辨（2026-11-21 使用者要求）。
+       寫在這裡而不是 _共用/style.css，複製共用檔時才不會被蓋掉；易錯表（.xo）在深色模式仍用深底。 */
+    .slide-visual { background: #e6eaf0; }
+    .zoom-modal:has(.zoom-body > .visual-host):not(:has(.xo)) { background: #e6eaf0 !important; }
+  </style>
   <script>
     // 預設深色（<html data-theme="dark">）；上次選淺色才拿掉。放在 head 避免開頁閃色
     try { if (localStorage.getItem('deck-theme') === 'light') delete document.documentElement.dataset.theme; } catch (e) {}
@@ -107,9 +113,9 @@
     </div>
   </div>
 
-  <script src="svg.js?v=20261108-2"></script>
-  <script src="ch2.js?v=20261108-2"></script>
-  <script src="engine.js?v=20261108-2"></script>
+  <script src="svg.js?v=20261121-3"></script>
+  <script src="ch2.js?v=20261121-3"></script>
+  <script src="engine.js?v=20261121-3"></script>
   <script>
     // 深色主題切換（theme-dark.css）；選擇存在 localStorage 的 deck-theme
     (function () {
