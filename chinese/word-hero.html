@@ -1,0 +1,1587 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#eef1ef">
+  <title>文字勇者・句子拼圖 Pilot</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --bg: #c7cdca;
+      --paper: #f2ebdd;
+      --ink: #27312e;
+      --muted: #65716d;
+      --line: #d8cfbd;
+      --forest: #2f6652;
+      --forest-soft: #e4efe8;
+      --gold: #a9792c;
+      --gold-soft: #f5edda;
+      --rose: #a84d42;
+      --rose-soft: #f6e8e4;
+      --blue: #4b7181;
+      --blue-soft: #e6eff1;
+      --shadow: 0 12px 32px #263b3210, 0 2px 6px #263b3208;
+      --serif: "Noto Serif TC", "Source Han Serif TC", "PMingLiU", serif;
+      --sans: "Noto Sans TC", "PingFang TC", "Microsoft JhengHei", sans-serif;
+    }
+    * { box-sizing: border-box; }
+    [hidden] { display: none !important; }
+    body {
+      min-height: 100vh; margin: 0; color: var(--ink); font: 16px/1.7 var(--sans);
+      background:
+        radial-gradient(ellipse at 9% 2%, #b8c5bc 0, transparent 27rem),
+        radial-gradient(ellipse at 96% 9%, #cdbfa7 0, transparent 24rem),
+        repeating-linear-gradient(0deg, transparent 0 31px, #82918b0d 32px),
+        var(--bg);
+    }
+    button { font: inherit; color: inherit; }
+    button:focus-visible { outline: 3px solid var(--gold); outline-offset: 3px; }
+    .wrap { width: min(1000px, calc(100% - 28px)); margin: 0 auto; padding: 22px 0 52px; }
+    .topline { display: flex; justify-content: space-between; align-items: center; gap: 14px; padding-bottom: 12px; border-bottom: 1px solid var(--line); color: var(--muted); font-size: 12px; letter-spacing: .08em; }
+    .brand { display: flex; align-items: center; gap: 9px; color: var(--forest); font-weight: 900; }
+    .crest { width: 29px; height: 29px; display: grid; place-items: center; border-radius: 50% 50% 50% 7px; background: var(--forest); color: white; font: 800 15px var(--serif); transform: rotate(-8deg); }
+    .sound-toggle { flex: none; padding: 6px 11px; border: 1px solid var(--line); border-radius: 999px; background: var(--paper); color: var(--forest); font-size: 12px; font-weight: 800; cursor: pointer; }
+    .sound-toggle[aria-pressed="false"] { background: transparent; color: var(--muted); }
+    .music-card { display: grid; grid-template-columns: minmax(0, 1fr) minmax(250px, 360px); align-items: center; gap: 14px; margin: 0 0 17px; padding: 12px 15px; border: 1px solid var(--line); border-radius: 12px; background: #ede8dc; }
+    .music-card strong { display: block; color: #5d4b2d; font: 800 15px var(--serif); }
+    .music-card p { margin: 2px 0 0; color: var(--muted); font-size: 12px; line-height: 1.5; }
+    .music-card audio { display: block; width: 100%; max-width: 100%; height: 40px; }
+    .hero { display: grid; grid-template-columns: 1fr auto; align-items: end; gap: 20px; padding: 27px 0 20px; }
+    .eyebrow { color: var(--rose); font-size: 12px; font-weight: 900; letter-spacing: .16em; }
+    h1 { margin: 5px 0 8px; font: 800 clamp(30px, 5vw, 48px)/1.18 var(--serif); }
+    .hero p { max-width: 690px; margin: 0; color: var(--muted); }
+    .sigil { display: grid; place-items: center; width: 92px; height: 92px; border: 2px solid var(--gold); border-radius: 50%; color: var(--gold); font: 900 14px/1.5 var(--serif); text-align: center; transform: rotate(7deg); box-shadow: inset 0 0 0 4px var(--bg), inset 0 0 0 5px #a9792c3a; }
+    .quest {
+      display: grid; grid-template-columns: auto 1fr auto; align-items: center; gap: 14px;
+      padding: 15px 18px; margin-bottom: 17px; color: #fffdf5; background: var(--ink);
+      border-radius: 5px 17px 5px 17px; box-shadow: var(--shadow);
+    }
+    .quest-mark { font: 900 22px var(--serif); color: #e9c77f; }
+    .quest b { display: block; color: #e9c77f; letter-spacing: .06em; }
+    .quest p { margin: 2px 0 0; font-size: 14px; line-height: 1.6; }
+    .quest-step { min-width: 78px; color: #e9c77f; font-size: 12px; font-weight: 800; text-align: right; }
+    .statusbar { display: flex; align-items: center; gap: 12px; margin: 0 2px 15px; }
+    .status-text { min-width: 103px; color: var(--muted); font-size: 13px; font-weight: 800; }
+    .progress { height: 8px; flex: 1; overflow: hidden; border-radius: 99px; background: #dce3df; }
+    .progress-fill { width: 0; height: 100%; background: linear-gradient(90deg, var(--forest), #78a282); transition: width .2s ease; }
+    .room { display: grid; grid-template-columns: minmax(0, 1.1fr) minmax(260px, .9fr); gap: 15px; }
+    .card { background: var(--paper); border: 1px solid var(--line); border-radius: 16px 5px 16px 5px; box-shadow: var(--shadow); }
+    .puzzle { padding: clamp(17px, 3.3vw, 25px); border-left: 6px solid var(--forest); }
+    .puzzle-head { display: flex; justify-content: space-between; align-items: start; gap: 12px; }
+    .level-tag { color: var(--forest); font-size: 11px; font-weight: 900; letter-spacing: .13em; }
+    h2 { margin: 3px 0 7px; font: 800 24px/1.35 var(--serif); }
+    .prompt { margin: 0 0 15px; color: var(--muted); }
+    .gate { flex: none; color: #dfe7e2; font: 800 44px/.9 var(--serif); }
+    .build-label { display: flex; justify-content: space-between; align-items: center; gap: 8px; color: var(--muted); font-size: 12px; font-weight: 800; margin: 0 0 7px; }
+    .build-area {
+      min-height: 81px; padding: 11px; display: flex; align-items: flex-start; align-content: flex-start;
+      flex-wrap: wrap; gap: 7px; border: 1.5px dashed #aab9b0; border-radius: 11px;
+      background: #f7f1e5;
+    }
+    .build-area.empty::before { content: "點選下方文字磚，依序放進句子裡"; color: #87928d; font-size: 14px; }
+    .clue-card { display: grid; grid-template-columns: auto 1fr; gap: 9px; align-items: start; margin: 0 0 13px; padding: 10px 12px; border-radius: 9px; background: var(--gold-soft); color: #6e572c; }
+    .clue-card b { color: var(--gold); font-size: 12px; letter-spacing: .05em; white-space: nowrap; }
+    .clue-card p { margin: 0; font-size: 13px; line-height: 1.6; }
+    .tiles-label { margin: 15px 0 7px; color: var(--muted); font-size: 12px; font-weight: 800; }
+    .tiles { display: flex; flex-wrap: wrap; gap: 7px; }
+    .tile {
+      min-height: 38px; padding: 7px 11px; border: 1px solid #cbd8d1; border-radius: 9px 9px 9px 3px;
+      background: var(--forest-soft); color: #315544; font-size: 14px; cursor: pointer;
+      transition: border-color .12s, background .12s, transform .12s;
+    }
+    .tile:hover { transform: translateY(-1px); border-color: var(--forest); }
+    .tile.in-line { background: var(--gold-soft); border-color: #e4d2a8; color: #715522; }
+    .tile:disabled { opacity: .43; cursor: default; transform: none; }
+    .tile.decoy { background: #f2f3f1; color: #727b76; border-color: #dfe3e0; }
+    .reason-box { margin-top: 13px; padding: 13px; border: 1px solid #cbdde0; border-radius: 11px; background: var(--blue-soft); }
+    .reason-box[hidden] { display: none; }
+    .reason-title { margin: 0 0 9px; color: #315d70; font: 800 15px var(--serif); }
+    .reason-options { display: grid; gap: 7px; }
+    .reason-option { padding: 9px 11px; border: 1px solid #c8d7db; border-radius: 9px; background: #f8fbfb; text-align: left; cursor: pointer; }
+    .reason-option:hover, .reason-option.chosen { border-color: var(--blue); background: #d6e8eb; }
+    .reason-option:disabled { cursor: default; }
+    .controls { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 14px; }
+    .btn {
+      border: 0; border-radius: 999px; padding: 9px 15px; background: var(--forest); color: white;
+      font-size: 14px; font-weight: 800; cursor: pointer; transition: filter .12s, transform .12s;
+    }
+    .btn:hover { filter: brightness(1.07); transform: translateY(-1px); }
+    .btn.quiet { border: 1px solid var(--forest); background: transparent; color: var(--forest); }
+    .btn.reset { border: 1px solid var(--line); background: transparent; color: var(--muted); }
+    .feedback { min-height: 48px; margin-top: 12px; padding: 10px 12px; border-radius: 9px; background: #f5f0e5; color: var(--muted); font-size: 14px; }
+    .feedback.good { background: var(--forest-soft); color: #2f5944; }
+    .feedback.try { background: var(--gold-soft); color: #735827; }
+    .story-card { padding: 19px 20px; background: #eee4d2; border-color: #dccfb8; }
+    .story-kicker { color: var(--gold); font-size: 11px; font-weight: 900; letter-spacing: .14em; }
+    .story-illustration {
+      display: block; width: 100%; aspect-ratio: 3 / 2; max-height: 230px; margin: 0 0 13px;
+      object-fit: cover; border: 1px solid #d9dcda; border-radius: 11px; background: #f1f2f2;
+    }
+    .story-card h3 { margin: 4px 0 8px; font: 800 19px var(--serif); }
+    .story-card p { margin: 0 0 10px; font-size: 14px; line-height: 1.75; }
+    .story-card p:last-child { margin-bottom: 0; }
+    .method { margin-top: 17px; padding: 11px 13px; border-radius: 10px; background: var(--blue-soft); color: #455e67; font-size: 13px; }
+    .method b { color: #315d70; }
+    .ending { display: none; padding: 23px; margin-top: 15px; text-align: center; background: var(--gold-soft); border: 1px solid #e6d7b4; border-radius: 16px; }
+    .ending.show { display: block; }
+    .ending h2 { color: #765622; }
+    .ending p { max-width: 560px; margin: 6px auto 15px; }
+    .refresh { max-width: 940px; margin: 23px auto 16px; padding: clamp(16px, 3vw, 24px); border: 1px solid #dccfb8; border-radius: 15px; background: #f7f1e5; text-align: left; }
+    .refresh-kicker { color: var(--gold); font-size: 11px; font-weight: 900; letter-spacing: .13em; }
+    .refresh h3 { margin: 4px 0 5px; color: #5d4b2d; font: 800 22px/1.4 var(--serif); }
+    .refresh-intro { margin: 0 0 15px !important; color: var(--muted); font-size: 14px; }
+    .refresh-section-title { margin: 16px 0 8px; color: #5d4b2d; font-size: 14px; font-weight: 900; }
+    .arc-grid { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 6px; }
+    .arc-beat { min-width: 0; padding: 8px 5px; border: 1px solid #e2d6c1; border-radius: 9px; background: #fcf8ef; text-align: center; }
+    .arc-beat strong { display: block; color: #62502f; font-size: 12px; }
+    .arc-beat span { display: block; color: #7a7468; font-size: 10px; line-height: 1.4; }
+    .refresh-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; margin-top: 10px; }
+    .refresh-card { min-width: 0; padding: 13px; border: 1px solid #e1d7c5; border-radius: 11px; background: #fcf9f2; }
+    .refresh-card h4 { margin: 0 0 8px; color: #5d4b2d; font: 800 15px/1.45 var(--serif); }
+    .refresh-card p { max-width: none; margin: 0 0 9px !important; color: var(--muted); font-size: 13px; line-height: 1.6; text-align: left; }
+    .refresh-card ul { margin: 0; padding-left: 19px; color: #59645d; font-size: 13px; line-height: 1.65; }
+    .refresh-tools { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; margin-top: 10px; }
+    .refresh-status { margin: 0 !important; color: var(--muted); font-size: 12px; text-align: left !important; }
+    .choice-row, .mini-options, .mini-pairs { display: flex; flex-wrap: wrap; gap: 8px; }
+    .think-choice, .mini-choice { padding: 9px 12px; border: 1px solid #d6c9b0; border-radius: 10px; background: #fffdf8; color: #514a3d; font: 700 13px/1.45 var(--sans); cursor: pointer; transition: border-color .12s, background .12s, transform .12s; }
+    .think-choice:hover, .mini-choice:hover { transform: translateY(-1px); border-color: var(--gold); }
+    .think-choice[aria-pressed="true"], .mini-choice.selected { border-color: var(--forest); background: #e4efe8; color: #2f5944; }
+    .think-feedback, .mini-feedback { min-height: 25px; margin: 8px 0 0 !important; color: var(--muted); font-size: 13px; text-align: left !important; }
+    .turning-details { margin-top: 10px; padding: 10px; border: 1px solid #e1d7c5; border-radius: 9px; background: #f7f1e5; }
+    .turning-details[hidden], .brainstorm-check[hidden] { display: none; }
+    .turning-compare { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 7px; }
+    .turning-compare article { padding: 8px; border-radius: 8px; background: #fffdf8; }
+    .turning-compare article span { color: var(--gold); font-size: 11px; font-weight: 900; }
+    .turning-compare article p { margin: 4px 0 0 !important; color: #514a3d; font-size: 12px; line-height: 1.55; }
+    .turning-tip { display: grid; gap: 3px; margin: 8px 0 0 !important; color: var(--muted); font-size: 12px; line-height: 1.55; }
+    .turning-tip strong { color: #5d4b2d; }
+    .brainstorm-group { margin-top: 10px; }
+    .brainstorm-group h5 { margin: 0 0 6px; color: #5d4b2d; font-size: 12px; }
+    .brainstorm-outline { min-height: 42px; margin: 12px 0 0 !important; padding: 10px 12px; border-radius: 9px; background: #e8efe9; color: #344d3e; font-size: 14px; line-height: 1.6; }
+    .brainstorm-check { margin: 8px 0 0 !important; color: #53665a; font-size: 12px; line-height: 1.55; }
+    .mini-game { padding: clamp(18px, 3vw, 26px); margin-bottom: 15px; border-left: 6px solid var(--gold); }
+    .mini-game[hidden], .room[hidden] { display: none; }
+    .mini-kicker { color: var(--gold); font-size: 11px; font-weight: 900; letter-spacing: .13em; }
+    .mini-game h2 { margin-top: 5px; }
+    .mini-game .mini-prompt { color: var(--muted); }
+    .mini-pair-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin: 16px 0 8px; }
+    .mini-pair-column { display: grid; align-content: start; gap: 8px; }
+    .mini-pair-column h3 { margin: 0; color: #5d4b2d; font: 800 14px var(--serif); }
+    .mini-pair-column .mini-choice { text-align: left; }
+    .mini-choice.matched { border-color: var(--forest); background: var(--forest-soft); }
+    .mini-progress { margin: 8px 0; color: var(--muted); font-size: 13px; font-weight: 800; }
+    .maze-panel[hidden] { display: none; }
+    .maze-help { margin: 10px 0 12px; color: var(--muted); font-size: 13px; }
+    .maze-layout { display: grid; grid-template-columns: minmax(0, 612px) auto; align-items: center; gap: 18px; }
+    .maze-canvas { display: block; width: 100%; height: auto; border: 2px solid #b9aa91; border-radius: 10px; background: #e9deca; image-rendering: pixelated; }
+    .maze-controls { display: grid; grid-template-columns: repeat(3, 46px); grid-template-rows: repeat(2, 46px); gap: 5px; justify-content: center; }
+    .maze-controls button { width: 46px; height: 46px; border: 1px solid #cabb9f; border-radius: 10px; background: #fffdf8; color: #4f604f; font-size: 20px; font-weight: 900; cursor: pointer; touch-action: manipulation; }
+    .maze-controls button:active { background: var(--forest-soft); transform: translateY(1px); }
+    .maze-controls [data-maze-dir="up"] { grid-column: 2; grid-row: 1; }
+    .maze-controls [data-maze-dir="left"] { grid-column: 1; grid-row: 2; }
+    .maze-controls [data-maze-dir="down"] { grid-column: 2; grid-row: 2; }
+    .maze-controls [data-maze-dir="right"] { grid-column: 3; grid-row: 2; }
+    .footer-note { margin-top: 18px; color: var(--muted); font-size: 12px; text-align: center; }
+    @media (max-width: 760px) {
+      .room { grid-template-columns: 1fr; }
+      .story-card { order: 2; }
+      .arc-grid { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+    }
+    @media (max-width: 540px) {
+      .wrap { width: min(100% - 20px, 1000px); padding-top: 14px; }
+      .mast-note, .sigil { display: none; }
+      .music-card { grid-template-columns: 1fr; gap: 7px; }
+      .arc-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .refresh-grid { grid-template-columns: 1fr; }
+      .turning-compare { grid-template-columns: 1fr; }
+      .mini-pair-grid { grid-template-columns: 1fr; }
+      .sequence-slot { grid-template-columns: 54px 1fr; }
+      .maze-layout { grid-template-columns: 1fr; }
+      .maze-canvas { max-width: 100%; }
+      .quest { grid-template-columns: auto 1fr; }
+      .quest-step { grid-column: 2; text-align: left; }
+      .statusbar { gap: 8px; }
+      .status-text { min-width: 88px; }
+      .gate { font-size: 34px; }
+      .tile { font-size: 13px; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { transition-duration: .01ms !important; scroll-behavior: auto !important; }
+    }
+  </style>
+</head>
+<body>
+  <main class="wrap">
+    <header class="topline">
+      <div class="brand"><span class="crest" aria-hidden="true">文</span><span>文字勇者・試玩版</span></div>
+      <div class="mast-note">Pilot 01　｜　不計時・可重組</div>
+      <button class="sound-toggle" id="sound-toggle" type="button" aria-pressed="true">答對音效：開</button>
+    </header>
+
+    <section class="hero">
+      <div>
+        <div class="eyebrow">WORD QUEST · SENTENCE PUZZLE</div>
+        <h1>沉默之塔的七道文字門</h1>
+        <p>灰霧偷走了王國的描述。請移動文字磚塊，找回聲音、畫面和回憶，為晨曦公主打開高塔的門。</p>
+      </div>
+      <div class="sigil" aria-label="文字冒險">觀察<br>組句<br>聯想</div>
+    </section>
+
+    <section class="music-card" aria-labelledby="music-title">
+      <div>
+        <strong id="music-title">故事配樂｜《勇者的約定》</strong>
+        <p>配樂由 Suno 生成，請到 Suno 網站收聽；不影響答對音效。</p>
+      </div>
+      <a class="btn quiet" href="https://suno.com/s/KXEmf7R17XkvP2Yh" target="_blank" rel="noopener" style="justify-self:start;text-decoration:none">到 Suno 收聽配樂 ↗</a>
+    </section>
+
+    <section class="quest" aria-label="冒險任務">
+      <div class="quest-mark" aria-hidden="true">✦</div>
+      <div>
+        <b>任務：修補故事之門</b>
+        <p>每道門都要先根據線索組句，再選出兩項證據說明理由。沒有倒數計時，答錯不扣分，可以查看提示或重組。</p>
+      </div>
+      <div class="quest-step" id="quest-step">第 1 道門／7</div>
+    </section>
+
+    <div class="statusbar" aria-label="闖關進度">
+      <span class="status-text" id="status-text">已開啟 0／7 道門</span>
+      <div class="progress" role="progressbar" aria-label="闖關進度" aria-valuemin="0" aria-valuemax="7" aria-valuenow="0">
+        <div class="progress-fill" id="progress-fill"></div>
+      </div>
+    </div>
+
+    <div class="room">
+      <section class="card puzzle" aria-labelledby="puzzle-title">
+        <div class="puzzle-head">
+          <div>
+            <div class="level-tag" id="level-tag">第一門 · 感官描寫</div>
+            <h2 id="puzzle-title">讓氣味和聲音回來</h2>
+          </div>
+          <div class="gate" id="gate-mark" aria-hidden="true">Ⅰ</div>
+        </div>
+        <p class="prompt" id="prompt">把地點、食物、聲音和氣味排成一個有畫面的句子。</p>
+        <div class="clue-card"><b>偵查線索</b><p id="clue-text"></p></div>
+
+        <div class="build-label"><span>你的句子</span><span id="tile-count">0 塊</span></div>
+        <div class="build-area empty" id="build-area" aria-label="已選文字磚"></div>
+
+        <div class="tiles-label" id="tiles-label">可用文字磚（點選加入；點已選磚塊可拿回）</div>
+        <div class="tiles" id="tile-bank" aria-label="可用文字磚"></div>
+
+        <section class="reason-box" id="reason-box" hidden aria-labelledby="reason-title">
+          <h3 class="reason-title" id="reason-title"></h3>
+          <div class="reason-options" id="reason-options" role="group" aria-label="選擇解題理由"></div>
+        </section>
+
+        <div class="controls">
+          <button class="btn" id="check-btn" type="button">檢查句子</button>
+          <button class="btn quiet" id="hint-btn" type="button">給我一個提示</button>
+          <button class="btn reset" id="reset-btn" type="button">清空重排</button>
+          <button class="btn" id="next-btn" type="button" hidden>下一道門 →</button>
+        </div>
+        <div class="feedback" id="feedback" aria-live="polite">先讀提示，再挑選文字磚。每一關只有一種示範排列，寫作時也可以有自己的說法。</div>
+      </section>
+
+      <aside class="card story-card">
+        <div class="story-kicker">旅途手札 · 寫作小技巧</div>
+        <img class="story-illustration" id="story-image" src="word-hero/word-hero-01.webp" alt="勇者在霧林聆聽風鈴、循著桂花香尋找石階小路" loading="eager">
+        <h3 id="story-title">先把感官放進句子</h3>
+        <div id="story-text">
+          <p>描述食物時，不只說「很好吃」。試著寫出眼睛看到的樣子、耳朵聽見的聲音，或鼻子聞到的氣味。</p>
+          <p>這一關的句子是自編示範，重點是觀察如何從「地點」走到「食物」，再加上聲音和氣味。</p>
+        </div>
+        <div class="method" id="method"><b>寫作線索：</b>地點 → 描寫對象 → 聲音 → 氣味</div>
+      </aside>
+    </div>
+
+    <section class="card mini-game" id="mini-game" hidden aria-labelledby="mini-title">
+      <div class="mini-kicker" id="mini-kicker">故事中場小任務</div>
+      <h2 id="mini-title"></h2>
+      <p class="mini-prompt" id="mini-prompt"></p>
+      <div class="mini-progress" id="mini-progress" aria-live="polite"></div>
+      <div class="mini-pair-grid" id="mini-pair-grid" hidden>
+        <div class="mini-pair-column">
+          <h3 id="mini-left-title"></h3>
+          <div class="mini-pairs" id="mini-left"></div>
+        </div>
+        <div class="mini-pair-column">
+          <h3 id="mini-right-title"></h3>
+          <div class="mini-pairs" id="mini-right"></div>
+        </div>
+      </div>
+      <div class="maze-panel" id="maze-panel" hidden>
+        <p class="maze-help">用方向鍵／WASD，或點畫面按鈕移動。避開有標記的鬆動石板；踩到會退回一格，但已收集的火星會保留。集滿 3 點再走到出口。</p>
+        <div class="maze-layout">
+          <canvas class="maze-canvas" id="maze-canvas" width="612" height="252" tabindex="0" aria-label="橫向卷軸迷宮：移動勇者收集火星並找到出口">你的瀏覽器不支援 Canvas。</canvas>
+          <div class="maze-controls" role="group" aria-label="迷宮方向控制">
+            <button type="button" data-maze-dir="up" aria-label="向上">↑</button>
+            <button type="button" data-maze-dir="left" aria-label="向左">←</button>
+            <button type="button" data-maze-dir="down" aria-label="向下">↓</button>
+            <button type="button" data-maze-dir="right" aria-label="向右">→</button>
+          </div>
+        </div>
+      </div>
+      <p class="mini-feedback" id="mini-feedback" aria-live="polite"></p>
+      <div class="controls">
+        <button class="btn reset" id="mini-reset-btn" type="button">重新想想</button>
+        <button class="btn" id="mini-continue-btn" type="button" hidden>線索接好了，繼續冒險 →</button>
+      </div>
+    </section>
+
+    <section class="ending" id="ending" aria-live="polite">
+      <div class="eyebrow">QUEST COMPLETE · PILOT CLEAR</div>
+      <h2>晨光穿過高塔，故事有了新的一頁</h2>
+      <p>晨曦公主和勇者並肩走出迷霧。她沒有等勇者替她寫結局，而是拿起羽毛筆，邀請你一起把這段冒險寫下來。</p>
+      <section class="refresh" aria-labelledby="refresh-title">
+        <div class="refresh-kicker">AFTER-QUEST REFRESH · STORY THINKING</div>
+        <h3 id="refresh-title">回顧架構、連結線索，再創作自己的故事</h3>
+        <p class="refresh-intro">沒有標準答案。先看故事怎麼一步步推進，再用自己的想法補上因果、轉折與結尾。</p>
+
+        <h4 class="refresh-section-title">步驟一｜回看七幕架構</h4>
+        <div class="arc-grid" aria-label="探索、希望、受挫、低潮、高潮、合作、收束">
+          <div class="arc-beat"><strong>探索</strong><span>五感找路</span></div>
+          <div class="arc-beat"><strong>希望</strong><span>看見高塔</span></div>
+          <div class="arc-beat"><strong>受挫</strong><span>黑影驚嚇</span></div>
+          <div class="arc-beat"><strong>低潮</strong><span>想起約定</span></div>
+          <div class="arc-beat"><strong>高潮</strong><span>勇敢求救</span></div>
+          <div class="arc-beat"><strong>合作</strong><span>鏡光開門</span></div>
+          <div class="arc-beat"><strong>收束</strong><span>風鈴回扣</span></div>
+        </div>
+
+        <div class="refresh-grid">
+          <article class="refresh-card">
+            <h4>步驟二｜你覺得哪裡是轉折？</h4>
+            <p>點選一幕，看看它怎麼改變故事方向。沒有標準答案。</p>
+            <div class="choice-row" id="refresh-turning-options"></div>
+            <p class="think-feedback" id="refresh-turning-feedback" aria-live="polite">選一幕，想想它前後有什麼不同。</p>
+            <div class="turning-details" id="refresh-turning-details" hidden>
+              <div class="turning-compare">
+                <article><span>轉折前</span><p id="turning-before"></p></article>
+                <article><span>發生什麼</span><p id="turning-event"></p></article>
+                <article><span>轉折後</span><p id="turning-after"></p></article>
+              </div>
+              <p class="turning-tip"><strong>寫作小提醒</strong><span id="turning-writing-tip"></span></p>
+            </div>
+          </article>
+          <article class="refresh-card">
+            <h4>步驟三｜把故事裡的線索配一配</h4>
+            <p>先點左邊的線索，再點右邊最接得上的事情。</p>
+            <div class="mini-pair-grid">
+              <div class="mini-pair-column"><h3>故事裡的線索</h3><div class="mini-pairs" id="refresh-link-left"></div></div>
+              <div class="mini-pair-column"><h3>接下來發生的事</h3><div class="mini-pairs" id="refresh-link-right"></div></div>
+            </div>
+            <p class="think-feedback" id="refresh-link-feedback" aria-live="polite">慢慢配，不計時，也不扣分。</p>
+          </article>
+          <article class="refresh-card brainstorm-card">
+            <h4>步驟四｜點選素材，拼出自己的故事</h4>
+            <p>從主角的目標開始，逐步加上線索、麻煩、選擇和結尾。每一排選一個點子，也可以隨時改選。</p>
+            <div id="brainstorm-options"></div>
+            <p class="brainstorm-outline" id="brainstorm-outline" aria-live="polite">你的故事骨架會出現在這裡。</p>
+            <p class="brainstorm-check" id="brainstorm-check" hidden>再想一想：開頭線索怎麼幫主角面對麻煩？結尾又呼應了開頭哪個細節？</p>
+          </article>
+        </div>
+        <div class="refresh-tools">
+          <button class="btn reset" id="clear-refresh-btn" type="button">重新開始腦力激盪</button>
+          <p class="refresh-status" id="refresh-status" role="status">點選內容會保存在這個瀏覽器，不會上傳。</p>
+        </div>
+      </section>
+      <button class="btn" id="restart-btn" type="button">再走一次文字冒險</button>
+    </section>
+
+    <p class="footer-note">本試玩版例句與故事人物為原創；兩個中場小遊戲不計時、不扣分，答對音效由瀏覽器即時合成，配樂連到 Suno 網站收聽，REFRESH 點選記錄只保存在這個瀏覽器。</p>
+    <p class="footer-note"><a href="../index.html" style="color:inherit;text-decoration:none">← 回學習小站</a></p>
+  </main>
+
+  <script>
+    "use strict";
+    const PUZZLES = [
+      {
+        tag: "第一關 · 霧林尋跡｜五感描寫",
+        title: "沿著聲音與花香找路",
+        prompt: "根據公主留下的兩條感官線索，排出勇者找到石階小路的句子。",
+        clue: "紙條：「先聽見風鈴，再聞到桂花香，石階小路就在附近。」",
+        mark: "Ⅰ",
+        tiles: [
+          { id: "place", text: "霧林入口的石階旁，" },
+          { id: "sound", text: "一串風鈴被晚風吹得叮噹作響，" },
+          { id: "scentStart", text: "空氣裡的桂花香，" },
+          { id: "scentEnd", text: "正從通往高塔的小路深處飄來。" },
+          { id: "sight", text: "樹葉上的露珠閃閃發亮，" },
+          { id: "decoy", text: "山頂傳來沉重的鼓聲，" }
+        ],
+        answer: ["place", "sound", "scentStart", "scentEnd"],
+        hint: ["紙條提到兩種感官線索，想想分別用哪兩個感官接收。", "先交代勇者在哪裡，再寫風鈴聲，最後讓桂花香指出小路方向。"],
+        reason: {
+          prompt: "選出兩項證據：哪兩塊文字直接對應公主紙條中的線索？",
+          options: [
+            { id: "hear", text: "風鈴被風吹得叮噹作響，對應「先聽見風鈴」。", answer: true },
+            { id: "smell", text: "桂花香從小路深處飄來，對應「再聞到桂花香」。", answer: true },
+            { id: "dew", text: "露珠閃亮，表示這條路一定通往公主所在的塔。", answer: false },
+            { id: "drum", text: "鼓聲比風鈴更大聲，所以更可能在石階旁。", answer: false }
+          ],
+          selectCount: 2,
+          answer: ["hear", "smell"],
+          hint: ["讀紙條時圈出「聽見」和「聞到」，各找一項文字證據。"],
+          feedback: "你用聽覺和嗅覺兩項證據，推理出通往石階小路的方向。"
+        },
+        feedback: "五感不只是裝飾；抓對線索，還能幫助推理。"
+      },
+      {
+        tag: "第二關 · 月光石橋｜比喻推理",
+        title: "找出有根據的比喻",
+        prompt: "觀察溪面線索，挑出相似點合理的比喻，拼出照亮石橋的句子。",
+        clue: "觀察記錄：溪水彎彎流動，月光落在水面，映出一條銀亮的光帶。",
+        mark: "Ⅱ",
+        tiles: [
+          { id: "object", text: "月光灑在彎彎的溪面上，" },
+          { id: "feature", text: "銀亮的水紋" },
+          { id: "like", text: "像一條銀色的緞帶，" },
+          { id: "curve", text: "沿著石橋的弧度，" },
+          { id: "place", text: "悄悄把勇者引向高塔。" },
+          { id: "wrongLike", text: "像一團沉重的黑石，" },
+          { id: "extra", text: "勇者的披風是深綠色的。" }
+        ],
+        answer: ["object", "feature", "like", "curve", "place"],
+        hint: ["找出線索裡同時有「彎曲」和「銀亮」特徵的事物。", "比喻磚要和溪面在形狀或顏色上有相似處，最後再說它指向哪裡。"],
+        reason: {
+          prompt: "選出兩項證據：為什麼把水紋比作「銀色的緞帶」是有根據的？",
+          options: [
+            { id: "shape", text: "溪水彎彎流動，和緞帶柔軟彎曲的形狀相似。", answer: true },
+            { id: "color", text: "月光映在水面上，水紋和緞帶一樣銀亮。", answer: true },
+            { id: "literal", text: "溪水真的變成了一條銀色的緞帶。", answer: false },
+            { id: "random", text: "只要句子裡有「像」，比喻就一定合理。", answer: false }
+          ],
+          selectCount: 2,
+          answer: ["shape", "color"],
+          hint: ["比喻不是任意配對；回看線索中的形狀與顏色，各找一項相似點。"],
+          feedback: "你用形狀和顏色兩項證據，讓比喻和溪面連在一起。"
+        },
+        feedback: "有證據的比喻，才能讓讀者看見你想像的畫面。"
+      },
+      {
+        tag: "第三關 · 倒影迷廊｜事實與推測",
+        title: "別讓倒影替你下結論",
+        prompt: "鏡子裡出現巨大的黑影。根據火把和影子的變化，拼出勇者查證的過程。",
+        clue: "線索：風把火把壓低，牆上的黑影立刻拉長；風停後，影子又縮回。",
+        mark: "Ⅲ",
+        tiles: [
+          { id: "flame", text: "風吹低勇者手中的火把，" },
+          { id: "shadow", text: "牆上的黑影立刻拉長，" },
+          { id: "guess", text: "像巨龍張開了翅膀；" },
+          { id: "wind", text: "風停後，影子又縮回牆角，" },
+          { id: "look", text: "勇者仔細一看，" },
+          { id: "truth", text: "才發現那是自己的披風。" },
+          { id: "assume", text: "勇者立刻認定巨龍就在眼前，" },
+          { id: "magic", text: "於是他相信牆壁一定會吃人。" }
+        ],
+        answer: ["flame", "shadow", "guess", "wind", "look", "truth"],
+        hint: ["先看火把和影子一起改變的線索，再看風停後發生什麼事。", "把第一眼的猜測和後來查證的事實分開來寫。"],
+        reason: {
+          prompt: "選出兩項證據：哪兩個變化讓勇者知道黑影不是巨龍？",
+          options: [
+            { id: "torch", text: "火把被風吹低時，牆上的影子跟著拉長。", answer: true },
+            { id: "wind", text: "風停後影子縮回；勇者也看見披風還在自己身上。", answer: true },
+            { id: "size", text: "黑影看起來很大，所以一定是巨龍。", answer: false },
+            { id: "fear", text: "勇者感到害怕，因此牆壁一定有魔法。", answer: false }
+          ],
+          selectCount: 2,
+          answer: ["torch", "wind"],
+          hint: ["比較火把高低、風停前後的影子變化；選可觀察、可核對的事實。"],
+          feedback: "你分清楚了「看到黑影」和「猜它是巨龍」，用兩項證據修正了第一眼的判斷。"
+        },
+        feedback: "受挫時停下來觀察，也是一種勇氣。"
+      },
+      {
+        tag: "第四關 · 靜默之塔｜聯想推論",
+        title: "從鈴聲推回約定",
+        prompt: "根據塔門上的刻字，排列聲音、記憶和行動，把門後的線索找出來。",
+        clue: "塔門刻字：「窗邊鈴聲響起時，別忘了我們約好一起回家。」",
+        mark: "Ⅳ",
+        tiles: [
+          { id: "sense", text: "塔窗邊的風鈴被晚風吹響，" },
+          { id: "memory", text: "勇者立刻想起公主留下的紙條，" },
+          { id: "promiseStart", text: "上面寫著：「找到彼此，" },
+          { id: "promiseEnd", text: "就能一起走回家。」" },
+          { id: "detour", text: "勇者決定把耳朵捂住，" },
+          { id: "decoy", text: "塔門上的石頭又冷又硬。" }
+        ],
+        answer: ["sense", "memory", "promiseStart", "promiseEnd"],
+        hint: ["先放入會觸發記憶的聲音，再接「想起」和約定。", "最後一塊應該說出約定帶來的行動方向。"],
+        reason: {
+          prompt: "選出兩個聯想環節：風鈴聲如何帶勇者找到下一步？",
+          options: [
+            { id: "soundMemory", text: "聽見風鈴，勇者想起公主留下的紙條。", answer: true },
+            { id: "memoryAction", text: "紙條裡的約定提醒他要找到同伴，一起回家。", answer: true },
+            { id: "compare", text: "風鈴和石門材質相同，所以可以互相比喻。", answer: false },
+            { id: "list", text: "只要把風鈴、勇者、石門排在一起，故事就完整了。", answer: false }
+          ],
+          selectCount: 2,
+          answer: ["soundMemory", "memoryAction"],
+          hint: ["想想第一塊造成了什麼聯想；最後一塊又指向誰要和誰一起做什麼？"],
+          feedback: "你把聲音接到約定，再從記憶推理出行動方向。"
+        },
+        feedback: "聯想不只是想到別的事物，也可以幫助解開故事線索。"
+      },
+      {
+        tag: "第五關 · 灰霧魔龍｜動作寫出勇氣",
+        title: "害怕的時候，仍然前進",
+        prompt: "魔龍噴出冷霧。用動作和轉折寫出勇者害怕，卻仍決定救人的一刻。",
+        clue: "線索：火把快熄了，勇者雙腿發抖；塔裡傳來公主求救的聲音。",
+        mark: "Ⅴ",
+        tiles: [
+          { id: "dragon", text: "灰霧魔龍迎面噴出冰冷的霧，" },
+          { id: "fear", text: "勇者的雙腿抖個不停，" },
+          { id: "flame", text: "手中的火把只剩一點微光；" },
+          { id: "turn", text: "他深吸一口氣，仍把火把高高舉起，" },
+          { id: "action", text: "朝塔頂大聲喊出公主的名字。" },
+          { id: "brag", text: "勇者一點也不害怕，" },
+          { id: "look", text: "他的靴子上沾著泥巴。" }
+        ],
+        answer: ["dragon", "fear", "flame", "turn", "action"],
+        hint: ["勇敢不一定是「完全不害怕」，找出表示害怕的細節和仍然採取的行動。", "用「仍」把害怕的心情和接下來的行動連起來。"],
+        reason: {
+          prompt: "選出兩項證據：這段如何表現「害怕但仍然勇敢」？",
+          options: [
+            { id: "fearEvidence", text: "雙腿發抖、火把只剩微光，寫出他正面臨害怕。", answer: true },
+            { id: "actionEvidence", text: "他仍舉起火把並喊出公主名字，寫出他沒有放棄行動。", answer: true },
+            { id: "fearless", text: "勇者一點也不害怕，所以他很勇敢。", answer: false },
+            { id: "color", text: "只要寫出靴子的顏色，就能知道勇者很勇敢。", answer: false }
+          ],
+          selectCount: 2,
+          answer: ["fearEvidence", "actionEvidence"],
+          hint: ["勇敢和害怕可以同時存在；注意「雙腿發抖」後面接了什麼動作。"],
+          feedback: "勇敢不是沒有害怕，而是害怕時仍願意做重要的事。"
+        },
+        feedback: "具體動作比直接貼上「勇敢」標籤，更能讓讀者感受到勇氣。"
+      },
+      {
+        tag: "第六關 · 鏡光同心｜合作解謎",
+        title: "公主也送來一條線索",
+        prompt: "勇者喊出公主的名字後，根據風鈴、山風和鏡片線索，排出兩人合作開門的過程。",
+        clue: "線索：塔內有人應聲，風鈴連響三次；山風吹向塔內；牆上有一片能反光的鏡片，門鎖藏在暗處。",
+        mark: "Ⅵ",
+        tiles: [
+          { id: "call", text: "勇者朝塔頂喊出公主的名字，" },
+          { id: "signal", text: "塔窗邊立刻傳來三聲風鈴，" },
+          { id: "wind", text: "公主推開窗扉，山風吹散了灰霧，" },
+          { id: "mirror", text: "勇者把火把光照向牆上的鏡片，" },
+          { id: "lock", text: "亮光落在門鎖上，" },
+          { id: "open", text: "兩人終於合力打開塔門。" },
+          { id: "solo", text: "勇者獨自撞向厚重的石門，" },
+          { id: "unrelated", text: "公主把窗簾換成了藍色。" }
+        ],
+        answer: ["call", "signal", "wind", "mirror", "lock", "open"],
+        hint: ["先找公主如何回應，再看山風和鏡片各自能解決什麼問題。", "最後要讓公主和勇者都成為解謎行動的一部分。"],
+        reason: {
+          prompt: "選出兩項證據：公主和勇者如何合作打開塔門？",
+          options: [
+            { id: "princess", text: "公主以風鈴回應並推開窗，山風吹散堵路的灰霧。", answer: true },
+            { id: "hero", text: "勇者借鏡片反射火光，照出藏在暗處的門鎖。", answer: true },
+            { id: "force", text: "勇者只要更用力撞門，就一定能打開。", answer: false },
+            { id: "curtain", text: "換一面窗簾就能讓灰霧自行消失。", answer: false }
+          ],
+          selectCount: 2,
+          answer: ["princess", "hero"],
+          hint: ["一項線索來自公主的風鈴和窗戶；另一項來自勇者運用鏡片與火把。"],
+          feedback: "公主提供風與回應，勇者用鏡光找到門鎖；兩個行動合起來才打開塔門。"
+        },
+        feedback: "救援不是勇者一個人完成的；彼此回應、合作解謎，才突破困境。"
+      },
+      {
+        tag: "第七關 · 晨光重寫｜呼應與收束",
+        title: "和公主一起寫下新一頁",
+        prompt: "把晨光、重逢和共同完成的故事接起來，為七道文字門寫一個有呼應的結尾。",
+        clue: "旅程一開始，勇者循風鈴聲走進霧林；現在天亮了，公主也成為一起寫故事的夥伴。",
+        mark: "Ⅶ",
+        tiles: [
+          { id: "light", text: "晨光從高塔的窗邊灑進來，" },
+          { id: "bell", text: "熟悉的風鈴聲再次響起，" },
+          { id: "together", text: "晨曦公主和勇者並肩走出迷霧，" },
+          { id: "story", text: "把一路找到的線索寫進新故事，" },
+          { id: "promise", text: "還約好下次遇到困難，也要一起想辦法。" },
+          { id: "solo", text: "勇者獨自拿走所有故事頁，" },
+          { id: "unrelated", text: "遠方的山上開始下雪。" }
+        ],
+        answer: ["light", "bell", "together", "story", "promise"],
+        hint: ["找回開頭出現過的風鈴線索，再寫重逢後兩人一起做什麼。", "好的結尾會呼應前文，也讓角色的經歷帶來改變。"],
+        reason: {
+          prompt: "選出兩項證據：這個結尾如何呼應開頭並寫出角色成長？",
+          options: [
+            { id: "callback", text: "風鈴再次響起，回扣勇者最初追查的線索。", answer: true },
+            { id: "growth", text: "公主和勇者並肩寫新故事，呈現合作與共同成長。", answer: true },
+            { id: "solo", text: "勇者一個人帶走故事頁，才算完成救援任務。", answer: false },
+            { id: "new", text: "結尾突然加上下雪，因為多一個事件就會更完整。", answer: false }
+          ],
+          selectCount: 2,
+          answer: ["callback", "growth"],
+          hint: ["想想開頭的風鈴出現過幾次，再看看結尾是誰和誰一起完成故事。"],
+          feedback: "你讓開頭的線索在結尾再次出現，也讓公主成為一起創作的夥伴。"
+        },
+        feedback: "結尾呼應線索、人物也有所成長，冒險才真正完整。"
+      }
+    ];
+    const state = { level: 0, selected: [], order: [], phase: "build", reasonChoices: [], unlocked: false };
+    function shuffled(list) {
+      const copy = list.slice();
+      for (let i = copy.length - 1; i > 0; i -= 1) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [copy[i], copy[j]] = [copy[j], copy[i]];
+      }
+      return copy;
+    }
+    const els = {
+      tag: document.getElementById("level-tag"),
+      title: document.getElementById("puzzle-title"),
+      prompt: document.getElementById("prompt"),
+      clue: document.getElementById("clue-text"),
+      mark: document.getElementById("gate-mark"),
+      bank: document.getElementById("tile-bank"),
+      tilesLabel: document.getElementById("tiles-label"),
+      build: document.getElementById("build-area"),
+      count: document.getElementById("tile-count"),
+      reasonBox: document.getElementById("reason-box"),
+      reasonTitle: document.getElementById("reason-title"),
+      reasonOptions: document.getElementById("reason-options"),
+      feedback: document.getElementById("feedback"),
+      check: document.getElementById("check-btn"),
+      hint: document.getElementById("hint-btn"),
+      reset: document.getElementById("reset-btn"),
+      next: document.getElementById("next-btn"),
+      questStep: document.getElementById("quest-step"),
+      status: document.getElementById("status-text"),
+      progress: document.getElementById("progress-fill"),
+      progressBar: document.querySelector(".progress"),
+      storyTitle: document.getElementById("story-title"),
+      storyImage: document.getElementById("story-image"),
+      storyText: document.getElementById("story-text"),
+      method: document.getElementById("method"),
+      ending: document.getElementById("ending"),
+      restart: document.getElementById("restart-btn"),
+      soundToggle: document.getElementById("sound-toggle"),
+      refreshStatus: document.getElementById("refresh-status"),
+      clearRefresh: document.getElementById("clear-refresh-btn"),
+      refreshTurningOptions: document.getElementById("refresh-turning-options"),
+      refreshTurningFeedback: document.getElementById("refresh-turning-feedback"),
+      refreshTurningDetails: document.getElementById("refresh-turning-details"),
+      turningBefore: document.getElementById("turning-before"),
+      turningEvent: document.getElementById("turning-event"),
+      turningAfter: document.getElementById("turning-after"),
+      turningWritingTip: document.getElementById("turning-writing-tip"),
+      refreshLinkLeft: document.getElementById("refresh-link-left"),
+      refreshLinkRight: document.getElementById("refresh-link-right"),
+      refreshLinkFeedback: document.getElementById("refresh-link-feedback"),
+      brainstormOptions: document.getElementById("brainstorm-options"),
+      brainstormOutline: document.getElementById("brainstorm-outline"),
+      brainstormCheck: document.getElementById("brainstorm-check"),
+      miniGame: document.getElementById("mini-game"),
+      miniKicker: document.getElementById("mini-kicker"),
+      miniTitle: document.getElementById("mini-title"),
+      miniPrompt: document.getElementById("mini-prompt"),
+      miniProgress: document.getElementById("mini-progress"),
+      miniPairGrid: document.getElementById("mini-pair-grid"),
+      miniLeftTitle: document.getElementById("mini-left-title"),
+      miniRightTitle: document.getElementById("mini-right-title"),
+      miniLeft: document.getElementById("mini-left"),
+      miniRight: document.getElementById("mini-right"),
+      mazePanel: document.getElementById("maze-panel"),
+      mazeCanvas: document.getElementById("maze-canvas"),
+      miniFeedback: document.getElementById("mini-feedback"),
+      miniReset: document.getElementById("mini-reset-btn"),
+      miniContinue: document.getElementById("mini-continue-btn"),
+      room: document.querySelector(".room")
+    };
+    let soundEnabled = true;
+    let soundContext = null;
+    const REFRESH_STORAGE_KEY = "wordHeroRefreshDraftV1";
+    const miniState = { game: null, selectedLeft: "", matched: new Set(), complete: false, maze: null };
+    const refreshState = {
+      turning: "",
+      selectedLink: "",
+      matchedLinks: new Set(),
+      brainstorm: { hero: "", clue: "", obstacle: "", action: "", ending: "" }
+    };
+    const REFRESH_TURNING_OPTIONS = [
+      {
+        id: "shadow", text: "黑影出現",
+        insight: "黑影讓故事從順利尋路轉成受挫查證。",
+        before: "月光溪流讓勇者以為自己已經找對路。",
+        event: "牆上突然出現像巨龍的黑影。",
+        after: "勇者停下觀察，發現那是自己的披風影子。",
+        tip: "寫轉折時，可先交代原本狀況，再寫改變局面的事件，最後寫角色的新行動。"
+      },
+      {
+        id: "shout", text: "勇者求救",
+        insight: "勇者把害怕變成行動，故事由低潮走向高潮。",
+        before: "勇者雙腿發抖，火把只剩微光，塔門仍關著。",
+        event: "他仍舉起火把，朝塔頂喊出公主的名字。",
+        after: "勇者不再只是害怕，而是主動做了一件事。",
+        tip: "「雖然害怕，但是仍然行動」能讓讀者看見人物的改變。"
+      },
+      {
+        id: "bell", text: "風鈴回應",
+        insight: "風鈴帶來新的合作線索，讓故事由獨自冒險轉向一起解謎。",
+        before: "勇者在塔外孤立無援，不知道公主有沒有聽見。",
+        event: "塔窗邊的風鈴響起三聲。",
+        after: "勇者知道有人回應，故事多了合作的可能。",
+        tip: "讓前面出現過的物件或聲音，在關鍵時刻再次出現，就能自然帶出新情節。"
+      }
+    ];
+    const REFRESH_LINKS = [
+      { id: "bell", left: "聽見窗邊風鈴", right: "想起一起回家的約定" },
+      { id: "mirror", left: "鏡片接住火把光", right: "暗處的門鎖顯現" },
+      { id: "echo", left: "開頭追尋風鈴", right: "結尾再次聽見風鈴" }
+    ];
+    // 右欄（含一個干擾項）每次開頁打亂一次，避免和左欄同列對齊
+    const REFRESH_LINK_RIGHT = shuffled(
+      REFRESH_LINKS.map(item => ({ id: item.id, text: item.right })).concat([{ id: "decoy", text: "勇者的靴子沾上泥巴" }])
+    );
+    const BRAINSTORM_SECTIONS = [
+      { id: "hero", title: "主角與目標", prompt: "他一開始最想完成什麼？", options: [
+        { id: "gardener", text: "幫村子找回水源的孩子" },
+        { id: "postman", text: "想送信到山頂的小郵差" },
+        { id: "apprentice", text: "想修好鐘樓的學徒" }
+      ] },
+      { id: "clue", title: "開頭線索", prompt: "什麼小細節會在後面派上用場？", options: [
+        { id: "bell", text: "夜風裡突然響起的鈴聲" },
+        { id: "map", text: "只在月光下顯出的地圖" },
+        { id: "mirror", text: "鏡子裡多出來的一道影子" }
+      ] },
+      { id: "obstacle", title: "遇到的麻煩", prompt: "什麼讓主角不能直直走到目標？", options: [
+        { id: "fog", text: "濃霧遮住了路標" },
+        { id: "doubt", text: "同伴不相信這個線索" },
+        { id: "locked", text: "出口需要兩個人合作才能打開" }
+      ] },
+      { id: "action", title: "主角的選擇", prompt: "主角做了什麼，讓故事繼續往前？", options: [
+        { id: "observe", text: "停下來觀察，重新判斷線索" },
+        { id: "ask", text: "向同伴求助，合作試一個方法" },
+        { id: "change", text: "改變原計畫，沿另一條路走" }
+      ] },
+      { id: "ending", title: "結尾的回扣", prompt: "結尾要怎麼和開頭連起來？", options: [
+        { id: "object", text: "讓開頭的小物件在結尾再出現" },
+        { id: "role", text: "讓原本害怕的人變成引路者" },
+        { id: "newpage", text: "讓最後的線索帶出新的開始" }
+      ] }
+    ];
+    function playCorrectSound() {
+      if (!soundEnabled) return;
+      const AudioContextClass = window.AudioContext || window.webkitAudioContext;
+      if (!AudioContextClass) return;
+      try {
+        soundContext = soundContext || new AudioContextClass();
+        if (soundContext.state === "suspended") soundContext.resume().catch(() => {});
+        const start = soundContext.currentTime;
+        [[784, 0], [1046.5, 0.12]].forEach(([frequency, delay]) => {
+          const oscillator = soundContext.createOscillator();
+          const gain = soundContext.createGain();
+          const noteStart = start + delay;
+          oscillator.type = "sine";
+          oscillator.frequency.setValueAtTime(frequency, noteStart);
+          gain.gain.setValueAtTime(0.0001, noteStart);
+          gain.gain.exponentialRampToValueAtTime(0.065, noteStart + 0.025);
+          gain.gain.exponentialRampToValueAtTime(0.0001, noteStart + 0.32);
+          oscillator.connect(gain);
+          gain.connect(soundContext.destination);
+          oscillator.start(noteStart);
+          oscillator.stop(noteStart + 0.33);
+        });
+      } catch {
+        // Audio is optional; a sound error must never block the puzzle.
+      }
+    }
+
+    els.soundToggle.addEventListener("click", () => {
+      soundEnabled = !soundEnabled;
+      els.soundToggle.setAttribute("aria-pressed", String(soundEnabled));
+      els.soundToggle.textContent = "答對音效：" + (soundEnabled ? "開" : "關");
+    });
+    const STORY = [
+      {
+        title: "第一幕｜霧林尋跡：五感描寫",
+        image: "word-hero/word-hero-01.webp",
+        imageAlt: "勇者在霧林聆聽風鈴、循著桂花香尋找石階小路",
+        paragraphs: [
+          "晨曦公主把第一張紙條留在霧林。勇者聽見風鈴、聞到桂花香，才找到藏在石階旁的小路。",
+          "故事從好奇開始：感官細節不只讓場景生動，也能成為解謎線索。"
+        ],
+        method: "觀察地點 → 聽見風鈴 → 聞到桂花香 → 推出路徑"
+      },
+      {
+        title: "第二幕｜月光石橋：比喻推理",
+        image: "word-hero/word-hero-02.webp",
+        imageAlt: "勇者看見月光映在彎曲溪流上，銀亮水紋引向石橋",
+        paragraphs: [
+          "溪水反射月光，像一條銀色的緞帶，勇者終於看見高塔就在前方。希望似乎近了一些。",
+          "比喻不是任意配對；先找出本體和喻體真正相似的特徵，再用它照亮畫面。"
+        ],
+        method: "觀察特徵 → 找共同點 → 組成比喻 → 用證據說明"
+      },
+      {
+        title: "第三幕｜倒影迷廊：事實與推測",
+        image: "word-hero/word-hero-03.webp",
+        imageAlt: "勇者用火把查證牆上巨龍般的黑影其實是自己的披風",
+        paragraphs: [
+          "希望很快變成驚慌：牆上忽然出現巨龍般的黑影，勇者差點轉身逃走。停下來觀察後，他才發現那是自己的披風。",
+          "遇到可怕的畫面，先把「我看見了什麼」和「我猜那是什麼」分開，尋找可以驗證的證據。"
+        ],
+        method: "先看見 → 暫停猜測 → 比較變化 → 用證據判斷"
+      },
+      {
+        title: "第四幕｜靜默之塔：聯想推論",
+        image: "word-hero/word-hero-04.webp",
+        imageAlt: "勇者聽見塔窗邊風鈴，想起與公主一起回家的約定",
+        paragraphs: [
+          "塔門緊閉，四周一片寂靜。窗邊風鈴響起時，勇者想起公主留下的約定：「找到彼此，就能一起走回家。」",
+          "這是故事最低潮的一刻：沒有直接答案，勇者只能從聲音、記憶和約定之間找出關聯。"
+        ],
+        method: "感官線索 → 想起約定 → 推出下一步行動"
+      },
+      {
+        title: "第五幕｜灰霧魔龍：動作寫出勇氣",
+        image: "word-hero/word-hero-05.webp",
+        imageAlt: "勇者雖害怕仍舉起微弱火把，向灰霧中的魔龍與高塔呼喊",
+        paragraphs: [
+          "灰霧魔龍擋住塔門，勇者雙腿發抖，火把也快熄了。可他仍舉起微弱的火光，朝塔頂喊出公主的名字。",
+          "高潮不必把人物寫成「完全不害怕」；寫出害怕時仍採取的行動，勇氣才看得見。"
+        ],
+        method: "困境 → 身體反應 → 轉折 → 勇者的行動"
+      },
+      {
+        title: "第六幕｜鏡光同心：公主與勇者合作",
+        image: "word-hero/word-hero-06.webp",
+        imageAlt: "勇者借鏡片反射火光找出門鎖，敞開的塔窗與風鈴顯示有人在場外回應",
+        paragraphs: [
+          "勇者喊出公主的名字後，窗邊立刻響起三聲風鈴。公主推開窗扉，讓山風吹散灰霧；勇者則用鏡片把火把光反射到暗處的門鎖。",
+          "前面學過的聲音、光線和推理，在這一刻變成兩人各自能做的事。合作不是一個人包辦，而是把不同線索和能力接起來。"
+        ],
+        method: "公主回應 → 山風吹霧 → 勇者借鏡照鎖 → 合力開門"
+      },
+      {
+        title: "第七幕｜晨光重寫：呼應與收束",
+        image: "word-hero/word-hero-07.webp",
+        imageAlt: "公主和勇者在晨光中並肩離開高塔，分享空白故事書",
+        paragraphs: [
+          "高塔的門打開，晨曦公主和勇者並肩走出迷霧。熟悉的風鈴再次響起，像是在回應旅程的起點。",
+          "公主拿起羽毛筆，邀請勇者一起寫下新的一頁。結尾呼應線索，也讓公主成為共同完成故事的夥伴。"
+        ],
+        method: "回扣開頭線索 → 寫出人物改變 → 一起完成新故事"
+      }
+    ];
+    const MINI_GAMES = [
+      {
+        afterLevel: 1,
+        type: "match",
+        kicker: "中場小遊戲 1／2 · 月光石橋",
+        title: "月光找路：把線索配成一對",
+        prompt: "先點左邊看到的線索，再點右邊最接得上的事情。配好三對，就能沿著銀光找到高塔。",
+        leftTitle: "看到的線索",
+        rightTitle: "它帶來的發現",
+        pairs: [
+          { id: "moon", left: "月光落在溪面", right: "水面映出銀亮光帶" },
+          { id: "curve", left: "溪水彎彎流動", right: "銀光沿溪彎向石橋" },
+          { id: "tower", left: "光帶延伸到遠方", right: "勇者循線看見高塔" }
+        ],
+        decoys: [{ id: "drum", text: "山頂鼓聲比風鈴更響亮" }]
+      },
+      {
+        afterLevel: 4,
+        type: "maze",
+        kicker: "中場小遊戲 2／2 · 火把迷廊",
+        title: "火把迷廊：避開陷阱，收集火星",
+        prompt: "沿高塔走廊找到三點火星，再走到出口。注意地上的鬆動石板，踩到會退回一步，但不會失去火星。"
+      }
+    ];
+    function createMazeState() {
+      const rows = 7, columns = 23;
+      const grid = Array.from({ length: rows }, () => Array(columns).fill("#"));
+      const horizontal = (y, from, to) => {
+        for (let x = from; x <= to; x += 1) grid[y][x] = ".";
+      };
+      const vertical = (x, from, to) => {
+        for (let y = from; y <= to; y += 1) grid[y][x] = ".";
+      };
+      horizontal(1, 1, 4);
+      vertical(4, 1, 3);
+      horizontal(3, 4, 8);
+      vertical(8, 3, 5);
+      horizontal(5, 8, 13);
+      vertical(13, 2, 5);
+      horizontal(2, 13, 21);
+      vertical(2, 1, 2);
+      horizontal(2, 2, 3);
+      vertical(6, 3, 4);
+      horizontal(4, 6, 7);
+      vertical(17, 2, 3);
+      horizontal(3, 17, 19);
+      return {
+        grid,
+        player: { x: 1, y: 1 },
+        exit: { x: 21, y: 2 },
+        traps: [
+          { x: 8, y: 4, sprung: false },
+          { x: 19, y: 3, sprung: false }
+        ],
+        sparks: [
+          { x: 3, y: 1, collected: false },
+          { x: 6, y: 3, collected: false },
+          { x: 11, y: 5, collected: false }
+        ]
+      };
+    }
+    function drawMaze() {
+      const maze = miniState.maze;
+      const canvas = els.mazeCanvas;
+      if (!maze || !canvas) return;
+      const context = canvas.getContext("2d");
+      if (!context) return;
+      const tile = 36, viewColumns = canvas.width / tile;
+      const columns = maze.grid[0].length;
+      const cameraX = Math.max(0, Math.min(columns - viewColumns, maze.player.x - 5));
+      context.clearRect(0, 0, canvas.width, canvas.height);
+      for (let y = 0; y < maze.grid.length; y += 1) {
+        for (let screenX = 0; screenX < viewColumns; screenX += 1) {
+          const worldX = screenX + cameraX;
+          const x = screenX * tile, py = y * tile;
+          if (maze.grid[y][worldX] === "#") {
+            context.fillStyle = "#8d7659";
+            context.fillRect(x, py, tile, tile);
+            context.fillStyle = "#a99474";
+            context.fillRect(x + 3, py + 3, tile - 6, 5);
+            context.strokeStyle = "#735f49";
+            context.strokeRect(x + 0.5, py + 0.5, tile - 1, tile - 1);
+          } else {
+            context.fillStyle = ((worldX + y) % 2 === 0) ? "#f2eadb" : "#ece2d0";
+            context.fillRect(x, py, tile, tile);
+            context.strokeStyle = "#e0d5c2";
+            context.strokeRect(x + 0.5, py + 0.5, tile - 1, tile - 1);
+          }
+        }
+      }
+      maze.sparks.forEach(spark => {
+        if (spark.collected || spark.x < cameraX || spark.x >= cameraX + viewColumns) return;
+        const sx = (spark.x - cameraX + 0.5) * tile, sy = (spark.y + 0.5) * tile;
+        context.fillStyle = "#e2a63c";
+        context.beginPath();
+        for (let point = 0; point < 10; point += 1) {
+          const radius = point % 2 === 0 ? 8 : 3.5;
+          const angle = -Math.PI / 2 + point * Math.PI / 5;
+          const px = sx + Math.cos(angle) * radius, py = sy + Math.sin(angle) * radius;
+          if (point === 0) context.moveTo(px, py);
+          else context.lineTo(px, py);
+        }
+        context.closePath();
+        context.fill();
+      });
+      maze.traps.forEach(trap => {
+        if (trap.sprung || trap.x < cameraX || trap.x >= cameraX + viewColumns) return;
+        const tx = (trap.x - cameraX + 0.5) * tile, ty = (trap.y + 0.5) * tile;
+        context.fillStyle = "#b65c44";
+        context.beginPath();
+        context.moveTo(tx, ty - 10);
+        context.lineTo(tx + 10, ty + 8);
+        context.lineTo(tx - 10, ty + 8);
+        context.closePath();
+        context.fill();
+        context.fillStyle = "#fff8ed";
+        context.font = "bold 12px sans-serif";
+        context.textAlign = "center";
+        context.textBaseline = "middle";
+        context.fillText("!", tx, ty + 2);
+      });
+      if (maze.exit.x >= cameraX && maze.exit.x < cameraX + viewColumns) {
+        const ex = (maze.exit.x - cameraX + 0.5) * tile, ey = (maze.exit.y + 0.5) * tile;
+        context.fillStyle = maze.sparks.every(spark => spark.collected) ? "#47735d" : "#9d8d70";
+        context.fillRect(ex - 11, ey - 13, 22, 26);
+        context.fillStyle = "#f3ead8";
+        context.beginPath();
+        context.arc(ex, ey - 2, 2, 0, Math.PI * 2);
+        context.fill();
+      }
+      const heroX = (maze.player.x - cameraX + 0.5) * tile, heroY = (maze.player.y + 0.5) * tile;
+      context.fillStyle = "#2f6652";
+      context.beginPath();
+      context.ellipse(heroX, heroY + 4, 12, 10, 0, 0, Math.PI * 2);
+      context.fill();
+      context.fillStyle = "#e5c4a3";
+      context.beginPath();
+      context.arc(heroX, heroY - 5, 7, 0, Math.PI * 2);
+      context.fill();
+      context.fillStyle = "#e3a640";
+      context.beginPath();
+      context.moveTo(heroX + 8, heroY - 4);
+      context.lineTo(heroX + 16, heroY - 8);
+      context.lineTo(heroX + 13, heroY + 1);
+      context.closePath();
+      context.fill();
+    }
+    function moveMaze(dx, dy) {
+      const maze = miniState.maze;
+      if (!maze || miniState.complete) return;
+      const x = maze.player.x + dx, y = maze.player.y + dy;
+      if (y < 0 || y >= maze.grid.length || x < 0 || x >= maze.grid[0].length || maze.grid[y][x] === "#") {
+        els.miniFeedback.textContent = "前面是石牆，換個方向走走看。";
+        return;
+      }
+      const trap = maze.traps.find(item => !item.sprung && item.x === x && item.y === y);
+      if (trap) {
+        trap.sprung = true;
+        els.miniFeedback.textContent = "踩到鬆動石板，勇者退回一格；火星保留，這塊石板也不會再觸發。";
+        drawMaze();
+        return;
+      }
+      maze.player.x = x;
+      maze.player.y = y;
+      const spark = maze.sparks.find(item => !item.collected && item.x === x && item.y === y);
+      if (spark) {
+        spark.collected = true;
+        els.miniFeedback.textContent = "找到一點火星！繼續沿走廊找出口。";
+      } else {
+        els.miniFeedback.textContent = "勇者往前走了一步。";
+      }
+      const collected = maze.sparks.filter(item => item.collected).length;
+      els.miniProgress.textContent = "火星 " + collected + "／" + maze.sparks.length + "　｜　沿走廊尋找出口";
+      drawMaze();
+      if (x === maze.exit.x && y === maze.exit.y) {
+        if (collected === maze.sparks.length) {
+          completeMiniGame("火把重新亮起，勇者走到了下一段走廊。");
+        } else {
+          els.miniFeedback.textContent = "出口就在前面，再找找剩下的火星。";
+        }
+      }
+    }
+    function renderMiniPairs() {
+      const game = miniState.game;
+      els.miniLeft.replaceChildren();
+      els.miniRight.replaceChildren();
+      const makeButton = (id, text, side) => {
+        const button = document.createElement("button");
+        button.type = "button";
+        button.className = "mini-choice";
+        button.textContent = text;
+        button.dataset.miniSide = side;
+        button.dataset.miniId = id;
+        button.disabled = miniState.complete || miniState.matched.has(id);
+        if (miniState.matched.has(id)) button.classList.add("matched");
+        if (side === "left" && miniState.selectedLeft === id) button.classList.add("selected");
+        return button;
+      };
+      game.pairs.forEach(pair => els.miniLeft.append(makeButton(pair.id, pair.left, "left")));
+      miniState.rightOrder.forEach(item => els.miniRight.append(makeButton(item.id, item.text, "right")));
+      els.miniProgress.textContent = "已配好 " + miniState.matched.size + "／" + game.pairs.length + " 對";
+    }
+    function completeMiniGame(message) {
+      miniState.complete = true;
+      playCorrectSound();
+      els.miniFeedback.textContent = message;
+      els.miniContinue.hidden = false;
+      if (miniState.game.type === "match") renderMiniPairs();
+      else drawMaze();
+    }
+    function renderMiniGame() {
+      const game = miniState.game;
+      els.miniKicker.textContent = game.kicker;
+      els.miniTitle.textContent = game.title;
+      els.miniPrompt.textContent = game.prompt;
+      els.miniContinue.hidden = true;
+      els.miniReset.hidden = false;
+      els.miniReset.textContent = game.type === "maze" ? "重新開始迷宮" : "重新想想";
+      els.miniFeedback.textContent = "慢慢來，不計時，也不扣分。";
+      const isMatch = game.type === "match";
+      const isMaze = game.type === "maze";
+      els.miniPairGrid.hidden = !isMatch;
+      els.mazePanel.hidden = !isMaze;
+      if (isMatch) {
+        els.miniLeftTitle.textContent = game.leftTitle;
+        els.miniRightTitle.textContent = game.rightTitle;
+        renderMiniPairs();
+      } else {
+        const collected = miniState.maze.sparks.filter(spark => spark.collected).length;
+        els.miniProgress.textContent = "火星 " + collected + "／" + miniState.maze.sparks.length + "　｜　走到出口";
+        drawMaze();
+      }
+    }
+    function showMiniGame(game) {
+      miniState.game = game;
+      miniState.rightOrder = game.type === "match"
+        ? shuffled(game.pairs.map(pair => ({ id: pair.id, text: pair.right })).concat(game.decoys))
+        : [];
+      miniState.selectedLeft = "";
+      miniState.matched = new Set();
+      miniState.complete = false;
+      miniState.maze = game.type === "maze" ? createMazeState() : null;
+      els.room.hidden = true;
+      els.miniGame.hidden = false;
+      els.questStep.textContent = game.kicker.replace(" · ", "　／　");
+      renderMiniGame();
+      if (game.type === "maze") els.mazeCanvas.focus({ preventScroll: true });
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+    function resetMiniGame() {
+      if (!miniState.game) return;
+      miniState.selectedLeft = "";
+      miniState.matched = new Set();
+      miniState.complete = false;
+      if (miniState.game.type === "maze") miniState.maze = createMazeState();
+      renderMiniGame();
+    }
+    function nextStoryScene() {
+      els.miniGame.hidden = true;
+      els.room.hidden = false;
+      if (state.level < PUZZLES.length - 1) {
+        state.level += 1;
+        drawPuzzle();
+        window.scrollTo({ top: 0, behavior: "smooth" });
+      } else {
+        els.ending.classList.add("show");
+        els.next.hidden = true;
+        els.questStep.textContent = PUZZLES.length + " 道門已開啟";
+        window.scrollTo({ top: document.body.scrollHeight, behavior: "smooth" });
+      }
+    }
+    function renderRefreshTurning() {
+      els.refreshTurningOptions.replaceChildren();
+      REFRESH_TURNING_OPTIONS.forEach(item => {
+        const button = document.createElement("button");
+        button.type = "button";
+        button.className = "think-choice";
+        button.textContent = item.text;
+        button.dataset.turningId = item.id;
+        button.setAttribute("aria-pressed", String(refreshState.turning === item.id));
+        if (refreshState.turning === item.id) button.classList.add("selected");
+        els.refreshTurningOptions.append(button);
+      });
+      const chosen = REFRESH_TURNING_OPTIONS.find(item => item.id === refreshState.turning);
+      els.refreshTurningFeedback.textContent = chosen ? chosen.insight : "選一幕，想想它前後有什麼不同。";
+      els.refreshTurningDetails.hidden = !chosen;
+      if (chosen) {
+        els.turningBefore.textContent = chosen.before;
+        els.turningEvent.textContent = chosen.event;
+        els.turningAfter.textContent = chosen.after;
+        els.turningWritingTip.textContent = chosen.tip;
+      }
+    }
+    function renderRefreshLinks() {
+      els.refreshLinkLeft.replaceChildren();
+      els.refreshLinkRight.replaceChildren();
+      const makeButton = (id, text, side) => {
+        const button = document.createElement("button");
+        button.type = "button";
+        button.className = "mini-choice";
+        button.textContent = text;
+        button.dataset.linkSide = side;
+        button.dataset.linkId = id;
+        button.disabled = refreshState.matchedLinks.has(id);
+        if (refreshState.matchedLinks.has(id)) button.classList.add("matched");
+        if (side === "left" && refreshState.selectedLink === id) button.classList.add("selected");
+        return button;
+      };
+      REFRESH_LINKS.forEach(item => els.refreshLinkLeft.append(makeButton(item.id, item.left, "left")));
+      REFRESH_LINK_RIGHT.forEach(item => els.refreshLinkRight.append(makeButton(item.id, item.text, "right")));
+      els.refreshLinkFeedback.textContent = refreshState.matchedLinks.size === REFRESH_LINKS.length
+        ? "你找到線索與前後情節的連結了！"
+        : "已配好 " + refreshState.matchedLinks.size + "／" + REFRESH_LINKS.length + " 組；試著說出它們怎麼接上。";
+    }
+    function renderBrainstorm() {
+      els.brainstormOptions.replaceChildren();
+      BRAINSTORM_SECTIONS.forEach(section => {
+        const group = document.createElement("div");
+        group.className = "brainstorm-group";
+        const heading = document.createElement("h5");
+        heading.textContent = section.title;
+        const prompt = document.createElement("p");
+        prompt.className = "brainstorm-prompt";
+        prompt.textContent = section.prompt;
+        const row = document.createElement("div");
+        row.className = "choice-row";
+        section.options.forEach(option => {
+          const button = document.createElement("button");
+          button.type = "button";
+          button.className = "think-choice";
+          button.textContent = option.text;
+          button.dataset.brainstormSection = section.id;
+          button.dataset.brainstormId = option.id;
+          button.setAttribute("aria-pressed", String(refreshState.brainstorm[section.id] === option.id));
+          if (refreshState.brainstorm[section.id] === option.id) button.classList.add("selected");
+          row.append(button);
+        });
+        group.append(heading, prompt, row);
+        els.brainstormOptions.append(group);
+      });
+      const selectedText = section => {
+        const option = section.options.find(item => item.id === refreshState.brainstorm[section.id]);
+        return section.title + "：" + (option ? option.text : "〔點選一個點子〕");
+      };
+      els.brainstormOutline.textContent = BRAINSTORM_SECTIONS.map(selectedText).join(" → ");
+      els.brainstormCheck.hidden = !BRAINSTORM_SECTIONS.every(section => Boolean(refreshState.brainstorm[section.id]));
+    }
+    function saveRefreshDraft() {
+      try {
+        const draft = {
+          turning: refreshState.turning,
+          matchedLinks: [...refreshState.matchedLinks],
+          brainstorm: refreshState.brainstorm
+        };
+        window.localStorage.setItem(REFRESH_STORAGE_KEY, JSON.stringify(draft));
+        els.refreshStatus.textContent = "點子已保存在這個瀏覽器，不會上傳。";
+      } catch {
+        els.refreshStatus.textContent = "目前無法儲存；重新整理後可能會清除選擇。";
+      }
+    }
+    function loadRefreshDraft() {
+      try {
+        const draft = JSON.parse(window.localStorage.getItem(REFRESH_STORAGE_KEY) || "{}");
+        if (REFRESH_TURNING_OPTIONS.some(item => item.id === draft.turning)) refreshState.turning = draft.turning;
+        if (Array.isArray(draft.matchedLinks)) {
+          refreshState.matchedLinks = new Set(draft.matchedLinks.filter(id => REFRESH_LINKS.some(item => item.id === id)));
+        }
+        BRAINSTORM_SECTIONS.forEach(section => {
+          if (section.options.some(item => item.id === draft.brainstorm?.[section.id])) {
+            refreshState.brainstorm[section.id] = draft.brainstorm[section.id];
+          }
+        });
+      } catch {
+        els.refreshStatus.textContent = "本機記錄無法讀取，可以直接重新點選素材。";
+      }
+      renderRefreshTurning();
+      renderRefreshLinks();
+      renderBrainstorm();
+    }
+    function clearRefreshDraft() {
+      refreshState.turning = "";
+      refreshState.selectedLink = "";
+      refreshState.matchedLinks = new Set();
+      refreshState.brainstorm = { hero: "", clue: "", obstacle: "", action: "", ending: "" };
+      try {
+        window.localStorage.removeItem(REFRESH_STORAGE_KEY);
+        els.refreshStatus.textContent = "已重新開始腦力激盪。";
+      } catch {
+        els.refreshStatus.textContent = "選擇已重設；瀏覽器未開放本機儲存。";
+      }
+      renderRefreshTurning();
+      renderRefreshLinks();
+      renderBrainstorm();
+    }
+    function drawPuzzle() {
+      const puzzle = PUZZLES[state.level];
+      els.room.hidden = false;
+      els.miniGame.hidden = true;
+      // 打亂磚塊；若剛好前幾塊就是正解順序，重洗
+      const ids = puzzle.tiles.map(tile => tile.id);
+      do { state.order = shuffled(ids); }
+      while (puzzle.answer.every((id, i) => state.order[i] === id));
+      state.selected = [];
+      state.phase = "build";
+      state.reasonChoices = [];
+      state.unlocked = false;
+      els.tag.textContent = puzzle.tag;
+      els.title.textContent = puzzle.title;
+      els.prompt.textContent = puzzle.prompt;
+      els.clue.textContent = puzzle.clue;
+      els.mark.textContent = puzzle.mark;
+      els.questStep.textContent = "第 " + (state.level + 1) + " 道門／" + PUZZLES.length;
+      els.next.hidden = true;
+      els.reasonBox.hidden = true;
+      els.reasonOptions.replaceChildren();
+      els.bank.hidden = false;
+      els.tilesLabel.hidden = false;
+      els.check.textContent = "檢查句子";
+      els.check.disabled = false;
+      els.hint.disabled = false;
+      els.reset.disabled = false;
+      els.hint.dataset.used = "0";
+      els.feedback.className = "feedback";
+      els.feedback.textContent = "第一步：依線索組句。第二步：說明你選擇這些文字磚的理由。";
+      const story = STORY[state.level];
+      els.storyTitle.textContent = story.title;
+      els.storyImage.src = story.image;
+      els.storyImage.alt = story.imageAlt;
+      els.storyText.replaceChildren(...story.paragraphs.map(text => {
+        const p = document.createElement("p"); p.textContent = text; return p;
+      }));
+      els.method.replaceChildren();
+      const b = document.createElement("b"); b.textContent = "寫作線索：";
+      els.method.append(b, document.createTextNode(story.method));
+      drawTiles();
+    }
+    function drawTiles() {
+      const puzzle = PUZZLES[state.level];
+      els.bank.replaceChildren();
+      els.build.replaceChildren();
+      const selectedSet = new Set(state.selected);
+      const byId = new Map(puzzle.tiles.map(tile => [tile.id, tile]));
+      const makeTile = (tile, inLine) => {
+        const button = document.createElement("button");
+        button.type = "button";
+        button.className = "tile" + (inLine ? " in-line" : "");
+        button.textContent = tile.text;
+        button.dataset.tileId = tile.id;
+        button.setAttribute("aria-pressed", inLine ? "true" : "false");
+        button.disabled = state.phase !== "build" || state.unlocked;
+        return button;
+      };
+      // 句子區照點選順序排；磚塊區照本關打亂後的順序排
+      state.selected.forEach(id => els.build.append(makeTile(byId.get(id), true)));
+      state.order.forEach(id => {
+        if (!selectedSet.has(id)) els.bank.append(makeTile(byId.get(id), false));
+      });
+      els.build.classList.toggle("empty", state.selected.length === 0);
+      els.count.textContent = state.selected.length + " 塊";
+      const reasoning = state.phase === "reason";
+      els.bank.hidden = reasoning;
+      els.tilesLabel.hidden = reasoning;
+    }
+    function addTile(id) {
+      if (state.phase !== "build" || state.unlocked || state.selected.includes(id)) return;
+      state.selected.push(id);
+      drawTiles();
+      const moved = els.build.querySelector('[data-tile-id="' + id + '"]');
+      if (moved) moved.focus();
+    }
+    function removeTile(id) {
+      if (state.phase !== "build" || state.unlocked) return;
+      const index = state.selected.indexOf(id);
+      if (index >= 0) state.selected.splice(index, 1);
+      drawTiles();
+      const returned = els.bank.querySelector('[data-tile-id="' + id + '"]');
+      if (returned) returned.focus();
+    }
+    function showReasonOptions() {
+      const reason = PUZZLES[state.level].reason;
+      state.reasonChoices = [];
+      els.reasonTitle.textContent = reason.prompt;
+      els.reasonOptions.replaceChildren();
+      shuffled(reason.options).forEach(option => {
+        const button = document.createElement("button");
+        button.type = "button";
+        button.className = "reason-option";
+        button.textContent = option.text;
+        button.dataset.reasonId = option.id;
+        button.setAttribute("aria-pressed", "false");
+        button.addEventListener("click", () => {
+          if (state.phase !== "reason" || state.unlocked) return;
+          const selectedIndex = state.reasonChoices.indexOf(option.id);
+          if (selectedIndex >= 0) {
+            state.reasonChoices.splice(selectedIndex, 1);
+          } else if (state.reasonChoices.length < reason.selectCount) {
+            state.reasonChoices.push(option.id);
+          } else {
+            els.feedback.className = "feedback try";
+            els.feedback.textContent = "這一題請選 " + reason.selectCount + " 項證據；先取消一項再換選。";
+            return;
+          }
+          els.reasonOptions.querySelectorAll(".reason-option").forEach(item => {
+            const chosen = state.reasonChoices.includes(item.dataset.reasonId);
+            item.classList.toggle("chosen", chosen);
+            item.setAttribute("aria-pressed", chosen ? "true" : "false");
+          });
+          els.feedback.className = "feedback";
+          els.feedback.textContent = "已選 " + state.reasonChoices.length + "／" + reason.selectCount + " 項證據。想想每一項是否都能支持你的句子。";
+        });
+        els.reasonOptions.append(button);
+      });
+      els.reasonBox.hidden = false;
+    }
+    function checkAnswer() {
+      if (state.unlocked) return;
+      if (state.phase === "reason") {
+        const reason = PUZZLES[state.level].reason;
+        if (state.reasonChoices.length !== reason.selectCount) {
+          els.feedback.className = "feedback try";
+          els.feedback.textContent = "請選 " + reason.selectCount + " 項證據，再確認你的推理。";
+          return;
+        }
+        const expected = new Set(reason.answer);
+        const chosen = new Set(state.reasonChoices);
+        const correctReason = chosen.size === expected.size && [...expected].every(id => chosen.has(id));
+        if (!correctReason) {
+          els.feedback.className = "feedback try";
+          els.feedback.textContent = "有證據還沒對上，或混入了干擾線索。重新比對線索後再試一次。";
+          return;
+        }
+        state.unlocked = true;
+        els.feedback.className = "feedback good";
+        els.feedback.textContent = "推理正確！" + reason.feedback;
+        els.check.disabled = true;
+        els.hint.disabled = true;
+        els.reset.disabled = true;
+        els.reasonOptions.querySelectorAll(".reason-option").forEach(item => { item.disabled = true; });
+        els.next.hidden = false;
+        const complete = state.level + 1;
+        els.status.textContent = "已開啟 " + complete + "／" + PUZZLES.length + " 道門";
+        els.progress.style.width = (complete / PUZZLES.length * 100) + "%";
+        els.progressBar.setAttribute("aria-valuenow", String(complete));
+        return;
+      }
+      if (!state.selected.length) {
+        els.feedback.className = "feedback try";
+        els.feedback.textContent = "先選幾塊文字磚，試著組成一句話。";
+        return;
+      }
+      const answer = PUZZLES[state.level].answer;
+      const correct = state.selected.length === answer.length && state.selected.every((id, i) => id === answer[i]);
+      if (!correct) {
+        els.feedback.className = "feedback try";
+        els.feedback.textContent = "這個排列還不太通順。可以清空重排，或再看一次提示；不用急，這裡不計時。";
+        return;
+      }
+      playCorrectSound();
+      state.phase = "reason";
+      els.hint.dataset.used = "0";
+      els.check.textContent = "確認理由";
+      els.feedback.className = "feedback good";
+      els.feedback.textContent = "句子組好了！現在對照線索，選出最能證明你選法的理由。";
+      showReasonOptions();
+      drawTiles();
+    }
+    els.bank.addEventListener("click", event => {
+      const button = event.target.closest("button[data-tile-id]");
+      if (button) addTile(button.dataset.tileId);
+    });
+    els.build.addEventListener("click", event => {
+      const button = event.target.closest("button[data-tile-id]");
+      if (button) removeTile(button.dataset.tileId);
+    });
+    els.check.addEventListener("click", checkAnswer);
+    els.hint.addEventListener("click", () => {
+      const puzzle = PUZZLES[state.level];
+      const hints = state.phase === "reason" ? puzzle.reason.hint : puzzle.hint;
+      const hintIndex = Math.min(Number(els.hint.dataset.used || 0), hints.length - 1);
+      els.feedback.className = "feedback try";
+      els.feedback.textContent = "提示：" + hints[hintIndex];
+      els.hint.dataset.used = String(Math.min(hintIndex + 1, hints.length - 1));
+    });
+    els.reset.addEventListener("click", () => {
+      state.selected = [];
+      state.phase = "build";
+      state.reasonChoices = [];
+      els.hint.dataset.used = "0";
+      els.reasonBox.hidden = true;
+      els.check.textContent = "檢查句子";
+      els.bank.hidden = false;
+      els.tilesLabel.hidden = false;
+      els.feedback.className = "feedback";
+      els.feedback.textContent = "磚塊已放回原處，重新解謎。";
+      drawTiles();
+    });
+    els.miniPairGrid.addEventListener("click", event => {
+      const button = event.target.closest("button[data-mini-side]");
+      if (!button || miniState.complete) return;
+      const id = button.dataset.miniId;
+      if (button.dataset.miniSide === "left") {
+        if (!miniState.matched.has(id)) {
+          miniState.selectedLeft = id;
+          els.miniFeedback.textContent = "再選右邊接得上的結果。";
+          renderMiniPairs();
+        }
+        return;
+      }
+      if (!miniState.selectedLeft) {
+        els.miniFeedback.textContent = "先選左邊的一個線索，再找它的結果。";
+        return;
+      }
+      if (miniState.selectedLeft === id) {
+        miniState.matched.add(id);
+        miniState.selectedLeft = "";
+        if (miniState.matched.size === miniState.game.pairs.length) {
+          completeMiniGame("三條線索都接上了！勇者找到通往高塔的路。");
+        } else {
+          els.miniFeedback.textContent = "接對了！再找下一組線索。";
+          renderMiniPairs();
+        }
+      } else {
+        miniState.selectedLeft = "";
+        els.miniFeedback.textContent = "這兩個還接不起來，換一個結果試試看。";
+        renderMiniPairs();
+      }
+    });
+    const mazeDirections = {
+      up: [0, -1],
+      down: [0, 1],
+      left: [-1, 0],
+      right: [1, 0]
+    };
+    els.mazePanel.addEventListener("click", event => {
+      const button = event.target.closest("button[data-maze-dir]");
+      if (!button) return;
+      const [dx, dy] = mazeDirections[button.dataset.mazeDir];
+      moveMaze(dx, dy);
+    });
+    document.addEventListener("keydown", event => {
+      if (els.miniGame.hidden || miniState.game?.type !== "maze" || miniState.complete || event.repeat) return;
+      const key = event.key.toLowerCase();
+      const direction = {
+        arrowup: "up", w: "up",
+        arrowdown: "down", s: "down",
+        arrowleft: "left", a: "left",
+        arrowright: "right", d: "right"
+      }[key];
+      if (!direction) return;
+      event.preventDefault();
+      const [dx, dy] = mazeDirections[direction];
+      moveMaze(dx, dy);
+    });
+    els.miniReset.addEventListener("click", resetMiniGame);
+    els.miniContinue.addEventListener("click", nextStoryScene);
+    els.next.addEventListener("click", () => {
+      const interlude = MINI_GAMES.find(game => game.afterLevel === state.level);
+      if (interlude) showMiniGame(interlude);
+      else nextStoryScene();
+    });
+    els.refreshTurningOptions.addEventListener("click", event => {
+      const button = event.target.closest("button[data-turning-id]");
+      if (!button) return;
+      refreshState.turning = button.dataset.turningId;
+      renderRefreshTurning();
+      saveRefreshDraft();
+    });
+    function handleRefreshLinkClick(event, side) {
+      const button = event.target.closest('button[data-link-side="' + side + '"]');
+      if (!button) return;
+      const id = button.dataset.linkId;
+      if (side === "left") {
+        if (!refreshState.matchedLinks.has(id)) refreshState.selectedLink = id;
+        renderRefreshLinks();
+        return;
+      }
+      if (!refreshState.selectedLink) {
+        els.refreshLinkFeedback.textContent = "先選左邊的線索，再找它連到哪件事。";
+        return;
+      }
+      if (refreshState.selectedLink === id) {
+        refreshState.matchedLinks.add(id);
+        refreshState.selectedLink = "";
+        saveRefreshDraft();
+        renderRefreshLinks();
+      } else {
+        refreshState.selectedLink = "";
+        els.refreshLinkFeedback.textContent = "這一對還沒接起來，再試一種連法。";
+        renderRefreshLinks();
+      }
+    }
+    els.refreshLinkLeft.addEventListener("click", event => handleRefreshLinkClick(event, "left"));
+    els.refreshLinkRight.addEventListener("click", event => handleRefreshLinkClick(event, "right"));
+    els.brainstormOptions.addEventListener("click", event => {
+      const button = event.target.closest("button[data-brainstorm-section]");
+      if (!button) return;
+      refreshState.brainstorm[button.dataset.brainstormSection] = button.dataset.brainstormId;
+      renderBrainstorm();
+      saveRefreshDraft();
+    });
+    els.clearRefresh.addEventListener("click", clearRefreshDraft);
+    els.restart.addEventListener("click", () => {
+      state.level = 0;
+      els.status.textContent = "已開啟 0／" + PUZZLES.length + " 道門";
+      els.progress.style.width = "0%";
+      els.progressBar.setAttribute("aria-valuenow", "0");
+      els.ending.classList.remove("show");
+      els.miniGame.hidden = true;
+      els.room.hidden = false;
+      drawPuzzle();
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    });
+    loadRefreshDraft();
+    drawPuzzle();
+  </script>
+</body>
+</html>
