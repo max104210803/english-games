@@ -1,0 +1,1185 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>漢語拼音互動學習｜注音 → 拼音霓虹鍵盤</title>
+<style>
+:root{
+  --bg:#0a0e1a; --bg2:#101627; --panel:#151d33; --panel2:#1b2542;
+  --line:#263252; --txt:#e8edf7; --dim:#8b96b3;
+  --cyan:#37e6ff; --pink:#ff4fd8; --gold:#ffd166;
+  --t1:#ff5c7a; --t2:#3ddc84; --t3:#4da6ff; --t4:#c77dff; --t0:#9aa4b8;
+  --mono:"Cascadia Code","Consolas","Courier New",monospace;
+  --zh:"Microsoft JhengHei","Noto Sans TC","PingFang TC",sans-serif;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+button{touch-action:manipulation;-webkit-tap-highlight-color:transparent}
+html{scroll-behavior:smooth}
+body{
+  background:var(--bg); color:var(--txt); font-family:var(--zh);
+  min-height:100vh; overflow-x:hidden;
+  background-image:
+    radial-gradient(ellipse 80% 50% at 20% -10%, rgba(55,230,255,.10), transparent),
+    radial-gradient(ellipse 60% 40% at 90% 0%, rgba(255,79,216,.08), transparent),
+    radial-gradient(ellipse 70% 60% at 50% 110%, rgba(77,166,255,.07), transparent);
+}
+body::after{ /* 細微掃描線質感 */
+  content:""; position:fixed; inset:0; pointer-events:none; z-index:999;
+  background:repeating-linear-gradient(0deg, rgba(255,255,255,.012) 0 1px, transparent 1px 3px);
+}
+.wrap{max-width:1060px;margin:0 auto;padding:22px 18px 80px}
+
+/* ── 標題 ── */
+header{text-align:center;padding:26px 0 10px}
+header h1{
+  font-size:clamp(26px,4.5vw,42px); letter-spacing:.12em; font-weight:900;
+  background:linear-gradient(92deg,var(--cyan) 10%,#9be8ff 40%,var(--pink) 90%);
+  -webkit-background-clip:text; background-clip:text; color:transparent;
+  text-shadow:0 0 34px rgba(55,230,255,.25);
+}
+header .sub{color:var(--dim);margin-top:8px;font-size:14px;letter-spacing:.28em}
+header .sub b{color:var(--gold);font-family:var(--mono)}
+
+/* ── 工具列 ── */
+.toolbar{display:flex;justify-content:center;gap:10px;margin:16px 0 6px;flex-wrap:wrap}
+.toolbtn{
+  background:var(--panel);border:1px solid var(--line);color:var(--txt);
+  border-radius:999px;padding:7px 16px;font-size:13px;cursor:pointer;font-family:var(--zh);
+  transition:.2s;
+}
+.toolbtn:hover{border-color:var(--cyan);box-shadow:0 0 12px rgba(55,230,255,.25)}
+.qlen.on{border-color:var(--cyan);color:var(--cyan);box-shadow:0 0 10px rgba(55,230,255,.3)}
+/* ── 字詞練習 ── */
+#wWord{font-size:46px;color:var(--gold);text-shadow:0 0 20px rgba(255,209,102,.3)}
+#wZy{color:var(--pink);font-size:20px;margin:6px 0 4px;letter-spacing:.1em}
+.wrow{background:var(--panel2);border:1px solid var(--line);border-radius:14px;padding:14px;margin:10px 0;text-align:left}
+.wrow .whead{font-size:13px;color:var(--dim);margin-bottom:8px}
+.wslot{font-family:var(--mono);font-size:20px;color:var(--dim);background:var(--panel);border:1px dashed var(--line);border-radius:8px;padding:2px 12px;margin-left:8px}
+.wslot.solved{color:var(--t2);border:1px solid var(--t2);background:rgba(61,220,132,.1)}
+.wopts{display:flex;gap:8px;flex-wrap:wrap}
+.wopt{font-family:var(--mono);font-size:18px;font-weight:700;padding:8px 14px;background:var(--panel);border:1px solid var(--line);border-radius:10px;color:var(--txt);cursor:pointer;transition:.15s}
+.wopt:hover{border-color:var(--cyan)}
+.wopt.right{background:rgba(61,220,132,.18);border-color:var(--t2);color:var(--t2)}
+.wopt.wrong{animation:shake .4s;border-color:var(--t1);color:var(--t1)}
+.wopt:disabled{cursor:default;opacity:.8}
+#voiceWarn{
+  display:none;margin:10px auto;max-width:640px;text-align:center;font-size:13px;
+  color:var(--gold);background:rgba(255,209,102,.08);border:1px solid rgba(255,209,102,.35);
+  border-radius:10px;padding:8px 14px;
+}
+
+/* ── 分頁 ── */
+nav{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin:18px 0 22px;position:sticky;top:0;z-index:50;padding:10px 0;background:linear-gradient(var(--bg) 78%,transparent)}
+.tab{
+  background:var(--panel);border:1px solid var(--line);color:var(--dim);
+  padding:10px 18px;border-radius:12px;cursor:pointer;font-size:15px;font-weight:700;
+  font-family:var(--zh);transition:.2s;letter-spacing:.05em;
+}
+.tab:hover{color:var(--txt);transform:translateY(-2px)}
+.tab.on{
+  color:#06121f;background:linear-gradient(120deg,var(--cyan),#7ff0ff);
+  border-color:var(--cyan);box-shadow:0 0 18px rgba(55,230,255,.45);
+}
+section.page{display:none;animation:fadein .35s ease}
+section.page.on{display:block}
+@keyframes fadein{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+
+h2.sec{font-size:19px;margin:26px 0 6px;color:var(--cyan);letter-spacing:.1em}
+h2.sec small{color:var(--dim);font-size:12px;font-weight:400;margin-left:10px;letter-spacing:.05em}
+.note{color:var(--dim);font-size:13px;line-height:1.8;margin-bottom:14px}
+.note b{color:var(--gold)}
+.note code{font-family:var(--mono);color:var(--cyan);background:rgba(55,230,255,.08);padding:1px 6px;border-radius:5px}
+
+/* ── 拼音鍵盤 ── */
+#detail{
+  display:none;background:linear-gradient(135deg,var(--panel2),var(--panel));
+  border:1px solid var(--cyan);border-radius:16px;padding:18px 22px;margin-bottom:18px;
+  box-shadow:0 0 24px rgba(55,230,255,.15);animation:fadein .25s ease;
+}
+#detail.on{display:flex;gap:22px;align-items:center;flex-wrap:wrap}
+#detail .big{font-family:var(--mono);font-size:52px;font-weight:700;color:var(--cyan);text-shadow:0 0 18px rgba(55,230,255,.5);min-width:110px;text-align:center}
+#detail .zy{font-size:34px;color:var(--pink);min-width:70px;text-align:center}
+#detail .info{flex:1;min-width:220px;font-size:14px;line-height:1.9;color:var(--txt)}
+#detail .info .ex{color:var(--gold)}
+#detail .info .rule{color:var(--dim);font-size:13px}
+#detail .replay{
+  background:rgba(55,230,255,.12);border:1px solid var(--cyan);color:var(--cyan);
+  border-radius:10px;padding:8px 14px;cursor:pointer;font-size:14px;font-family:var(--zh);
+}
+#detail .replay:hover{background:rgba(55,230,255,.25)}
+
+.keys{display:grid;grid-template-columns:repeat(auto-fill,minmax(96px,1fr));gap:10px}
+.key{
+  position:relative;background:linear-gradient(160deg,var(--panel2),var(--panel));
+  border:1px solid var(--line);border-radius:14px;padding:12px 6px 10px;text-align:center;
+  cursor:pointer;transition:transform .12s, box-shadow .2s, border-color .2s;user-select:none;
+}
+.key:hover{transform:translateY(-3px);border-color:var(--cyan);box-shadow:0 6px 18px rgba(55,230,255,.2)}
+.key:active,.key.hit{transform:scale(.93)}
+.key.hit{border-color:var(--pink);box-shadow:0 0 22px rgba(255,79,216,.55)}
+.key .py{font-family:var(--mono);font-size:26px;font-weight:700;color:var(--txt)}
+.key .zy{font-size:15px;color:var(--pink);margin-top:2px}
+.key .ex{font-size:11px;color:var(--dim);margin-top:3px}
+.key .badge{
+  position:absolute;top:-7px;right:-4px;font-size:10px;font-family:var(--mono);
+  background:var(--gold);color:#201500;border-radius:6px;padding:1px 6px;font-weight:700;
+}
+.key.special{border-color:rgba(255,209,102,.5)}
+.key.special .py{color:var(--gold)}
+
+/* ── 聲調 ── */
+.tones{display:flex;gap:12px;flex-wrap:wrap;margin:14px 0}
+.tone{
+  flex:1;min-width:110px;background:var(--panel);border:1px solid var(--line);border-radius:14px;
+  padding:16px 8px;text-align:center;cursor:pointer;transition:.18s;
+}
+.tone:hover{transform:translateY(-3px)}
+.tone .mark{font-family:var(--mono);font-size:38px;font-weight:700}
+.tone .ch{font-size:22px;margin-top:4px}
+.tone .lbl{font-size:12px;color:var(--dim);margin-top:4px}
+.tone[data-t="1"] .mark{color:var(--t1)} .tone[data-t="1"]:hover{border-color:var(--t1);box-shadow:0 0 16px rgba(255,92,122,.35)}
+.tone[data-t="2"] .mark{color:var(--t2)} .tone[data-t="2"]:hover{border-color:var(--t2);box-shadow:0 0 16px rgba(61,220,132,.35)}
+.tone[data-t="3"] .mark{color:var(--t3)} .tone[data-t="3"]:hover{border-color:var(--t3);box-shadow:0 0 16px rgba(77,166,255,.35)}
+.tone[data-t="4"] .mark{color:var(--t4)} .tone[data-t="4"]:hover{border-color:var(--t4);box-shadow:0 0 16px rgba(199,125,255,.35)}
+.tone[data-t="0"] .mark{color:var(--t0)} .tone[data-t="0"]:hover{border-color:var(--t0)}
+
+/* ── 規則卡 ── */
+.rulecard{
+  background:var(--panel);border:1px solid var(--line);border-radius:16px;
+  margin-bottom:14px;overflow:hidden;
+}
+.rulecard .head{
+  display:flex;align-items:center;gap:12px;padding:16px 20px;cursor:pointer;transition:.2s;
+}
+.rulecard .head:hover{background:var(--panel2)}
+.rulecard .num{
+  font-family:var(--mono);font-size:20px;font-weight:700;color:#06121f;
+  background:linear-gradient(120deg,var(--cyan),var(--pink));border-radius:10px;
+  width:38px;height:38px;display:flex;align-items:center;justify-content:center;flex-shrink:0;
+}
+.rulecard .head h3{font-size:17px;flex:1}
+.rulecard .head .arrow{color:var(--dim);transition:.25s}
+.rulecard.open .head .arrow{transform:rotate(90deg);color:var(--cyan)}
+.rulecard .body{display:none;padding:0 20px 20px;font-size:14px;line-height:2}
+.rulecard.open .body{display:block;animation:fadein .25s ease}
+.rulecard table{width:100%;border-collapse:collapse;margin:10px 0;font-size:14px}
+.rulecard th,.rulecard td{border:1px solid var(--line);padding:7px 10px;text-align:center}
+.rulecard th{background:var(--panel2);color:var(--cyan);font-size:13px}
+.rulecard td .mono{font-family:var(--mono);color:var(--gold)}
+.rulecard .speak{
+  background:none;border:1px solid var(--line);border-radius:8px;color:var(--cyan);
+  cursor:pointer;padding:2px 9px;font-size:13px;font-family:var(--zh);
+}
+.rulecard .speak:hover{border-color:var(--cyan);background:rgba(55,230,255,.1)}
+.tipbox{
+  background:rgba(255,209,102,.07);border-left:3px solid var(--gold);
+  padding:10px 14px;border-radius:0 10px 10px 0;margin-top:10px;font-size:13px;color:var(--txt);
+}
+
+/* ── 標調小遊戲 ── */
+#toneGame{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:22px;margin-top:18px;text-align:center}
+#toneGame .q{font-size:15px;color:var(--dim);margin-bottom:12px}
+#toneLetters{display:flex;gap:10px;justify-content:center;margin:10px 0 14px;flex-wrap:wrap}
+#toneLetters button{
+  font-family:var(--mono);font-size:34px;font-weight:700;width:58px;height:64px;
+  background:var(--panel2);border:1px solid var(--line);border-radius:12px;color:var(--txt);
+  cursor:pointer;transition:.15s;
+}
+#toneLetters button.vowel{border-color:rgba(55,230,255,.5)}
+#toneLetters button:hover{transform:translateY(-3px);border-color:var(--cyan)}
+#toneLetters button.right{background:rgba(61,220,132,.2);border-color:var(--t2);color:var(--t2)}
+#toneLetters button.wrong{animation:shake .4s;border-color:var(--t1);color:var(--t1)}
+@keyframes shake{0%,100%{transform:none}25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
+#toneMsg{min-height:28px;font-size:15px;margin-bottom:8px}
+#toneMsg.ok{color:var(--t2)} #toneMsg.no{color:var(--t1)}
+.ghostbtn{
+  background:none;border:1px solid var(--line);color:var(--dim);border-radius:10px;
+  padding:8px 18px;cursor:pointer;font-size:14px;font-family:var(--zh);transition:.2s;
+}
+.ghostbtn:hover{color:var(--cyan);border-color:var(--cyan)}
+
+/* ── 拼寫挑戰 ── */
+#quizBox{max-width:640px;margin:0 auto;text-align:center}
+.qcard{background:var(--panel);border:1px solid var(--line);border-radius:20px;padding:30px 24px}
+.qcard .zy-big{font-size:52px;color:var(--pink);text-shadow:0 0 22px rgba(255,79,216,.35);letter-spacing:.08em}
+.qcard .word{font-size:16px;color:var(--dim);margin:8px 0 20px}
+.qcard .word b{color:var(--gold);font-size:20px}
+.opts{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.opt{
+  font-family:var(--mono);font-size:24px;font-weight:700;padding:16px 8px;
+  background:var(--panel2);border:1px solid var(--line);border-radius:14px;color:var(--txt);
+  cursor:pointer;transition:.15s;
+}
+.opt:hover{border-color:var(--cyan);transform:translateY(-2px)}
+.opt.right{background:rgba(61,220,132,.18);border-color:var(--t2);color:var(--t2)}
+.opt.wrong{background:rgba(255,92,122,.15);border-color:var(--t1);color:var(--t1);animation:shake .4s}
+.opt:disabled{cursor:default;opacity:.85}
+#quizHud{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;font-size:14px;color:var(--dim)}
+#quizHud .score{font-family:var(--mono);color:var(--gold);font-size:18px}
+#quizHud .streak{color:var(--pink);font-weight:700}
+#quizBar{height:6px;background:var(--panel2);border-radius:99px;margin-bottom:18px;overflow:hidden}
+#quizBar i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--cyan),var(--pink));border-radius:99px;transition:width .4s}
+#quizExpl{min-height:44px;margin-top:16px;font-size:13.5px;color:var(--dim);line-height:1.8}
+#quizExpl b{color:var(--cyan)}
+.bigbtn{
+  background:linear-gradient(120deg,var(--cyan),#7ff0ff);color:#06121f;border:none;
+  font-size:18px;font-weight:900;font-family:var(--zh);letter-spacing:.1em;
+  padding:14px 40px;border-radius:14px;cursor:pointer;margin-top:16px;transition:.2s;
+  box-shadow:0 0 22px rgba(55,230,255,.35);
+}
+.bigbtn:hover{transform:translateY(-2px);box-shadow:0 0 32px rgba(55,230,255,.55)}
+#quizEnd .stars{font-size:44px;letter-spacing:.15em;margin:10px 0}
+#quizEnd .final{font-family:var(--mono);font-size:52px;color:var(--gold);text-shadow:0 0 24px rgba(255,209,102,.4)}
+#quizEnd .best{color:var(--dim);font-size:13px;margin-top:6px}
+
+/* ── 易混淆字卡 ── */
+.confgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:14px}
+.confcard{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:20px;transition:.2s}
+.confcard:hover{border-color:var(--pink);box-shadow:0 0 18px rgba(255,79,216,.18)}
+.confcard h3{font-size:26px;margin-bottom:10px}
+.confcard h3 small{font-size:13px;color:var(--dim);font-weight:400;margin-left:8px}
+.confrow{display:flex;align-items:center;gap:10px;margin:8px 0;font-size:14px}
+.confrow .tag{font-size:11px;border-radius:6px;padding:2px 8px;flex-shrink:0}
+.confrow .tag.tw{background:rgba(77,166,255,.15);color:var(--t3);border:1px solid rgba(77,166,255,.4)}
+.confrow .tag.cn{background:rgba(255,79,216,.12);color:var(--pink);border:1px solid rgba(255,79,216,.4)}
+.confrow .mono{font-family:var(--mono);color:var(--gold)}
+.confcard .why{font-size:12.5px;color:var(--dim);line-height:1.8;margin-top:10px;border-top:1px dashed var(--line);padding-top:10px}
+
+/* ── 總對照表 ── */
+.chartwrap{overflow-x:auto;-webkit-overflow-scrolling:touch;margin:8px 0 6px}
+.chart{width:100%;border-collapse:collapse;font-size:15px}
+.chart th,.chart td{border:1px solid var(--line);padding:7px 8px;text-align:center;vertical-align:middle}
+.chart th{background:var(--panel2);color:var(--cyan);font-size:13px;white-space:nowrap}
+.chart th.grp{color:var(--dim);font-weight:400;font-size:12.5px;text-align:left;background:var(--panel)}
+.chart .zy{color:var(--pink);font-size:17px}
+.chart .py{font-family:var(--mono);color:var(--txt);font-weight:700;font-size:17px}
+.chart .ex{color:var(--dim);font-size:13px}
+.chart .rm{color:var(--dim);font-size:12.5px;text-align:left}
+.chart td.diff{background:rgba(255,209,102,.09)}
+.chart td.diff .py{color:var(--gold)}
+.chart .say{cursor:pointer;transition:background .15s}
+.chart .say:hover{background:rgba(55,230,255,.08)}
+#chartI td{min-width:72px}
+#chartI td .py{display:block}
+#chartF{min-width:560px}
+
+footer{text-align:center;color:var(--dim);font-size:12px;margin-top:50px;line-height:2}
+footer .mono{font-family:var(--mono)}
+
+/* ── 彩帶 ── */
+.confetti{position:fixed;top:-14px;width:9px;height:14px;z-index:1000;pointer-events:none;animation:fall linear forwards}
+@keyframes fall{to{transform:translateY(105vh) rotate(720deg);opacity:.2}}
+
+@media (max-width:560px){
+  .opts{grid-template-columns:1fr}
+  #detail .big{font-size:40px}
+  .qcard .zy-big{font-size:40px}
+  /* 分頁列改單行橫滑，避免 sticky 佔掉太多手機螢幕 */
+  nav{flex-wrap:nowrap;overflow-x:auto;justify-content:flex-start;-webkit-overflow-scrolling:touch;scrollbar-width:none}
+  nav::-webkit-scrollbar{display:none}
+  .tab{flex-shrink:0;font-size:13px;padding:8px 12px}
+  header .sub{letter-spacing:.12em}
+  /* 規則表格改橫向滑動閱讀，避免窄螢幕擠壓斷行 */
+  .rulecard .body{overflow-x:auto}
+  .rulecard table{min-width:540px}
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header>
+  <h1>漢語拼音 ・ 霓虹學習機</h1>
+  <div class="sub">會注音，就會拼音 ── <b>ㄅ → b</b> 的轉譯之旅</div>
+</header>
+
+<div class="toolbar">
+  <button class="toolbtn" id="soundBtn">🔊 音效：開</button>
+  <button class="toolbtn" id="testVoiceBtn">🎙️ 試聽語音</button>
+</div>
+<div id="voiceWarn">⚠️ 目前瀏覽器找不到中文語音，發音功能可能無聲。建議改用 <b>Microsoft Edge</b> 或 <b>Chrome</b> 開啟本頁。</div>
+
+<nav>
+  <button class="tab on" data-page="kb">🎹 拼音鍵盤</button>
+  <button class="tab" data-page="chart">📋 總對照表</button>
+  <button class="tab" data-page="rules">📜 四大規則</button>
+  <button class="tab" data-page="quiz">🎮 拼寫挑戰</button>
+  <button class="tab" data-page="words">📝 字詞練習</button>
+  <button class="tab" data-page="conf">⚠️ 易混淆字</button>
+</nav>
+
+<!-- ══════════ 拼音鍵盤 ══════════ -->
+<section class="page on" id="page-kb">
+  <div id="detail">
+    <div class="big" id="dPy"></div>
+    <div class="zy" id="dZy"></div>
+    <div class="info">
+      <div class="ex" id="dEx"></div>
+      <div class="rule" id="dRule"></div>
+    </div>
+    <button class="replay" id="dReplay">🔁 再聽一次</button>
+  </div>
+
+  <h2 class="sec">聲母鍵盤 <small>21 個開頭音・點按鍵發音，也可以直接按電腦鍵盤字母</small></h2>
+  <p class="note">金色按鍵是容易拼錯的特別音：<b>zh ch sh r z c s</b> 單獨成音時，後面要補一個 <code>i</code>（空韻），例如 ㄓ → <code>zhi</code>、ㄙ → <code>si</code>。</p>
+  <div class="keys" id="initialKeys"></div>
+
+  <h2 class="sec">韻母鍵盤 <small>點按鍵聽「獨立發音」的讀法</small></h2>
+  <p class="note">右上角金色標籤是<b>零聲母拼法</b>：前面沒有聲母時，ㄧ開頭改 <code>y</code>、ㄨ開頭改 <code>w</code>、ㄩ開頭改 <code>yu</code>。例如 ㄧㄡ → 有聲母時寫 <code>iu</code>（牛 niú），獨立時寫 <code>you</code>（有 yǒu）。</p>
+  <div class="keys" id="finalKeys"></div>
+
+  <h2 class="sec">聲調試聽 <small>同一個音 ma，五種聲調五個意思</small></h2>
+  <div class="tones" id="toneRow"></div>
+</section>
+
+<!-- ══════════ 總對照表 ══════════ -->
+<section class="page" id="page-chart">
+  <p class="note">一頁看完全部對照。<b>點任一格或任一列可以聽例字</b>。ㄧ、ㄨ、ㄩ 開頭的韻母獨立時都會改寫（i→y、u→w、ü→yu）；其中<b>金色底</b>的幾列不只換開頭，還有簡寫、ong、ü 去點等變化，最容易拼錯。</p>
+
+  <h2 class="sec">聲母 <small>21 個・依發音部位分組</small></h2>
+  <div class="chartwrap"><table class="chart" id="chartI"></table></div>
+  <p class="note">捲舌與平舌兩組（<code>zh ch sh r z c s</code>）單獨成字時要補空韻 <code>i</code>：知 zhī、吃 chī、詩 shī、日 rì、資 zī、雌 cī、思 sī。</p>
+
+  <h2 class="sec">韻母 <small>有聲母時 vs 獨立成音（零聲母）</small></h2>
+  <div class="chartwrap"><table class="chart" id="chartF"></table></div>
+
+  <h2 class="sec">聲調符號 <small>注音和拼音的標法剛好相反的兩處</small></h2>
+  <div class="chartwrap"><table class="chart" id="chartT"></table></div>
+  <p class="note">注意：注音<b>一聲不標</b>、拼音一聲<b>要標</b> ˉ；注音輕聲標 ˙、拼音輕聲<b>不標</b>。調號位置口訣：<b>有 a 不放過，沒 a 找 o、e；i、u 並列標在後。</b></p>
+</section>
+
+<!-- ══════════ 四大規則 ══════════ -->
+<section class="page" id="page-rules">
+  <p class="note">照對照表一個一個字母換，為什麼「空」ㄎㄨㄥ 拼出來不是 kueng 而是 <code>kong</code>？因為有四個隱藏版規則。點開每一張卡片看看：</p>
+
+  <div class="rulecard open">
+    <div class="head"><div class="num">1</div><h3>變音變韻 ── 寫的和唸的不一樣</h3><span class="arrow">▶</span></div>
+    <div class="body">
+      <p>有些結合韻「實際讀音」和「字母長相」不同，但<b>拼寫時要照規定寫</b>，不能照耳朵拼：</p>
+      <table>
+        <tr><th>注音</th><th>拼音寫法</th><th>實際讀起來像</th><th>例字</th><th>聽</th></tr>
+        <tr><td>ㄧㄢ</td><td class="mono">ian / yan</td><td>ㄧㄝㄋ（ien）</td><td>天 tiān</td><td><button class="speak" data-say="天">🔊</button></td></tr>
+        <tr><td>ㄧㄣ</td><td class="mono">in / yin</td><td>ㄧㄣ（中間音弱化）</td><td>音 yīn</td><td><button class="speak" data-say="音">🔊</button></td></tr>
+        <tr><td>ㄧㄥ</td><td class="mono">ing / ying</td><td>ㄧㄥ（中間音弱化）</td><td>英 yīng</td><td><button class="speak" data-say="英">🔊</button></td></tr>
+        <tr><td>ㄩㄢ</td><td class="mono">uan / yuan</td><td>ㄩㄝㄋ（üen）</td><td>圓 yuán</td><td><button class="speak" data-say="圓">🔊</button></td></tr>
+        <tr><td>ㄩㄣ</td><td class="mono">un / yun</td><td>ㄩㄣ（中間音弱化）</td><td>雲 yún</td><td><button class="speak" data-say="雲">🔊</button></td></tr>
+        <tr><td>ㄨㄥ</td><td class="mono">ong（有聲母）/ weng</td><td>寫 ong，但唸 ㄨㄥ（不是 ㄛㄥ）</td><td>東 dōng／翁 wēng</td><td><button class="speak" data-say="東">🔊</button></td></tr>
+        <tr><td>ㄩㄥ</td><td class="mono">iong / yong</td><td>ㄩㄥ</td><td>熊 xióng</td><td><button class="speak" data-say="熊">🔊</button></td></tr>
+      </table>
+      <div class="tipbox">💡 重點記憶：ㄨㄥ 前面<b>有聲母寫 ong</b>（東 dōng），<b>沒聲母寫 weng</b>（翁 wēng）。這就是「空」拼成 kōng 的原因！</div>
+    </div>
+  </div>
+
+  <div class="rulecard">
+    <div class="head"><div class="num">2</div><h3>介音與省略 ── i、u、ü 開頭要變身</h3><span class="arrow">▶</span></div>
+    <div class="body">
+      <div class="tipbox">🔍 <b>什麼是「介音」？</b>介音就是注音裡的 <b>ㄧ、ㄨ、ㄩ</b>（拼音的 <b class="mono" style="color:var(--cyan)">i、u、ü</b>）。「介」是「居中、媒介」的意思──當它們<b>夾在聲母和後面的韻母中間</b>時，就像一座橋：例如「家」ㄐ<b>ㄧ</b>ㄠ = j<b>i</b>ao，ㄐ 是聲母、ㄠ 是韻母，中間的 ㄧ 就是介音；「花」ㄏ<b>ㄨ</b>ㄚ = h<b>u</b>a 的 ㄨ 也是。華語的介音只有這三個。下面要講的規則，就是這三個音<b>跑到最前面、前面沒有聲母</b>時，拼法要怎麼變身。</div>
+      <p><b>獨立成音（零聲母）時：</b></p>
+      <table>
+        <tr><th>開頭</th><th>規則</th><th>例子</th><th>聽</th></tr>
+        <tr><td>ㄧ（i）</td><td>後面還有元音 → i 換成 <span class="mono">y</span>；只有 i → 前面補 y</td><td>ㄧㄠ → yào（要）／ㄧ → yī（一）</td><td><button class="speak" data-say="要">🔊</button></td></tr>
+        <tr><td>ㄨ（u）</td><td>後面還有元音 → u 換成 <span class="mono">w</span>；只有 u → 前面補 w</td><td>ㄨㄛ → wǒ（我）／ㄨ → wǔ（五）</td><td><button class="speak" data-say="我">🔊</button></td></tr>
+        <tr><td>ㄩ（ü）</td><td>一律前面補 <span class="mono">yu</span>，ü 去掉兩點</td><td>ㄩ → yǔ（雨）／ㄩㄝ → yuè（月）</td><td><button class="speak" data-say="雨">🔊</button></td></tr>
+      </table>
+      <p><b>有聲母時，兩個三合韻要省略中間的元音：</b></p>
+      <table>
+        <tr><th>注音</th><th>完整形</th><th>有聲母時簡寫</th><th>例子</th><th>聽</th></tr>
+        <tr><td>ㄨㄟ</td><td class="mono">uei</td><td class="mono">ui</td><td>水 shuǐ（獨立時 wèi）</td><td><button class="speak" data-say="水">🔊</button></td></tr>
+        <tr><td>ㄧㄡ</td><td class="mono">iou</td><td class="mono">iu</td><td>牛 niú（獨立時 yǒu）</td><td><button class="speak" data-say="牛">🔊</button></td></tr>
+        <tr><td>ㄨㄣ</td><td class="mono">uen</td><td class="mono">un</td><td>春 chūn（獨立時 wèn）</td><td><button class="speak" data-say="春">🔊</button></td></tr>
+      </table>
+      <div class="tipbox">💡 口訣：<b>「ui、iu、un，見到聲母就瘦身」</b>──中間的 e、o、e 被省掉了，但讀音還在！</div>
+    </div>
+  </div>
+
+  <div class="rulecard">
+    <div class="head"><div class="num">3</div><h3>空韻 ── 注音沒寫出來的韻母</h3><span class="arrow">▶</span></div>
+    <div class="body">
+      <p>ㄓ ㄔ ㄕ ㄖ ㄗ ㄘ ㄙ 這七個音，注音單獨就能成字（知、吃、詩…），後面沒有韻母符號──這叫「空韻」。但漢語拼音<b>規定要補上字母 i</b>：</p>
+      <table>
+        <tr><th>注音</th><th>拼音</th><th>例字</th><th>聽</th></tr>
+        <tr><td>ㄓ</td><td class="mono">zhi</td><td>知 zhī</td><td><button class="speak" data-say="知">🔊</button></td></tr>
+        <tr><td>ㄔ</td><td class="mono">chi</td><td>吃 chī</td><td><button class="speak" data-say="吃">🔊</button></td></tr>
+        <tr><td>ㄕ</td><td class="mono">shi</td><td>詩 shī</td><td><button class="speak" data-say="詩">🔊</button></td></tr>
+        <tr><td>ㄖ</td><td class="mono">ri</td><td>日 rì</td><td><button class="speak" data-say="日">🔊</button></td></tr>
+        <tr><td>ㄗ</td><td class="mono">zi</td><td>資 zī</td><td><button class="speak" data-say="資">🔊</button></td></tr>
+        <tr><td>ㄘ</td><td class="mono">ci</td><td>雌 cī</td><td><button class="speak" data-say="雌">🔊</button></td></tr>
+        <tr><td>ㄙ</td><td class="mono">si</td><td>思 sī</td><td><button class="speak" data-say="思">🔊</button></td></tr>
+      </table>
+      <div class="tipbox">⚠️ 這個 i <b>不唸 ㄧ</b>！zhi 的 i 只是「佔位符號」，唸起來還是 ㄓ。注意 ㄐㄑㄒ（j q x）後面的 i 才是真的 ㄧ。</div>
+    </div>
+  </div>
+
+  <div class="rulecard">
+    <div class="head"><div class="num">4</div><h3>聲調標在哪個字母上？</h3><span class="arrow">▶</span></div>
+    <div class="body">
+      <p>漢語拼音<b>一聲要標調號</b>（ˉ），輕聲不標。調號標在元音上。</p>
+      <div class="tipbox">🔍 <b>什麼是「元音」？</b>元音（也叫母音）就是拼音裡的 <b class="mono" style="color:var(--cyan)">a、o、e、i、u、ü</b> 這六個字母──相當於注音的 ㄚ、ㄛ、ㄜ、ㄧ、ㄨ、ㄩ 這類「張開嘴巴、氣流不受阻擋」的音。其他字母（b、p、m、f、n、g…）是輔音，調號<b>不會</b>標在它們上面。例如 <span class="mono">hao</span> 裡只有 a、o 是元音，h 是輔音。</div>
+      <p>知道誰是元音後，記這個口訣：</p>
+      <div class="tipbox" style="font-size:15px">🎯 <b>有 a 不放過，沒 a 找 o、e；i、u 並列標在後。</b></div>
+      <table>
+        <tr><th>音節</th><th>標在哪</th><th>為什麼</th><th>結果</th></tr>
+        <tr><td class="mono">hao</td><td>a</td><td>有 a 不放過</td><td class="mono">hǎo 好</td></tr>
+        <tr><td class="mono">ou</td><td>o</td><td>沒 a 找 o、e</td><td class="mono">ōu 歐</td></tr>
+        <tr><td class="mono">hui</td><td>i</td><td>i、u 並列標在後</td><td class="mono">huì 會</td></tr>
+        <tr><td class="mono">liu</td><td>u</td><td>i、u 並列標在後</td><td class="mono">liù 六</td></tr>
+        <tr><td class="mono">ni</td><td>i</td><td>唯一元音</td><td class="mono">nǐ 你</td></tr>
+      </table>
+      <p>👇 直接玩玩看「標調小遊戲」：</p>
+      <div id="toneGame">
+        <div class="q" id="toneQ"></div>
+        <div id="toneLetters"></div>
+        <div id="toneMsg"></div>
+        <button class="ghostbtn" id="toneNext">下一題 →</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════ 拼寫挑戰 ══════════ -->
+<section class="page" id="page-quiz">
+  <div id="quizBox">
+    <div id="quizStart" class="qcard">
+      <div style="font-size:52px">🎮</div>
+      <h3 style="margin:10px 0;font-size:20px">拼音轉譯挑戰</h3>
+      <p class="note" style="margin-bottom:0">看注音符號，選出正確的漢語拼音拼法。<br>題庫 48 題，每場自選 10／15／20 題，答對連續越多題，分數越高！<br>答錯會給<b>提示</b>，可以再試一次；想清楚了再按「下一題」。<br>小心：ü 的兩點、簡寫、空韻都是陷阱 😈</p>
+      <div style="margin:14px 0 2px;font-size:13px;color:var(--dim)">選擇題數：
+        <button class="toolbtn qlen on" data-n="10">10 題</button>
+        <button class="toolbtn qlen" data-n="15">15 題</button>
+        <button class="toolbtn qlen" data-n="20">20 題</button>
+      </div>
+      <button class="bigbtn" id="quizGo">開始挑戰</button>
+      <div class="best" id="bestShow" style="color:var(--dim);font-size:13px;margin-top:12px"></div>
+    </div>
+    <div id="quizPlay" style="display:none">
+      <div id="quizHud">
+        <span>第 <span id="qNum">1</span> / <span id="qTotal">10</span> 題</span>
+        <span class="streak" id="qStreak"></span>
+        <span class="score" id="qScore">0 分</span>
+      </div>
+      <div id="quizBar"><i></i></div>
+      <div class="qcard">
+        <div class="zy-big" id="qZy"></div>
+        <div class="word">例字：<b id="qWord"></b></div>
+        <div class="opts" id="qOpts"></div>
+        <div id="quizExpl"></div>
+        <button class="bigbtn" id="quizNext" style="display:none;margin-top:12px">下一題 →</button>
+      </div>
+    </div>
+    <div id="quizEnd" class="qcard" style="display:none">
+      <div class="stars" id="endStars"></div>
+      <div class="final" id="endScore"></div>
+      <div class="best" id="endBest"></div>
+      <p class="note" id="endMsg" style="margin-top:12px"></p>
+      <button class="bigbtn" id="quizAgain">再玩一次</button>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════ 字詞練習 ══════════ -->
+<section class="page" id="page-words">
+  <p class="note">把<b>整個詞</b>的拼音拼出來！每個字選出正確拼音（含聲調），全部拼對就會唸出整個詞。<b>輕聲字不標調號</b>（如「謝謝」的第二個字），也是考點喔。拼錯會給提示，可以繼續試。</p>
+  <div style="max-width:640px;margin:0 auto">
+    <div style="display:flex;justify-content:space-between;margin-bottom:12px;font-size:14px;color:var(--dim)">
+      <span>第 <span id="wNum">1</span> / <span id="wTotal">30</span> 詞</span>
+      <span id="wDone" style="color:var(--t2)"></span>
+    </div>
+    <div class="qcard">
+      <div id="wWord"></div>
+      <div id="wZy"></div>
+      <button class="ghostbtn" id="wListen" style="margin:8px 0">🔊 聽整個詞</button>
+      <div id="wRows"></div>
+      <div id="wMsg" style="min-height:30px;margin-top:10px;font-size:14px;line-height:1.9"></div>
+      <button class="bigbtn" id="wNext" style="display:none;margin-top:10px">下一個詞 →</button>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════ 易混淆字 ══════════ -->
+<section class="page" id="page-conf">
+  <p class="note">台灣注音和漢語拼音標準音在少數幾個字上不同，用拼音打字找不到字時，先想到這幾個：</p>
+  <div class="confgrid">
+    <div class="confcard">
+      <h3>和 <small>「我和你」的和</small></h3>
+      <div class="confrow"><span class="tag tw">台灣</span>ㄏㄢˋ <span class="mono">han4</span>（當「跟」用時的台灣讀音）</div>
+      <div class="confrow"><span class="tag cn">拼音</span>ㄏㄜˊ <span class="mono">hé</span> <button class="speak" data-say="我和你">🔊 聽</button></div>
+      <div class="why">只有當連接詞「和（跟）」時，台灣才常唸 ㄏㄢˋ；「和平」「和氣」兩岸都唸 ㄏㄜˊ。拼音輸入一律打 he2。另外「和麵」的 ㄏㄨㄛˊ 對應 huó。</div>
+    </div>
+    <div class="confcard">
+      <h3>垃圾 <small>唸起來差很多！</small></h3>
+      <div class="confrow"><span class="tag tw">台灣</span>ㄌㄜˋ ㄙㄜˋ <span class="mono">lè sè</span></div>
+      <div class="confrow"><span class="tag cn">拼音</span>ㄌㄚ ㄐㄧ <span class="mono">lā jī</span> <button class="speak" data-say="垃圾">🔊 聽</button></div>
+      <div class="why">拼音輸入要打 la1 ji1。這是兩岸讀音差異最大的常用詞之一。</div>
+    </div>
+    <div class="confcard">
+      <h3>期 <small>「星期」的期</small></h3>
+      <div class="confrow"><span class="tag tw">台灣</span>ㄑㄧˊ <span class="mono">qí（二聲）</span></div>
+      <div class="confrow"><span class="tag cn">拼音</span>ㄑㄧ <span class="mono">qī（一聲）</span> <button class="speak" data-say="星期">🔊 聽</button></div>
+      <div class="why">拼音標準音是一聲 qi1。打 qi2 找不到「期」的時候別懷疑鍵盤。</div>
+    </div>
+    <div class="confcard">
+      <h3>ü 的兩點 <small>什麼時候消失？</small></h3>
+      <div class="confrow"><span class="tag cn">j q x</span>ㄐㄑㄒ 後面 → 去點寫 <span class="mono">u</span>：去 qù、學 xué</div>
+      <div class="confrow"><span class="tag tw">n l</span>ㄋㄌ 後面 → 保留 <span class="mono">ü</span>：女 nǚ、略 lüè <button class="speak" data-say="女">🔊 聽</button></div>
+      <div class="why">口訣：<b>「j q x 小淘氣，見到魚眼就挖去」</b>。電腦輸入時 ü 用 v 代替：nv3＝女、lve4＝略。因為 j/q/x 本來就不接 ㄨ，所以寫 u 也不會混淆。</div>
+    </div>
+    <div class="confcard">
+      <h3>ㄝ <small>很少單獨出現</small></h3>
+      <div class="confrow"><span class="tag cn">規則</span>ㄝ 大多跟 ㄧ、ㄩ 結合：<span class="mono">ie</span>（謝 xiè）、<span class="mono">üe</span>（月 yuè）</div>
+      <div class="confrow"><span class="tag tw">注意</span>ㄧㄝ 的 e 和 ㄜ 的 e 是<b>不同的音</b>，但拼音都寫 e <button class="speak" data-say="謝">🔊 聽</button></div>
+      <div class="why">ㄜ（e）唸「婀」；ㄧㄝ／ㄩㄝ 裡的 e 唸「ㄝ」。字母相同、讀音不同，靠前面的 i/u 判斷。</div>
+    </div>
+    <div class="confcard">
+      <h3>拼音不是英文！ <small>最重要的心態</small></h3>
+      <div class="confrow"><span class="tag cn">c</span>＝ㄘ（不是 k 也不是 s）</div>
+      <div class="confrow"><span class="tag cn">q</span>＝ㄑ（不是 k）</div>
+      <div class="confrow"><span class="tag cn">x</span>＝ㄒ（不是 ks）</div>
+      <div class="confrow"><span class="tag cn">zh</span>＝ㄓ（不是 z+h）</div>
+      <div class="why">漢語拼音借用的是<b>羅馬字母</b>，不是英文發音。俄文的 c 唸 ㄙ、葡萄牙文的 x 唸 ㄒ──同一個字母在不同語言本來就有不同唸法，不用覺得奇怪！</div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  規則依《漢語拼音方案》整理；參考影片：國立空中大學數位華語文中心〈9 分鐘學會漢語拼音的拼法〉。題目與例字皆為自編。<br>
+  發音使用瀏覽器內建語音合成（普通話）・<a href="../index.html" style="color:inherit;text-decoration:none">← 回學習小站</a>
+</footer>
+</div>
+
+<script>
+"use strict";
+/* ═════════ 語音 ═════════ */
+let muted=false, zhVoice=null, lastSay="你好";
+function loadVoices(){
+  const vs=speechSynthesis.getVoices();
+  zhVoice = vs.find(v=>/zh[-_]CN/i.test(v.lang)&&/Xiaoxiao|Yating|Huihui|Google/i.test(v.name))
+        || vs.find(v=>/zh[-_]CN/i.test(v.lang))
+        || vs.find(v=>/^zh/i.test(v.lang)) || null;
+  document.getElementById("voiceWarn").style.display = (vs.length&&!zhVoice)?"block":"none";
+}
+if("speechSynthesis" in window){
+  loadVoices();
+  speechSynthesis.onvoiceschanged=loadVoices;
+}else{
+  document.getElementById("voiceWarn").style.display="block";
+}
+function speak(text){
+  lastSay=text;
+  if(muted||!("speechSynthesis" in window))return;
+  try{
+    speechSynthesis.cancel();
+    const u=new SpeechSynthesisUtterance(text);
+    u.lang="zh-CN"; if(zhVoice)u.voice=zhVoice;
+    u.rate=0.82; u.pitch=1;
+    speechSynthesis.speak(u);
+  }catch(e){}
+}
+/* 按鍵回饋短音 */
+let actx=null;
+function blip(freq){
+  if(muted)return;
+  try{
+    actx=actx||new (window.AudioContext||window.webkitAudioContext)();
+    const o=actx.createOscillator(),g=actx.createGain();
+    o.type="sine";o.frequency.value=freq||660;
+    g.gain.setValueAtTime(.08,actx.currentTime);
+    g.gain.exponentialRampToValueAtTime(.001,actx.currentTime+.12);
+    o.connect(g);g.connect(actx.destination);
+    o.start();o.stop(actx.currentTime+.13);
+  }catch(e){}
+}
+document.getElementById("soundBtn").onclick=function(){
+  muted=!muted;
+  this.textContent=muted?"🔇 音效：關":"🔊 音效：開";
+  if(muted&&"speechSynthesis" in window)speechSynthesis.cancel();
+};
+document.getElementById("testVoiceBtn").onclick=()=>speak("你好，歡迎使用漢語拼音互動學習機");
+
+/* ═════════ 分頁 ═════════ */
+const tabs=document.querySelectorAll(".tab");
+let curPage="kb";
+tabs.forEach(t=>t.onclick=()=>{
+  tabs.forEach(x=>x.classList.remove("on"));t.classList.add("on");
+  document.querySelectorAll(".page").forEach(p=>p.classList.remove("on"));
+  document.getElementById("page-"+t.dataset.page).classList.add("on");
+  curPage=t.dataset.page; blip(520);
+});
+
+/* ═════════ 鍵盤資料 ═════════ */
+const INITIALS=[
+ ["b","ㄅ","玻","b 唸 ㄅ，不送氣。對應英文字母 b 但唸「玻」。"],
+ ["p","ㄆ","坡","p 唸 ㄆ，送氣。"],
+ ["m","ㄇ","摸",""],
+ ["f","ㄈ","佛",""],
+ ["d","ㄉ","得","d 唸 ㄉ，不送氣。"],
+ ["t","ㄊ","特","t 唸 ㄊ，送氣。"],
+ ["n","ㄋ","訥",""],
+ ["l","ㄌ","勒",""],
+ ["g","ㄍ","哥","g 唸 ㄍ，不送氣（不是英文的 g）。"],
+ ["k","ㄎ","科","k 唸 ㄎ，送氣。"],
+ ["h","ㄏ","喝",""],
+ ["j","ㄐ","基","j 唸 ㄐ！只接 ㄧ、ㄩ 開頭的韻母。後面的 ü 要去點寫 u。"],
+ ["q","ㄑ","欺","q 唸 ㄑ！只接 ㄧ、ㄩ 開頭的韻母。後面的 ü 要去點寫 u。"],
+ ["x","ㄒ","希","x 唸 ㄒ！只接 ㄧ、ㄩ 開頭的韻母。後面的 ü 要去點寫 u。"],
+ ["zh","ㄓ","知","捲舌音。單獨成音要補空韻 i → zhi。"],
+ ["ch","ㄔ","吃","捲舌音。單獨成音要補空韻 i → chi。"],
+ ["sh","ㄕ","詩","捲舌音。單獨成音要補空韻 i → shi。"],
+ ["r","ㄖ","日","捲舌音。單獨成音要補空韻 i → ri。"],
+ ["z","ㄗ","資","平舌音。單獨成音要補空韻 i → zi。"],
+ ["c","ㄘ","雌","c 唸 ㄘ（不是英文的 k/s）！單獨成音補 i → ci。"],
+ ["s","ㄙ","思","平舌音。單獨成音要補空韻 i → si。"]
+];
+/* [拼音, 注音, 例字, 零聲母形, 規則說明] */
+const FINALS=[
+ ["a","ㄚ","啊","",""],
+ ["o","ㄛ","喔","",""],
+ ["e","ㄜ","婀","","唸「婀」，和 ㄧㄝ 裡的 e 不同音。"],
+ ["ê","ㄝ","欸","","通常不單獨出現，多跟 ㄧ、ㄩ 結合成 ie / üe。"],
+ ["ai","ㄞ","哀","",""],
+ ["ei","ㄟ","欸","","單獨的 ㄟ 照寫 ei（黑 hēi）。ㄨㄟ 有聲母時才簡寫成 ui，見 ui 鍵。"],
+ ["ao","ㄠ","熬","",""],
+ ["ou","ㄡ","歐","","單獨的 ㄡ 照寫 ou（狗 gǒu）。ㄧㄡ 有聲母時才簡寫成 iu，見 iu 鍵。"],
+ ["an","ㄢ","安","",""],
+ ["en","ㄣ","恩","","單獨的 ㄣ 照寫 en（門 mén）。ㄨㄣ 有聲母時才簡寫成 un，見 un 鍵。"],
+ ["ang","ㄤ","昂","",""],
+ ["eng","ㄥ","鞥","",""],
+ ["er","ㄦ","兒","","捲舌韻母，只能獨立成音（兒 ér、二 èr）。"],
+ ["i","ㄧ","衣","yi","獨立時前面補 y → yi。"],
+ ["ia","ㄧㄚ","呀","ya","獨立時 i 換 y → ya。"],
+ ["ie","ㄧㄝ","耶","ye","獨立時 i 換 y → ye。這裡的 e 唸 ㄝ。"],
+ ["iao","ㄧㄠ","腰","yao","獨立時 i 換 y → yao。"],
+ ["iu","ㄧㄡ","優","you","有聲母寫 iu（niu2 牛）；獨立寫 you。iou 的簡寫！"],
+ ["ian","ㄧㄢ","煙","yan","寫 ian 但讀起來像 ien（變音）。獨立寫 yan。"],
+ ["in","ㄧㄣ","音","yin","獨立時前面補 y → yin。"],
+ ["iang","ㄧㄤ","央","yang","獨立時 i 換 y → yang。"],
+ ["ing","ㄧㄥ","英","ying","獨立時前面補 y → ying。"],
+ ["u","ㄨ","烏","wu","獨立時前面補 w → wu。"],
+ ["ua","ㄨㄚ","蛙","wa","獨立時 u 換 w → wa。"],
+ ["uo","ㄨㄛ","窩","wo","獨立時 u 換 w → wo。"],
+ ["uai","ㄨㄞ","歪","wai","獨立時 u 換 w → wai。"],
+ ["ui","ㄨㄟ","威","wei","有聲母寫 ui（shui3 水）；獨立寫 wei。uei 的簡寫！"],
+ ["uan","ㄨㄢ","彎","wan","獨立時 u 換 w → wan。注意：ㄩㄢ 接 j/q/x 也寫 uan！"],
+ ["un","ㄨㄣ","溫","wen","有聲母寫 un（chun1 春）；獨立寫 wen。uen 的簡寫！"],
+ ["uang","ㄨㄤ","汪","wang","獨立時 u 換 w → wang。"],
+ ["ong","ㄨㄥ","翁","weng","有聲母寫 ong（dong1 東）；獨立寫 weng。這就是「空 kōng」！"],
+ ["ü","ㄩ","迂","yu","獨立寫 yu（去點）。接 j/q/x 寫 u；接 n/l 保留 ü（輸入打 v）。"],
+ ["üe","ㄩㄝ","約","yue","獨立寫 yue。接 j/q/x 寫 ue（xue2 學）；接 n/l 寫 üe（lve4 略）。"],
+ ["üan","ㄩㄢ","冤","yuan","獨立寫 yuan。接 j/q/x 寫 uan（quan2 全）。讀起來像 üen（變音）。"],
+ ["ün","ㄩㄣ","暈","yun","獨立寫 yun。接 j/q/x 寫 un（jun1 軍）。"],
+ ["iong","ㄩㄥ","雍","yong","獨立寫 yong。接 j/q/x 寫 iong（xiong2 熊）。"]
+];
+const TONES=[
+ [1,"mā","媽","一聲 ˉ（高平）"],
+ [2,"má","麻","二聲 ˊ（上揚）"],
+ [3,"mǎ","馬","三聲 ˇ（降升）"],
+ [4,"mà","罵","四聲 ˋ（重降）"],
+ [0,"ma","嗎","輕聲（不標）"]
+];
+
+/* ═════════ 渲染鍵盤 ═════════ */
+const dEl=document.getElementById("detail");
+let dSay="";
+function showDetail(py,zy,ex,rule){
+  document.getElementById("dPy").textContent=py;
+  document.getElementById("dZy").textContent=zy;
+  document.getElementById("dEx").textContent="例字："+ex;
+  document.getElementById("dRule").textContent=rule||"對照單純，直接記住即可！";
+  dEl.classList.add("on");
+}
+document.getElementById("dReplay").onclick=()=>{if(dSay)speak(dSay);};
+
+const ikBox=document.getElementById("initialKeys");
+INITIALS.forEach(([py,zy,ex,rule])=>{
+  const d=document.createElement("div");
+  d.className="key"+(["zh","ch","sh","r","z","c","s"].includes(py)?" special":"");
+  d.dataset.k=py;
+  d.innerHTML=`<div class="py">${py}</div><div class="zy">${zy}</div><div class="ex">${ex}</div>`;
+  d.onclick=()=>{hitKey(d,py);dSay=ex;showDetail(py,zy,ex,rule);blip(660);speak(ex);};
+  ikBox.appendChild(d);
+});
+const fkBox=document.getElementById("finalKeys");
+FINALS.forEach(([py,zy,ex,zero,rule])=>{
+  const d=document.createElement("div");
+  d.className="key"+(zero?" special":"");
+  d.innerHTML=`<div class="py">${py}</div><div class="zy">${zy}</div><div class="ex">${ex}${zero?"・"+zero:""}</div>`
+    +(zero?`<span class="badge">${zero}</span>`:"");
+  d.onclick=()=>{hitKey(d,py);dSay=ex;showDetail(py,zy,ex+(zero?`（獨立發音時寫 ${zero}）`:""),rule);blip(760);speak(ex);};
+  fkBox.appendChild(d);
+});
+function hitKey(el){
+  el.classList.add("hit");
+  setTimeout(()=>el.classList.remove("hit"),220);
+}
+/* 電腦鍵盤實體按鍵 */
+const keyMap={};
+INITIALS.forEach(r=>{if(r[0].length===1)keyMap[r[0]]=r;});
+[["a","ㄚ","啊"],["o","ㄛ","喔"],["e","ㄜ","婀"]].forEach(r=>keyMap[r[0]]=r);
+document.addEventListener("keydown",ev=>{
+  if(curPage!=="kb"||ev.repeat||ev.ctrlKey||ev.altKey||ev.metaKey)return;
+  const k=ev.key.toLowerCase();
+  const row=keyMap[k];
+  if(!row)return;
+  const el=ikBox.querySelector(`[data-k="${k}"]`)||fkBox.children[FINALS.findIndex(f=>f[0]===k)];
+  if(el)hitKey(el);
+  dSay=row[2];showDetail(row[0],row[1],row[2],row[3]||"");
+  blip(660);speak(row[2]);
+});
+
+/* 聲調列 */
+const tRow=document.getElementById("toneRow");
+TONES.forEach(([t,py,ch,lbl])=>{
+  const d=document.createElement("div");
+  d.className="tone";d.dataset.t=t;
+  d.innerHTML=`<div class="mark">${py}</div><div class="ch">${ch}</div><div class="lbl">${lbl}</div>`;
+  d.onclick=()=>{blip(500+t*90);speak(ch);};
+  tRow.appendChild(d);
+});
+
+/* ═════════ 總對照表（由 INITIALS／FINALS 資料產生，改資料兩邊同步） ═════════ */
+(function(){
+  const $=id=>document.getElementById(id);
+  const byPy={};INITIALS.forEach(r=>byPy[r[0]]=r);
+  const GI=[["雙唇・唇齒","b p m f"],["舌尖","d t n l"],["舌根","g k h"],["舌面","j q x"],["捲舌","zh ch sh r"],["平舌","z c s"]];
+  let h="";
+  GI.forEach(([lbl,list])=>{
+    const ks=list.split(" ");
+    h+=`<tr><th class="grp">${lbl}</th>`;
+    for(let i=0;i<4;i++){
+      const r=byPy[ks[i]];
+      h+=r?`<td class="say" data-say="${r[2]}"><span class="zy">${r[1]}</span> <span class="py">${r[0]}</span><span class="ex">${r[2]}</span></td>`:"<td></td>";
+    }
+    h+="</tr>";
+  });
+  $("chartI").innerHTML=h;
+
+  /* 有聲母時的寫法：ü 家族要分 n/l 與 j/q/x；er、ê 不接聲母 */
+  const WITH={"ê":"—","er":"—（不接聲母）",
+    "ü":"nü lü ／ ju qu xu","üe":"nüe lüe ／ jue que xue",
+    "üan":"juan quan xuan","ün":"jun qun xun","iong":"jiong qiong xiong"};
+  const NOTE={"ê":"多以 ie、üe 出現","e":"唸「婀」","iu":"iou 的簡寫","ui":"uei 的簡寫","un":"uen 的簡寫",
+    "ong":"ㄨㄥ 有聲母寫 ong","ian":"讀像 ien，照寫 ian","üan":"讀像 üen；j q x 後去點",
+    "ü":"j q x 後去點；n l 後保留","üe":"j q x 後去點；n l 後保留","ün":"j q x 後去點","iong":"j q x 後寫 iong",
+    "i":"只有 i → 補 y","u":"只有 u → 補 w","in":"只有 i＋n → 補 y","ing":"只有 i＋ng → 補 y"};
+  /* 金色標示：簡寫三兄弟、ㄨㄥ、ㄩ 家族（不是單純 i→y、u→w 的那些） */
+  const TRICKY=["iu","ui","un","ong","ü","üe","üan","ün","iong"];
+  const GF=[["單韻母・複韻母・聲隨韻母",0,12],["捲舌韻母",12,13],["ㄧ 開頭（獨立時 i→y）",13,22],
+            ["ㄨ 開頭（獨立時 u→w）",22,31],["ㄩ 開頭（獨立時一律 yu）",31,36]];
+  let f="<tr><th>注音</th><th>有聲母時</th><th>獨立成音</th><th>例字</th><th>備註</th></tr>";
+  GF.forEach(([lbl,a,b])=>{
+    f+=`<tr><th class="grp" colspan="5">${lbl}</th></tr>`;
+    FINALS.slice(a,b).forEach(([py,zy,ex,zero])=>{
+      const w=WITH[py]||py, alone=zero||py, diff=TRICKY.includes(py);
+      f+=`<tr class="say" data-say="${ex}"><td class="zy">${zy}</td>`
+        +`<td${diff?' class="diff"':""}><span class="py">${w}</span></td>`
+        +`<td${diff?' class="diff"':""}><span class="py">${alone}</span></td>`
+        +`<td class="ex">${ex}</td><td class="rm">${NOTE[py]||""}</td></tr>`;
+    });
+  });
+  $("chartF").innerHTML=f;
+
+  const T=[["一聲","不標","ā","媽 mā"],["二聲","ˊ","á","麻 má"],["三聲","ˇ","ǎ","馬 mǎ"],["四聲","ˋ","à","罵 mà"],["輕聲","˙","不標","嗎 ma"]];
+  let t="<tr><th>聲調</th><th>注音</th><th>拼音</th><th>例</th></tr>";
+  T.forEach(([n,z,p,e])=>{
+    const d=(n==="一聲"||n==="輕聲");
+    t+=`<tr class="say" data-say="${e[0]}"><td>${n}</td><td${d?' class="diff"':""}><span class="zy">${z}</span></td>`
+      +`<td${d?' class="diff"':""}><span class="py">${p}</span></td><td class="ex">${e}</td></tr>`;
+  });
+  $("chartT").innerHTML=t;
+
+  document.querySelectorAll("#page-chart .say").forEach(el=>el.onclick=()=>{blip(640);speak(el.dataset.say);});
+})();
+
+/* ═════════ 規則卡 ═════════ */
+document.querySelectorAll(".rulecard .head").forEach(h=>{
+  h.onclick=()=>{h.parentElement.classList.toggle("open");blip(580);};
+});
+document.querySelectorAll(".speak").forEach(b=>{
+  b.onclick=ev=>{ev.stopPropagation();speak(b.dataset.say);};
+});
+
+/* ═════════ 標調小遊戲 ═════════ */
+const TONEQS=[
+ ["hao",3,"好","a","有 a 不放過 → hǎo"],
+ ["hui",4,"會","i","i、u 並列標在後 → huì"],
+ ["liu",4,"六","u","i、u 並列標在後 → liù"],
+ ["xiao",3,"小","a","有 a 不放過 → xiǎo"],
+ ["ni",3,"你","i","唯一元音 → nǐ"],
+ ["ou",1,"歐","o","沒 a 找 o、e → ōu"],
+ ["gui",4,"貴","i","i、u 並列標在後 → guì"],
+ ["lun",2,"倫","u","唯一元音 u → lún"],
+ ["jiu",4,"就","u","i、u 並列標在後 → jiù"],
+ ["tuan",2,"團","a","有 a 不放過 → tuán"],
+ ["wei",4,"為","e","沒 a 找 o、e → wèi"],
+ ["shui",3,"水","i","i、u 並列標在後 → shuǐ"],
+ ["xue",2,"學","e","沒 a 找 o、e → xué"],
+ ["que",4,"雀","e","沒 a 找 o、e → què"]
+];
+let tIdx=0,tOrder=[];
+function shuffle(a){for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;}
+function toneRound(){
+  if(!tOrder.length)tOrder=shuffle(TONEQS.map((_,i)=>i));
+  tIdx=tOrder.pop();
+  const [syl,tone,ch,ans,expl]=TONEQS[tIdx];
+  document.getElementById("toneQ").innerHTML=`「<b style="color:var(--gold)">${ch}</b>」是第 <b style="color:var(--cyan)">${tone}</b> 聲 ── 調號該標在哪個字母上？點下去！`;
+  const box=document.getElementById("toneLetters");box.innerHTML="";
+  const msg=document.getElementById("toneMsg");msg.textContent="";msg.className="";
+  [...syl].forEach(letter=>{
+    const b=document.createElement("button");
+    b.textContent=letter;
+    if("aeiouü".includes(letter))b.classList.add("vowel");
+    b.onclick=()=>{
+      if(letter===ans){
+        b.classList.add("right");
+        msg.className="ok";msg.textContent="✅ 答對了！"+expl;
+        box.querySelectorAll("button").forEach(x=>x.disabled=true);
+        blip(880);speak(ch);
+      }else{
+        b.classList.add("wrong");
+        msg.className="no";msg.textContent="❌ 再想想口訣：有 a 不放過，沒 a 找 o、e；i、u 並列標在後。";
+        blip(220);
+        setTimeout(()=>b.classList.remove("wrong"),450);
+      }
+    };
+    box.appendChild(b);
+  });
+}
+document.getElementById("toneNext").onclick=()=>{toneRound();blip(520);};
+toneRound();
+
+/* ═════════ 拼寫挑戰 ═════════ */
+const QUIZ=[
+ ["ㄒㄩㄝˊ","學","xué",["xüé","xié","xué","xuě"],"j/q/x 後面的 ü 要去點寫 u，所以是 xue 不是 xüe。"],
+ ["ㄋㄩˇ","女","nǚ",["nǔ","nǚ","nuǒ","nǔi"],"n/l 後面的 ü 保留兩點！（輸入時打 nv3）"],
+ ["ㄓ","知","zhī",["zī","zh","zhī","zhi"],"空韻：ㄓ 單獨成音要補 i，一聲要標調號 → zhī。"],
+ ["ㄘˋ","次","cì",["chì","qì","cì","c"],"ㄘ = c（不是英文唸法）；空韻補 i → cì。"],
+ ["ㄕㄨㄟˇ","水","shuǐ",["shueǐ","shǔi","suǐ","shuǐ"],"uei 有聲母簡寫成 ui；i、u 並列標在後 → shuǐ。"],
+ ["ㄋㄧㄡˊ","牛","niú",["nioú","niǔ","niú","líu"],"iou 有聲母簡寫成 iu；i、u 並列標在後 → niú。"],
+ ["ㄧㄡˇ","有","yǒu",["iǒu","yoǔ","yǒu","ǒu"],"獨立成音：i 換 y，但 ou 完整保留 → yǒu。"],
+ ["ㄨㄛˇ","我","wǒ",["uǒ","wuǒ","ǒ","wǒ"],"獨立成音：u 換 w → wǒ（不是 wuǒ）。"],
+ ["ㄩˊ","魚","yú",["ú","yǘ","yú","ǘ"],"ㄩ 獨立寫 yu，ü 去點 → yú。"],
+ ["ㄉㄨㄥ","東","dōng",["duēng","dūeng","duōng","dōng"],"ㄨㄥ 有聲母寫 ong → dōng（不是 dueng）！"],
+ ["ㄨㄥ","翁","wēng",["ōng","wōng","uēng","wēng"],"ㄨㄥ 獨立寫 weng → wēng。"],
+ ["ㄒㄩㄥˊ","熊","xióng",["xüóng","xǘong","xióng","xiōng"],"ㄩㄥ 接 j/q/x 寫 iong → xióng。"],
+ ["ㄐㄩㄢ","捐","juān",["jüān","jvān","juǎn","juān"],"ㄩㄢ 接 j/q/x 寫 uan（去點）→ juān。"],
+ ["ㄑㄩㄣˊ","群","qún",["qǘn","qúen","qún","qǔn"],"ㄩㄣ 接 j/q/x 寫 un（去點）→ qún。"],
+ ["ㄩㄢˊ","圓","yuán",["üán","yúan","yuán","yuǎn"],"ㄩㄢ 獨立寫 yuan → yuán。"],
+ ["ㄧㄣ","音","yīn",["īn","yīn","yīng","īng"],"ㄧㄣ 獨立前面補 y → yīn（不是 yīng）。"],
+ ["ㄊㄧㄢ","天","tiān",["tiēn","tian","tiān","tiǎn"],"ian 讀起來像 ien，但拼寫照寫 ian → tiān。"],
+ ["ㄔㄨㄣ","春","chūn",["chuēn","cūn","chūn","chuen"],"uen 有聲母簡寫成 un → chūn。"],
+ ["ㄌㄩㄝˋ","略","lüè",["luè","lüè","lve","lüě"],"n/l 後面 ü 保留兩點 → lüè（輸入打 lve4）。"],
+ ["ㄏㄨㄤˊ","黃","huáng",["húang","huǎng","huáng","huāng"],"有 a 不放過，調號標在 a → huáng。"],
+ ["ㄒㄧㄤˇ","想","xiǎng",["xǐang","xǎng","xiǎng","xiāng"],"有 a 不放過 → xiǎng。"],
+ ["ㄖˋ","日","rì",["r","rì","zhì","rī"],"空韻補 i；ㄖ = r → rì。"],
+ ["ㄙ","思","sī",["shī","s","sī","sì"],"平舌 ㄙ = s，空韻補 i → sī。"],
+ ["ㄩㄣˊ","雲","yún",["ǘn","yúen","yún","yǔn"],"ㄩㄣ 獨立寫 yun（去點）→ yún。"],
+ ["ㄐㄧ","機","jī",["qī","xī","jī","zhī"],"ㄐ = j（不是 q 也不是 x）；j/q/x 後面的 i 是真的 ㄧ。"],
+ ["ㄑㄧ","七","qī",["jī","xī","chī","qī"],"ㄑ = q；和 ㄐ(j)、ㄒ(x) 同家族但不同字母。"],
+ ["ㄒㄧ","西","xī",["shī","sī","qī","xī"],"ㄒ = x（不是 sh 也不是 s）；羅馬字母 x 在拼音唸 ㄒ。"],
+ ["ㄍㄜ","哥","gē",["kē","hē","gē","gé"],"g = ㄍ 不送氣；k = ㄎ 送氣，是兩個不同聲母。"],
+ ["ㄎㄜ","科","kē",["gē","hē","kě","kē"],"k = ㄎ 送氣；g = ㄍ 不送氣。"],
+ ["ㄗㄠˇ","早","zǎo",["zhǎo","cǎo","zào","zǎo"],"ㄗ 是平舌 z；ㄓ 才是捲舌 zh。早 zǎo vs 找 zhǎo。"],
+ ["ㄓㄠˇ","找","zhǎo",["zǎo","chǎo","zhào","zhǎo"],"ㄓ 是捲舌 zh；ㄗ 才是平舌 z。"],
+ ["ㄕㄢ","山","shān",["sān","shǎn","chān","shān"],"ㄕ 是捲舌 sh；ㄙ 才是平舌 s。山 shān vs 三 sān。"],
+ ["ㄙㄢ","三","sān",["shān","cān","sǎn","sān"],"ㄙ 是平舌 s；ㄕ 才是捲舌 sh。"],
+ ["ㄖㄣˊ","人","rén",["lén","réng","rěn","rén"],"ㄖ = r（捲舌）；韻母 ㄣ = en 收 n，不是 eng。"],
+ ["ㄌㄥˇ","冷","lěng",["lěn","něng","lèng","lěng"],"ㄥ = eng 收 ng；聲母 ㄌ = l，不是 n。"],
+ ["ㄋㄥˊ","能","néng",["nén","léng","něng","néng"],"ㄥ = eng 收 ng；ㄋ = n，不是 l。"],
+ ["ㄧㄚ","鴨","yā",["iā","yā","ià","yá"],"ㄧㄚ 獨立成音：i 換 y → ya。"],
+ ["ㄨㄞˋ","外","wài",["uài","wài","vaì","waì"],"ㄨㄞ 獨立：u 換 w → wai；調號有 a 標 a。"],
+ ["ㄩㄝ","月","yuè",["üè","yè","yuè","yüè"],"ㄩㄝ 獨立寫 yue，ü 去點。"],
+ ["ㄧㄥ","鷹","yīng",["īng","yīn","yīng","īn"],"ㄧㄥ 獨立補 y → ying；收 ng 不是 n。"],
+ ["ㄨㄤ","王","wáng",["uáng","wǎng","wāng","wáng"],"ㄨㄤ 獨立：u 換 w → wang；調號標 a。"],
+ ["ㄧㄤ","羊","yáng",["iáng","yǎng","yáng","yāng"],"ㄧㄤ 獨立：i 換 y → yang。"],
+ ["ㄨㄢ","玩","wán",["uán","wǎng","wán","wuán"],"ㄨㄢ 獨立：u 換 w → wan。"],
+ ["ㄩㄥ","用","yòng",["üòng","yiòng","yǒng","yòng"],"ㄩㄥ 獨立寫 yong；有聲母才寫 iong（熊 xióng）。"],
+ ["ㄍㄨㄟ","龜","guī",["gueī","guǐ","guī","gūi"],"uei 有聲母簡寫 ui；i、u 並列標在後 → 標 i。"],
+ ["ㄏㄨㄟˊ","回","huí",["hueí","húi","huǐ","huí"],"ui 是 uei 的簡寫；調號標後面的 i。"],
+ ["ㄑㄧㄡˊ","球","qiú",["qioú","qǐu","qiū","qiú"],"iou 有聲母簡寫 iu；調號標後面的 u。"],
+ ["ㄉㄨㄟˋ","對","duì",["dueì","dùi","duǐ","duì"],"uei 有聲母簡寫 ui；i、u 並列標在後。"]
+];
+/* 每題的提示（答錯第一次時顯示，不直接洩漏答案）：規則＋聲母家族＋相似字詞比照 */
+const HINTS={
+ "ㄒㄩㄝˊ":"口訣：<b>j q x 小淘氣，見到魚眼（ü 的兩點）就挖去！</b><br>🔁 比一比：同一條規則的還有 去 qù、軍 jūn、全 quán、群 qún；但 n/l 不挖：女 nǚ、略 lüè。<br>👪 j q x 家族只接 ㄧ、ㄩ 開頭的韻母，所以它們後面的 u 其實都是 ü！",
+ "ㄋㄩˇ":"只有 <b>j/q/x</b> 會挖掉 ü 的兩點，<b>n 和 l 不會</b>。<br>🔁 比一比：女 nǚ、綠 lǜ、略 lüè 都保留兩點；去 qù、學 xué 才去點。<br>⌨️ 電腦輸入 ü 要打 v：nv3＝女、lv4＝綠。",
+ "ㄓ":"<b>空韻家族：zh ch sh r z c s</b> 單獨成音都要補 i。<br>🔁 比一比：知 zhī、吃 chī、詩 shī、日 rì（捲舌）；資 zī、雌 cī、思 sī（平舌）。<br>⚠️ 這個 i 不唸 ㄧ，只是佔位符號；而且一聲也要標調號。",
+ "ㄘˋ":"拼音借用羅馬字母、<b>不是英文</b>：c＝ㄘ、q＝ㄑ、x＝ㄒ。<br>🔁 比一比：次 cì、雌 cī、詞 cí 都是 ㄘ（c）家族；別和捲舌的 吃 chī（ch）搞混。<br>💡 ㄘ 單獨成音要補空韻 i。",
+ "ㄕㄨㄟˇ":"ㄨㄟ 完整形是 <b>uei</b>，有聲母就瘦身成 <b>ui</b>。<br>🔁 比一比：水 shuǐ、貴 guì、會 huì 都寫 ui；獨立成音才寫 wei（為 wèi、威 wēi）。<br>🎯 調號口訣：i、u 並列標在後 → 標後面的 i。",
+ "ㄋㄧㄡˊ":"ㄧㄡ 完整形是 <b>iou</b>，有聲母省掉中間的 o 成 <b>iu</b>。<br>🔁 比一比：牛 niú、六 liù、就 jiù 都寫 iu；獨立成音才寫 you（有 yǒu、優 yōu）。<br>🎯 調號口訣：i、u 並列標在後 → 標後面的 u。",
+ "ㄧㄡˇ":"獨立成音：<b>i 換成 y</b>，但後面的 ou 不瘦身（瘦身只發生在有聲母時）。<br>🔁 比一比：有 yǒu、又 yòu 獨立寫 you；牛 niú、六 liù 有聲母才寫 iu。<br>💡 對照組：ㄨㄟ 獨立寫 wei（為 wèi），有聲母寫 ui（水 shuǐ）。",
+ "ㄨㄛˇ":"ㄨ 開頭獨立成音、後面還有元音時：<b>u 直接換成 w</b>。<br>🔁 比一比：我 wǒ、蛙 wā、彎 wān、歪 wāi 都是 u→w；只有 ㄨ 單獨一個音才補 w 寫 wu（五 wǔ、烏 wū）。",
+ "ㄩˊ":"ㄩ 獨立成音：<b>前面補 yu，ü 去點</b>。<br>🔁 比一比：魚 yú、雨 yǔ、月 yuè、圓 yuán 都是 yu 開頭；有 j/q/x 聲母時才寫 u（去 qù、學 xué）。<br>👪 ㄩ 家族獨立時一律 yu：yu、yue、yuan、yun、yong。",
+ "ㄉㄨㄥ":"ㄨㄥ：<b>有聲母寫 ong，沒有聲母寫 weng</b>。<br>🔁 比一比：東 dōng、空 kōng、中 zhōng、紅 hóng 都寫 ong；翁 wēng 獨立才寫 weng。<br>❌ 拼音裡沒有 ueng 這個寫法，別照注音 ㄨㄥ 硬拼！",
+ "ㄨㄥ":"ㄨㄥ 獨立成音寫 <b>weng</b>。<br>🔁 比一比：翁 wēng、甕 wèng 獨立寫 weng；東 dōng、空 kōng 有聲母寫 ong。<br>💡 這組是「變韻」：同一個 ㄨㄥ，兩種拼法，看前面有沒有聲母。",
+ "ㄒㄩㄥˊ":"ㄩㄥ 接 j/q/x 寫 <b>iong</b>（ü 去點併入 i）。<br>🔁 比一比：熊 xióng、窮 qióng、炯 jiǒng 都寫 iong；獨立寫 yong（用 yòng、永 yǒng）。<br>👪 對照：ㄨㄥ 有聲母寫 ong（東 dōng），ㄩㄥ 有聲母寫 iong，多了前面的 i。",
+ "ㄐㄩㄢ":"ㄩㄢ 接 j/q/x：<b>ü 去點寫 uan</b>。<br>🔁 比一比：捐 juān、全 quán、圈 quān、選 xuǎn 都寫 uan；獨立寫 yuan（圓 yuán、遠 yuǎn）。<br>👪 看到 j/q/x 後面的 uan，其實都是 ㄩㄢ！其他聲母後的 uan 才是 ㄨㄢ（關 guān）。",
+ "ㄑㄩㄣˊ":"ㄩㄣ 接 j/q/x：<b>ü 去點寫 un</b>。<br>🔁 比一比：群 qún、軍 jūn、君 jūn、尋 xún 都寫 un；獨立寫 yun（雲 yún、暈 yūn）。<br>⚠️ j/q/x 後的 un 是 ㄩㄣ；其他聲母後的 un 是 ㄨㄣ（春 chūn、村 cūn）。",
+ "ㄩㄢˊ":"ㄩㄢ 獨立寫 <b>yuan</b>，ü 去點。<br>🔁 比一比：圓 yuán、遠 yuǎn、院 yuàn 獨立寫 yuan；全 quán、捐 juān 有聲母寫 uan。<br>👂 它讀起來像 üen（變音），但拼寫照規定寫 yuan，別照耳朵拼。",
+ "ㄧㄣ":"ㄧㄣ 獨立前面補 y → <b>yin</b>；韻尾是 <b>n 不是 ng</b>。<br>🔁 比一比：音 yīn、心 xīn、今 jīn 收 -n；英 yīng、聽 tīng、京 jīng 收 -ng。<br>👂 ㄣ 唸「恩」收 n；ㄥ 唸「鞥」收 ng，兩個不同的韻母。",
+ "ㄊㄧㄢ":"<b>ian 讀起來像 ien，但拼寫照規定寫 ian</b>（變音不改字母）。<br>🔁 比一比：天 tiān、年 nián、點 diǎn、面 miàn 都寫 ian；獨立寫 yan（眼 yǎn、煙 yān）。<br>❌ 不要照耳朵拼成 tien！拼音裡沒有 tien 這個韻母。",
+ "ㄔㄨㄣ":"ㄨㄣ 完整形是 <b>uen</b>，有聲母省掉 e 成 <b>un</b>；ㄔ 是捲舌 <b>ch</b>。<br>🔁 比一比：春 chūn、村 cūn、孫 sūn 都寫 un；獨立寫 wen（問 wèn、溫 wēn）。<br>⚠️ 平舌 ㄘ＝c（村 cūn）、捲舌 ㄔ＝ch（春 chūn），聲母別搞混。",
+ "ㄌㄩㄝˋ":"<b>l 後面 ü 保留兩點！</b>只有 j/q/x 才去點。<br>🔁 比一比：略 lüè、綠 lǜ、女 nǚ 保留兩點；學 xué、月 yuè、決 jué 才去點。<br>⌨️ 電腦輸入打 v：lve4＝略、lv4＝綠。",
+ "ㄏㄨㄤˊ":"調號口訣：<b>有 a 不放過，沒 a 找 o、e；i、u 並列標在後。</b><br>🔁 比一比：黃 huáng、花 huā、快 kuài 有 a 標 a；歐 ōu 沒 a 標 o；會 huì 是 i、u 並列標後面的 i。<br>💡 這個音節裡 u 是介音、a 是主要元音，調號找 a 就對了。",
+ "ㄒㄧㄤˇ":"調號口訣第一句：<b>有 a 不放過</b> → 標 a。<br>🔁 比一比：想 xiǎng、小 xiǎo、家 jiā 都標 a；水 shuǐ、六 liù 沒有 a，才是 i、u 並列標在後。<br>💡 i 是介音，只要後面有 a，調號永遠輪不到 i。",
+ "ㄖˋ":"ㄖ 是捲舌 <b>r</b>；空韻家族 <b>zh ch sh r z c s</b> 單獨成音補 i。<br>🔁 比一比：日 rì、知 zhī、吃 chī、詩 shī 是捲舌＋i；資 zī、雌 cī、思 sī 是平舌＋i。<br>⚠️ 這個 i 不唸 ㄧ，只是佔位；四聲調號標在 i 上。",
+ "ㄙ":"ㄙ 是<b>平舌 s</b>，不是捲舌 sh。<br>🔁 比一比：平舌家族 資 zī、雌 cī、思 sī；捲舌家族 知 zhī、吃 chī、詩 shī。<br>💡 單獨成音要補空韻 i，一聲也要標調號 → sī（調號標在 i 上）。",
+ "ㄩㄣˊ":"ㄩㄣ 獨立寫 <b>yun</b>，ü 去點。<br>🔁 比一比：雲 yún、暈 yūn、勻 yún 獨立寫 yun；軍 jūn、群 qún 有聲母寫 un。<br>👪 ㄩ 家族獨立拼法：yu（魚）、yue（月）、yuan（圓）、yun（雲）、yong（用）。",
+ "ㄐㄧ":"👪 j q x 家族：ㄐ=j、ㄑ=q、ㄒ=x，只接 ㄧ、ㄩ 開頭的韻母。<br>🔁 比一比：機 jī、七 qī、西 xī；別和捲舌的 知 zhī 搞混。<br>💡 j/q/x 後面的 i 是真的 ㄧ（和空韻的 i 不同）。",
+ "ㄑㄧ":"👪 j q x 家族：ㄐ=j、ㄑ=q、ㄒ=x。<br>🔁 比一比：七 qī、機 jī、西 xī；ㄑ 送氣，聽起來像「欺」。<br>❌ q 不是英文的 k 音！",
+ "ㄒㄧ":"👪 ㄒ=x（舌面）、ㄕ=sh（捲舌）、ㄙ=s（平舌），三個不同音。<br>🔁 比一比：西 xī、詩 shī、思 sī。<br>💡 羅馬字母 x 在拼音唸 ㄒ（葡萄牙文的 x 也唸 ㄒ！）。",
+ "ㄍㄜ":"👪 ㄍ=g（不送氣）、ㄎ=k（送氣）、ㄏ=h。<br>🔁 比一比：哥 gē、科 kē、喝 hē。<br>💡 g 唸「哥」，不是英文的 g。",
+ "ㄎㄜ":"👪 ㄍ=g（不送氣）、ㄎ=k（送氣）、ㄏ=h。<br>🔁 比一比：科 kē、哥 gē、喝 hē。<br>💡 送氣＝唸的時候有一股氣衝出來（拿紙條在嘴前會動）。",
+ "ㄗㄠˇ":"👪 平舌家族 z c s（ㄗㄘㄙ）vs 捲舌家族 zh ch sh（ㄓㄔㄕ）。<br>🔁 比一比：早 zǎo vs 找 zhǎo；三 sān vs 山 shān。<br>💡 平舌沒有 h，捲舌多一個 h。",
+ "ㄓㄠˇ":"👪 捲舌家族 zh ch sh（ㄓㄔㄕ）vs 平舌家族 z c s（ㄗㄘㄙ）。<br>🔁 比一比：找 zhǎo vs 早 zǎo；山 shān vs 三 sān。<br>💡 捲舌音舌頭要翹起來。",
+ "ㄕㄢ":"ㄕ 是捲舌 <b>sh</b>；ㄙ 才是平舌 s。<br>🔁 比一比：山 shān vs 三 sān；詩 shī vs 思 sī。<br>💡 捲舌多一個 h。",
+ "ㄙㄢ":"ㄙ 是平舌 <b>s</b>；ㄕ 才是捲舌 sh。<br>🔁 比一比：三 sān vs 山 shān；思 sī vs 詩 shī。<br>💡 平舌家族：資 zī、雌 cī、思 sī。",
+ "ㄖㄣˊ":"ㄖ=r 是捲舌音；韻母 ㄣ=en 收 n、ㄥ=eng 收 ng。<br>🔁 比一比：人 rén、恩 ēn 收 n；冷 lěng、能 néng 收 ng。<br>💡 r 不是英文的 r，唸「日」的聲母。",
+ "ㄌㄥˇ":"ㄥ=eng（收 ng）；ㄣ=en（收 n）。<br>🔁 比一比：冷 lěng、能 néng、風 fēng 收 ng；人 rén、恩 ēn 收 n。<br>💡 聲母 ㄌ=l、ㄋ=n 也別混：冷 lěng vs 能 néng。",
+ "ㄋㄥˊ":"ㄥ=eng（收 ng）；ㄣ=en（收 n）。<br>🔁 比一比：能 néng、冷 lěng 收 ng；人 rén 收 n。<br>💡 ㄋ=n、ㄌ=l：能 néng vs 冷 lěng。",
+ "ㄧㄚ":"ㄧ 開頭獨立成音：後面還有元音 → <b>i 換 y</b>。<br>🔁 比一比：鴨 yā、牙 yá、要 yào；有聲母時才寫 ia（家 jiā）。",
+ "ㄨㄞˋ":"ㄨ 開頭獨立：<b>u 換 w</b>。<br>🔁 比一比：外 wài、歪 wāi、蛙 wā；有聲母才寫 uai（快 kuài）。<br>🎯 調號：有 a 不放過。",
+ "ㄩㄝ":"ㄩ 家族獨立一律 <b>yu</b> 開頭：yu、yue、yuan、yun、yong。<br>🔁 比一比：月 yuè、約 yuē；有 j/q/x 才寫 ue（學 xué）；n/l 保留 üe（略 lüè）。",
+ "ㄧㄥ":"ㄧㄥ 獨立補 y → <b>ying</b>。<br>🔁 比一比：鷹 yīng、英 yīng 收 ng；音 yīn、心 xīn 收 n。<br>👂 ㄥ 唸「鞥」，鼻腔收尾。",
+ "ㄨㄤ":"ㄨㄤ 獨立：<b>u 換 w</b> → wang。<br>🔁 比一比：王 wáng、汪 wāng；有聲母才寫 uang（黃 huáng）。<br>🎯 調號有 a 標 a。",
+ "ㄧㄤ":"ㄧㄤ 獨立：<b>i 換 y</b> → yang。<br>🔁 比一比：羊 yáng、央 yāng；有聲母才寫 iang（想 xiǎng）。<br>🎯 調號有 a 標 a。",
+ "ㄨㄢ":"ㄨㄢ 獨立：<b>u 換 w</b> → wan。<br>🔁 比一比：玩 wán、彎 wān；有聲母才寫 uan（關 guān）。<br>⚠️ j/q/x 後的 uan 是 ㄩㄢ（全 quán），不是 ㄨㄢ！",
+ "ㄩㄥ":"ㄩㄥ 獨立寫 <b>yong</b>；有 j/q/x 聲母寫 iong。<br>🔁 比一比：用 yòng、永 yǒng vs 熊 xióng、窮 qióng。<br>👪 ㄩ 家族獨立拼法：yu、yue、yuan、yun、yong。",
+ "ㄍㄨㄟ":"ㄨㄟ 有聲母：<b>uei 瘦身成 ui</b>。<br>🔁 比一比：龜 guī、水 shuǐ、貴 guì；獨立寫 wei（威 wēi）。<br>🎯 調號：i、u 並列標在後 → 標 i。",
+ "ㄏㄨㄟˊ":"ㄨㄟ 有聲母：<b>uei 瘦身成 ui</b>。<br>🔁 比一比：回 huí、水 shuǐ、對 duì；獨立寫 wei（為 wèi）。<br>🎯 調號：i、u 並列標在後 → 標 i。",
+ "ㄑㄧㄡˊ":"ㄧㄡ 有聲母：<b>iou 瘦身成 iu</b>。<br>🔁 比一比：球 qiú、牛 niú、六 liù；獨立寫 you（有 yǒu）。<br>🎯 調號：i、u 並列標在後 → 標 u。",
+ "ㄉㄨㄟˋ":"ㄨㄟ 有聲母：<b>uei 瘦身成 ui</b>。<br>🔁 比一比：對 duì、回 huí、貴 guì；獨立寫 wei（為 wèi）。<br>🎯 調號：i、u 並列標在後 → 標 i。"
+};
+let qList=[],qI=0,qScore=0,qStreak=0,qLock=false,qTries=0,qTotal=10;
+const $=id=>document.getElementById(id);
+function bestGet(){try{return +localStorage.getItem("pinyinBest"+qTotal)||0;}catch(e){return 0;}}
+function bestSet(v){try{localStorage.setItem("pinyinBest"+qTotal,v);}catch(e){}}
+function bestShow(){$("bestShow").textContent=bestGet()?`🏆 歷史最高（${qTotal} 題）：${bestGet()} 分`:"";}
+bestShow();
+document.querySelectorAll(".qlen").forEach(b=>b.onclick=()=>{
+  qTotal=+b.dataset.n;
+  document.querySelectorAll(".qlen").forEach(x=>x.classList.toggle("on",x===b));
+  bestShow();blip(560);
+});
+function quizStart(){
+  qList=shuffle(QUIZ.map((_,i)=>i)).slice(0,qTotal);
+  qI=0;qScore=0;qStreak=0;
+  $("quizStart").style.display="none";$("quizEnd").style.display="none";
+  $("quizPlay").style.display="block";
+  quizRender();
+}
+function quizRender(){
+  qLock=false;qTries=0;
+  const [zy,word,ans,opts,expl]=QUIZ[qList[qI]];
+  $("qNum").textContent=qI+1;
+  $("qTotal").textContent=qTotal;
+  $("qScore").textContent=qScore+" 分";
+  $("qStreak").textContent=qStreak>=2?`🔥 連擊 ×${qStreak}`:"";
+  $("quizBar").firstElementChild.style.width=(qI/qTotal*100)+"%";
+  $("qZy").textContent=zy;
+  $("qWord").textContent=word;
+  $("quizExpl").innerHTML="";
+  $("quizNext").style.display="none";
+  const box=$("qOpts");box.innerHTML="";
+  shuffle([...opts]).forEach(o=>{
+    const b=document.createElement("button");
+    b.className="opt";b.textContent=o;
+    b.onclick=()=>quizAnswer(b,o,ans,expl,word,HINTS[zy]||"回想四大規則：變音、省略、空韻、標調位置。");
+    box.appendChild(b);
+  });
+}
+function showNextBtn(){
+  const btn=$("quizNext");
+  btn.textContent=qI>=qTotal-1?"看結果 🏁":"下一題 →";
+  btn.style.display="inline-block";
+}
+function quizAnswer(btn,pick,ans,expl,word,hint){
+  if(qLock)return;
+  if(pick===ans){
+    /* 答對：鎖定本題，等使用者按「下一題」 */
+    qLock=true;
+    document.querySelectorAll(".opt").forEach(b=>{
+      b.disabled=true;
+      if(b.textContent===ans)b.classList.add("right");
+    });
+    if(qTries===0){
+      qStreak++;
+      qScore+=10+Math.min(qStreak-1,5)*2;
+      $("quizExpl").innerHTML=`✅ <b>${ans}</b> ── ${expl}`;
+    }else{
+      qScore+=5;
+      $("quizExpl").innerHTML=`✅ 第二次答對，+5 分！<b>${ans}</b> ── ${expl}`;
+    }
+    blip(880);speak(word);
+    $("qScore").textContent=qScore+" 分";
+    $("qStreak").textContent=qStreak>=2?`🔥 連擊 ×${qStreak}`:"";
+    showNextBtn();
+  }else{
+    /* 答錯：給提示，保留其他選項再試一次 */
+    qTries++;qStreak=0;
+    btn.classList.add("wrong");btn.disabled=true;
+    blip(200);
+    $("qStreak").textContent="";
+    if(qTries>=2){
+      /* 錯兩次：揭曉答案與完整解說 */
+      qLock=true;
+      document.querySelectorAll(".opt").forEach(b=>{
+        b.disabled=true;
+        if(b.textContent===ans)b.classList.add("right");
+      });
+      $("quizExpl").innerHTML=`❌ 正確答案是 <b>${ans}</b> ── ${expl}`;
+      showNextBtn();
+    }else{
+      $("quizExpl").innerHTML=`<div style="text-align:left;background:rgba(255,209,102,.07);border-left:3px solid var(--gold);padding:10px 14px;border-radius:0 10px 10px 0;line-height:1.9">💡 <b>提示</b>：${hint}<br><span style="font-size:12.5px;color:var(--dim)">再試一次！（第二次答對 +5 分，錯兩次會揭曉答案）</span></div>`;
+    }
+  }
+}
+$("quizNext").onclick=()=>{
+  blip(520);
+  qI++;
+  if(qI<qTotal)quizRender();else quizEnd();
+};
+function quizEnd(){
+  $("quizPlay").style.display="none";$("quizEnd").style.display="block";
+  $("quizBar").firstElementChild.style.width="100%";
+  const max=20*qTotal-30, r=qScore/max;
+  const stars=r>=.7?"⭐⭐⭐":r>=.45?"⭐⭐":r>=.25?"⭐":"💪";
+  $("endStars").textContent=stars;
+  $("endScore").textContent=qScore+" 分";
+  const best=Math.max(bestGet(),qScore);bestSet(best);
+  $("endBest").textContent=`🏆 歷史最高（${qTotal} 題）：${best} 分`;
+  $("endMsg").textContent=r>=.7?"太強了！四大規則全都難不倒你，拼音大師就是你！":
+    r>=.45?"很棒！大部分陷阱都閃過了，再複習一下錯的規則就完美。":
+    r>=.25?"不錯喔！回去「四大規則」把卡片再看一輪，下次一定更高。":
+    "別氣餒！先到「拼音鍵盤」把每個按鍵聽一輪，再回來挑戰。";
+  if(r>=.45)confetti();
+}
+function confetti(){
+  const colors=["#37e6ff","#ff4fd8","#ffd166","#3ddc84","#c77dff"];
+  for(let i=0;i<60;i++){
+    const c=document.createElement("div");
+    c.className="confetti";
+    c.style.left=Math.random()*100+"vw";
+    c.style.background=colors[i%colors.length];
+    c.style.animationDuration=(2+Math.random()*2)+"s";
+    c.style.animationDelay=(Math.random()*.8)+"s";
+    document.body.appendChild(c);
+    setTimeout(()=>c.remove(),5000);
+  }
+}
+$("quizGo").onclick=()=>{blip(700);quizStart();};
+$("quizAgain").onclick=()=>{blip(700);quizStart();};
+
+/* ═════════ 字詞練習 ═════════ */
+/* [詞, 注音, [各字拼音(輕聲不標調)], 提示] */
+const WORDS=[
+ ["你好","ㄋㄧˇ ㄏㄠˇ",["nǐ","hǎo"],"你：唯一元音 i 標調；好：有 a 不放過。"],
+ ["樹木","ㄕㄨˋ ㄇㄨˋ",["shù","mù"],"樹：ㄕ=sh 捲舌；木：ㄇ=m。"],
+ ["謝謝","ㄒㄧㄝˋ ㄒㄧㄝ˙",["xiè","xie"],"第二個字讀輕聲，不標調號！ㄒ=x。"],
+ ["學生","ㄒㄩㄝˊ ㄕㄥ",["xué","shēng"],"學：j/q/x 後 ü 去點；生：ㄕ=sh、ㄥ=eng。"],
+ ["老師","ㄌㄠˇ ㄕ",["lǎo","shī"],"師：空韻補 i，一聲要標調號。"],
+ ["朋友","ㄆㄥˊ ㄧㄡ˙",["péng","you"],"友單獨是 yǒu，普通話在「朋友」裡讀輕聲 you（台灣字典標 ㄧㄡˇ）。"],
+ ["電腦","ㄉㄧㄢˋ ㄋㄠˇ",["diàn","nǎo"],"電：ian 讀像 ien 但照寫 ian；腦：有 a 標 a。"],
+ ["手機","ㄕㄡˇ ㄐㄧ",["shǒu","jī"],"手：ou 沒 a 標 o；機：ㄐ=j。"],
+ ["學習","ㄒㄩㄝˊ ㄒㄧˊ",["xué","xí"],"兩個都是 ㄒ=x；學後面的 ü 去點寫 u。"],
+ ["時間","ㄕˊ ㄐㄧㄢ",["shí","jiān"],"時：空韻 i；間：ian 照寫、有 a 標 a。"],
+ ["美麗","ㄇㄟˇ ㄌㄧˋ",["měi","lì"],"美：mei 沒 a 找 o、e → 標 e；麗：ㄌ=l。"],
+ ["快樂","ㄎㄨㄞˋ ㄌㄜˋ",["kuài","lè"],"快：uai 有 a 標 a；樂：ㄌㄜ=lè。"],
+ ["國家","ㄍㄨㄛˊ ㄐㄧㄚ",["guó","jiā"],"國：uo 標 o；家：jia 有 a 標 a。"],
+ ["月亮","ㄩㄝˋ ㄌㄧㄤ˙",["yuè","liang"],"月：yue 去點；普通話「月亮」的亮讀輕聲 liang（台灣字典標 ㄌㄧㄤˋ）。"],
+ ["太陽","ㄊㄞˋ ㄧㄤˊ",["tài","yáng"],"太：ai 有 a 標 a；陽：ㄧㄤ 零聲母寫 yang。"],
+ ["下雨","ㄒㄧㄚˋ ㄩˇ",["xià","yǔ"],"雨：ㄩ 獨立寫 yu、ü 去點。"],
+ ["吃飯","ㄔ ㄈㄢˋ",["chī","fàn"],"吃：捲舌 ch＋空韻 i；飯：ㄈ=f。"],
+ ["睡覺","ㄕㄨㄟˋ ㄐㄧㄠˋ",["shuì","jiào"],"睡：uei→ui、i u 並列標後面的 i；覺：iao 標 a。"],
+ ["牛奶","ㄋㄧㄡˊ ㄋㄞˇ",["niú","nǎi"],"牛：iou→iu、標後面的 u；奶：ai 標 a。"],
+ ["水果","ㄕㄨㄟˇ ㄍㄨㄛˇ",["shuǐ","guǒ"],"水：ui 標 i；果：uo 標 o。"],
+ ["圖書館","ㄊㄨˊ ㄕㄨ ㄍㄨㄢˇ",["tú","shū","guǎn"],"書：ㄕㄨ=shu（這裡的 u 是真的 ㄨ）；館：uan 標 a。"],
+ ["巧克力","ㄑㄧㄠˇ ㄎㄜˋ ㄌㄧˋ",["qiǎo","kè","lì"],"巧：ㄑ=q、iao 標 a；克：ㄎ=k 送氣。"],
+ ["冰淇淋","ㄅㄧㄥ ㄑㄧˊ ㄌㄧㄣˊ",["bīng","qí","lín"],"冰：ing 收 ng；淇：ㄑ=q；淋：in 收 n。"],
+ ["星期","ㄒㄧㄥ ㄑㄧ",["xīng","qī"],"期：拼音標準一聲 qī（台灣唸 qí）！星：ing 收 ng。"],
+ ["垃圾","ㄌㄚ ㄐㄧ",["lā","jī"],"拼音讀 lā jī（台灣唸 lè sè）！圾：ㄐ=j。"],
+ ["和平","ㄏㄜˊ ㄆㄧㄥˊ",["hé","píng"],"和平的和兩岸都讀 hé（台灣只有當「跟」用時才唸 hàn）；平：ing 收 ng。"],
+ ["再見","ㄗㄞˋ ㄐㄧㄢˋ",["zài","jiàn"],"再：平舌 z；見：ian 照寫、標 a。"],
+ ["對不起","ㄉㄨㄟˋ ㄅㄨ˙ ㄑㄧˇ",["duì","bu","qǐ"],"對：ui 標 i；不：夾在中間讀輕聲 bu。"],
+ ["沒關係","ㄇㄟˊ ㄍㄨㄢ ㄒㄧ˙",["méi","guān","xi"],"沒：mei 標 e；係：輕聲 xi；關：guan 標 a。"],
+ ["為什麼","ㄨㄟˋ ㄕㄣˊ ㄇㄜ˙",["wèi","shén","me"],"為：uei 獨立寫 wei、標 e；什：ㄕ=shen（en 收 n）；麼：輕聲 me。"]
+];
+/* 聲調字母表：由正確拼音自動產生「同音不同調」與「ü/u 互換」干擾選項 */
+const TONE_MARKS={a:["ā","á","ǎ","à"],e:["ē","é","ě","è"],i:["ī","í","ǐ","ì"],o:["ō","ó","ǒ","ò"],u:["ū","ú","ǔ","ù"],ü:["ǖ","ǘ","ǚ","ǜ"]};
+const MARK2BASE={};
+for(const k in TONE_MARKS)TONE_MARKS[k].forEach((m,t)=>MARK2BASE[m]={v:k,t:t+1});
+function splitTone(py){
+  for(const ch of py){if(MARK2BASE[ch])return{base:py.replace(ch,MARK2BASE[ch].v),v:MARK2BASE[ch].v,t:MARK2BASE[ch].t};}
+  return{base:py,v:null,t:0};
+}
+function markAt(base,v,t){return base.replace(v,TONE_MARKS[v][t-1]);}
+function toneTarget(base){
+  if(base.includes("a"))return "a";
+  if(base.includes("o"))return "o";
+  if(base.includes("e"))return "e";
+  const m=[...base].filter(c=>"iuü".includes(c));
+  return m[m.length-1]||null;
+}
+function makeOpts(py){
+  const {base,v,t}=splitTone(py);
+  const set=new Set();
+  if(t>0){
+    [1,2,3,4].filter(x=>x!==t).forEach(x=>set.add(markAt(base,v,x)));
+    if(base.includes("ü"))set.add(markAt(base.replace("ü","u"),"u",t));
+    else if(base.includes("u"))set.add(markAt(base.replace("u","ü"),"ü",t));
+  }else{
+    const tv=toneTarget(base);
+    if(tv)[1,2,3,4].forEach(x=>set.add(markAt(base,tv,x)));
+  }
+  const arr=shuffle([...set].filter(x=>x!==py));
+  return shuffle([py,...arr.slice(0,3)]);
+}
+let wOrder=shuffle(WORDS.map((_,i)=>i)),wI=0,wDoneCount=0;
+function wordRender(){
+  const [word,zy,syls,note]=WORDS[wOrder[wI]];
+  $("wNum").textContent=wI+1;$("wTotal").textContent=WORDS.length;
+  $("wWord").textContent=word;$("wZy").textContent=zy;
+  $("wMsg").innerHTML="";$("wNext").style.display="none";
+  const box=$("wRows");box.innerHTML="";
+  let solved=0,hintShown=false;
+  syls.forEach((py,idx)=>{
+    const row=document.createElement("div");row.className="wrow";
+    row.innerHTML=`<div class="whead">第 ${idx+1} 字<span class="wslot">?</span></div>`;
+    const opts=document.createElement("div");opts.className="wopts";
+    makeOpts(py).forEach(o=>{
+      const b=document.createElement("button");b.className="wopt";b.textContent=o;
+      b.onclick=()=>{
+        if(b.disabled)return;
+        if(o===py){
+          b.classList.add("right");
+          opts.querySelectorAll("button").forEach(x=>x.disabled=true);
+          const slot=row.querySelector(".wslot");
+          slot.textContent=py;slot.classList.add("solved");
+          blip(700+idx*120);solved++;
+          if(solved===syls.length){
+            wDoneCount++;
+            $("wDone").textContent="✅ 已完成 "+wDoneCount+" 詞";
+            $("wMsg").innerHTML=`🎉 拼對了！<b style="color:var(--cyan)">${syls.join(" ")}</b>`+(note?`<br>💡 ${note}`:"");
+            $("wNext").style.display="inline-block";
+            speak(word);
+          }
+        }else{
+          b.classList.add("wrong");b.disabled=true;blip(200);
+          setTimeout(()=>b.classList.remove("wrong"),450);
+          if(!hintShown&&note){hintShown=true;$("wMsg").innerHTML=`💡 提示：${note}`;}
+        }
+      };
+      opts.appendChild(b);
+    });
+    row.appendChild(opts);box.appendChild(row);
+  });
+}
+$("wListen").onclick=()=>speak(WORDS[wOrder[wI]][0]);
+$("wNext").onclick=()=>{
+  blip(520);wI++;
+  if(wI>=wOrder.length){wOrder=shuffle(WORDS.map((_,i)=>i));wI=0;}
+  wordRender();
+};
+wordRender();
+</script>
+</body>
+</html>
