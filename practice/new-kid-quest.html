@@ -1183,5 +1183,28 @@ $("resetBtn").onclick = function(){
 
 })();
 </script>
+<!-- en-speak v1 -->
+<script>
+(function(){
+  if (!("speechSynthesis" in window)) return;
+  var voice = null;
+  function pick(){ try { var vs = speechSynthesis.getVoices();
+    voice = vs.find(function(v){ return /en[-_]US/i.test(v.lang) && /Google|Samantha|Aria|Jenny|Zira/i.test(v.name); })
+      || vs.find(function(v){ return /en[-_]US/i.test(v.lang); })
+      || vs.find(function(v){ return /^en/i.test(v.lang); }) || null; } catch (e) {} }
+  pick(); speechSynthesis.onvoiceschanged = pick;
+  document.addEventListener("click", function(ev){
+    var p = ev.target.closest && ev.target.closest("#vocab .pill, #vocabPills .pill");
+    if (!p) return;
+    try { if (typeof prog !== "undefined" && prog && prog.mute) return; } catch (e) {}
+    var b = p.querySelector("b");
+    var w = (b ? b.textContent : (p.getAttribute("data-v") || p.textContent)).trim();
+    if (!w) return;
+    try { speechSynthesis.cancel(); var u = new SpeechSynthesisUtterance(w);
+      u.lang = "en-US"; if (voice) u.voice = voice; u.rate = 0.8; speechSynthesis.speak(u); } catch (e) {}
+  });
+})();
+</script>
+<!-- /en-speak -->
 </body>
 </html>
