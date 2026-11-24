@@ -1,30 +1,39 @@
 <!doctype html>
-<html lang="zh-Hant">
+<html lang="zh-Hant" data-theme="dark">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Wonders 單元模擬考</title>
 <style>
-:root{--bg:#f6f7fb;--card:#fff;--ink:#1f2937;--mute:#6b7280;--line:#e5e7eb;--blue:#2563eb;--ok:#15803d;--okbg:#dcfce7;--bad:#b91c1c;--badbg:#fee2e2;--chip:#eef2ff}
-@media (prefers-color-scheme: dark){:root{--bg:#0f172a;--card:#1e293b;--ink:#e5e7eb;--mute:#94a3b8;--line:#334155;--blue:#60a5fa;--ok:#4ade80;--okbg:#14532d;--bad:#f87171;--badbg:#450a0a;--chip:#1e3a8a}}
+:root{--bg:#f4f6fb;--bg2:#e9eefb;--card:#fff;--ink:#1f2937;--mute:#6b7280;--line:#e2e8f0;--blue:#2563eb;--accent:#7c3aed;--ok:#15803d;--okbg:#dcfce7;--bad:#b91c1c;--badbg:#fee2e2;--chip:#eef2ff;--glow:rgba(124,58,237,.15)}
+:root[data-theme=dark]{--bg:#0b1020;--bg2:#141b34;--card:#18203a;--ink:#e8ecf6;--mute:#9aa6c3;--line:#2b3658;--blue:#7aa7ff;--accent:#b388ff;--ok:#4ade80;--okbg:#123d27;--bad:#fb7185;--badbg:#4a1420;--chip:#26315a;--glow:rgba(179,136,255,.25)}
 *{box-sizing:border-box}
-body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.6 system-ui,-apple-system,"Segoe UI","Microsoft JhengHei",sans-serif}
+body{margin:0;background:radial-gradient(circle at 20% 0%,var(--bg2),var(--bg) 60%) fixed;color:var(--ink);font:16px/1.6 system-ui,-apple-system,"Segoe UI","Microsoft JhengHei",sans-serif;transition:background .3s,color .3s}
 .wrap{max-width:860px;margin:0 auto;padding:16px}
-h1{font-size:1.5rem;margin:.2em 0}
+.top{display:flex;justify-content:space-between;align-items:center;gap:8px}
+.tools{display:flex;gap:6px}
+.tools button{font-size:1.2rem;width:42px;height:42px;border-radius:50%;border:1px solid var(--line);background:var(--card);color:var(--ink);cursor:pointer}
+h1{font-size:1.5rem;margin:.3em 0 .1em}
 .small{font-size:.85rem;color:var(--mute)}
 .tabs{display:flex;flex-wrap:wrap;gap:6px;margin:12px 0}
-.tabs button{border:1px solid var(--line);background:var(--card);color:var(--ink);border-radius:999px;padding:6px 12px;cursor:pointer;font:inherit}
-.tabs button[aria-pressed=true]{background:var(--blue);color:#fff;border-color:var(--blue)}
-.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px;margin:12px 0}
+.tabs button{border:1px solid var(--line);background:var(--card);color:var(--ink);border-radius:999px;padding:6px 12px;cursor:pointer;font:inherit;transition:transform .15s}
+.tabs button:hover{transform:translateY(-2px)}
+.tabs button[aria-pressed=true]{background:var(--accent);color:#fff;border-color:var(--accent);box-shadow:0 4px 14px var(--glow)}
+.card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:16px;margin:12px 0;box-shadow:0 2px 10px var(--glow)}
+.hero{display:flex;gap:12px;align-items:center}
+.hero .big{font-size:2.6rem;line-height:1;animation:bob 2.4s ease-in-out infinite}
+@keyframes bob{50%{transform:translateY(-6px) rotate(-4deg)}}
 h2{font-size:1.15rem;margin:.1em 0 .4em}
 .bank{display:flex;flex-wrap:wrap;gap:6px;margin:6px 0 10px}
-.bank span{background:var(--chip);border-radius:8px;padding:2px 10px}
+.bank span{background:var(--chip);border-radius:8px;padding:2px 10px;transition:opacity .2s}
+.bank span.used{opacity:.35;text-decoration:line-through}
 .q{margin:12px 0;padding-top:10px;border-top:1px dashed var(--line)}
 .q:first-of-type{border-top:0}
-select{font:inherit;padding:2px 6px;border-radius:6px;border:1px solid var(--line);background:var(--card);color:var(--ink);max-width:100%}
+select{font:inherit;padding:3px 6px;border-radius:8px;border:1px solid var(--line);background:var(--bg);color:var(--ink);max-width:100%}
 .opts{display:grid;gap:6px;margin-top:6px}
-.opts button{text-align:left;font:inherit;border:1px solid var(--line);background:var(--bg);color:var(--ink);border-radius:10px;padding:8px 10px;cursor:pointer}
-.opts button.sel{border-color:var(--blue);outline:2px solid var(--blue)}
+.opts button{text-align:left;font:inherit;border:1px solid var(--line);background:var(--bg);color:var(--ink);border-radius:12px;padding:8px 12px;cursor:pointer;transition:transform .1s}
+.opts button:active{transform:scale(.98)}
+.opts button.sel{border-color:var(--accent);outline:2px solid var(--accent)}
 .opts button.ok{background:var(--okbg);border-color:var(--ok)}
 .opts button.bad{background:var(--badbg);border-color:var(--bad)}
 .fb{display:none;margin-top:6px;padding:6px 10px;border-radius:8px;font-size:.92rem}
@@ -33,22 +42,43 @@ select{font:inherit;padding:2px 6px;border-radius:6px;border:1px solid var(--lin
 .fb.bad{background:var(--badbg)}
 textarea{width:100%;min-height:70px;font:inherit;border-radius:8px;border:1px solid var(--line);background:var(--bg);color:var(--ink);padding:8px}
 .btns{display:flex;flex-wrap:wrap;gap:8px;margin:14px 0}
-.btns button{font:inherit;border:0;border-radius:10px;padding:10px 16px;cursor:pointer;background:var(--blue);color:#fff}
+.btns button{font:inherit;border:0;border-radius:12px;padding:10px 16px;cursor:pointer;background:var(--accent);color:#fff}
 .btns button.alt{background:var(--card);color:var(--ink);border:1px solid var(--line)}
-.score{font-size:1.2rem;font-weight:700}
+.prog{position:sticky;top:0;z-index:5;background:var(--card);border:1px solid var(--line);border-radius:999px;padding:6px 12px;display:flex;align-items:center;gap:10px;box-shadow:0 2px 10px var(--glow)}
+.track{flex:1;margin:0 10px;height:10px;background:var(--chip);border-radius:999px;position:relative}
+.fill{height:100%;width:0;background:linear-gradient(90deg,var(--blue),var(--accent));border-radius:999px;transition:width .3s}
+.rocket{position:absolute;top:-11px;left:0;font-size:1.1rem;transition:left .3s;transform:translateX(-50%)}
+.result{text-align:center}
+.score{font-size:1.4rem;font-weight:700}
+.stars{font-size:2rem;letter-spacing:4px}
+.mascot{font-size:3rem;display:inline-block;animation:bob 1.6s ease-in-out infinite}
 .hide{display:none}
+.confetti{position:fixed;top:-40px;font-size:1.6rem;pointer-events:none;z-index:50;animation:fall linear forwards}
+@keyframes fall{to{transform:translateY(110vh) rotate(540deg)}}
+.pop{animation:pop .3s}
+@keyframes pop{50%{transform:scale(1.08)}}
+.shake{animation:shake .35s}
+@keyframes shake{25%{transform:translateX(-4px)}75%{transform:translateX(4px)}}
 </style>
 </head>
 <body>
 <div class="wrap">
-  <a class="small" href="../index.html" style="color:var(--blue);text-decoration:none">← 回學習小站</a>
-  <h1>📝 Wonders 單元模擬考</h1>
+  <div class="top">
+    <a class="small" href="../index.html" style="color:var(--blue);text-decoration:none">← 回學習小站</a>
+    <div class="tools">
+      <button type="button" id="theme" title="切換深色／淺色">🌙</button>
+      <button type="button" id="sound" title="音效開／關">🔊</button>
+    </div>
+  </div>
+  <h1>🏆 Wonders 單元模擬考</h1>
   <p class="small">依老師考卷的出題習慣自編：單字庫填空、閱讀理解、本週閱讀技能（含反向題）、文法、寫作。題目不是學校考卷原題，句子都是自編的。</p>
   <div class="tabs" id="tabs"></div>
   <div id="test"></div>
 </div>
 <script>
 const LESSONS = [{"id": "u4w3", "tab": "U4 W3", "title": "Happy New Year!", "focus": "寫實小說・比較與對照・明喻・不規則動詞 go／do／see／say／tell・書名", "bank": ["common", "costume", "customs", "favorite", "parades", "surrounded", "travels", "wonder"], "cloze": [ ["Eating dumplings with the whole family is one of the ___ of Chinese New Year.", "customs", "*one of the ___ of* 後面接複數名詞：習俗。"], ["My little brother wore a lion ___ to the class party.", "costume", "穿在身上扮成獅子：服裝、戲服。"], ["Rice is a very ___ food in Taiwan; almost everyone eats it every day.", "common", "*almost everyone* 表示很普遍。"], ["On National Day, bands and dancers march down the street in big ___.", "parades", "樂隊和舞者在街上前進：遊行。"], ["Fireworks are my ___ part of the night. I love them more than anything else!", "favorite", "*love them more than anything else*：最喜歡的。"], ["In the busy night market, we were ___ by people on every side.", "surrounded", "*on every side* 四面八方都是人：被包圍。"], ["My aunt ___ to a different country every summer.", "travels", "主詞 aunt 是第三人稱單數，動詞加 s：旅行。"], ["I ___ what Grandma will cook for dinner tonight.", "wonder", "*I ___ what…* 不知道、好奇：想知道。"] ], "read": [{"q": "The story is told by a girl who uses the word \"I\". The events are made up, but they could really happen. What genre is it?", "a": "Realistic Fiction", "w": ["Folktale", "Expository Text", "Biography"], "why": "編出來但可能真的發生的故事＝寫實小說。Into the Sea 卷第 1 題就是文體題。"}, {"q": "According to the story, how long does Chinese New Year last?", "a": "Fifteen days", "w": ["One night", "One week", "One month"], "why": "課文說春節持續十五天，美國跨年只有一個晚上。"}, {"q": "Which activity did the girl enjoy at BOTH New Year celebrations?", "a": "Watching a parade", "w": ["Making paper lanterns", "Seeing a lion dance", "Getting new red clothes"], "why": "美國跨年和中國除夕都有遊行；燈籠、舞獅、紅衣服只在中國新年。"}, {"q": "\"The lanterns glowed like little moons.\" Why is this sentence a simile?", "a": "It uses \"like\" to compare two different things.", "w": ["It repeats the same word.", "It tells a fact about the moon.", "It asks a question."], "why": "明喻用 like 或 as 比較兩樣不同的東西：燈籠和月亮。"}], "skill_name": "Compare and Contrast 比較與對照", "skill": [{"q": "Which sentence tells how the two New Year celebrations are the SAME?", "a": "Both are exciting family celebrations to welcome the new year.", "w": ["One lasts one night, and the other lasts fifteen days.", "Only one has paper lanterns.", "Only one happens in the United States."], "why": "Same＝兩邊都有的。其他三句都在說「不同」。"}, {"q": "Which fact belongs ONLY in the \"Chinese New Year\" side of the chart?", "a": "Wearing new red clothes", "w": ["Watching a parade", "Celebrating with family", "Welcoming the new year"], "why": "紅衣服只出現在中國新年；其他三個兩邊都有。"}, {"q": "(反向題) The chart says \"It lasts only one night.\" Which celebration is it?", "a": "New Year's Eve in the United States", "w": ["Chinese New Year", "The Lantern Festival", "Both celebrations"], "why": "給了「特徵」反過來找「是哪一個」。只有美國跨年是一個晚上。"}], "grammar_name": "不規則動詞 go／do／see／say／tell＋書名（G2 文法本 U4 W3）", "grammar": [{"q": "Yesterday we ___ to the night market.", "a": "went", "w": ["goed", "gone", "go"], "why": "go 的過去式是 went，不加 -ed。"}, {"q": "Last week my class ___ a dragon dance for the school.", "a": "did", "w": ["doed", "does", "do"], "why": "do 的過去式是 did。"}, {"q": "Grandma ___ me a story about the Kitchen God last night.", "a": "told", "w": ["telled", "tell", "tells"], "why": "tell 的過去式是 told。"}, {"q": "Which book title is written correctly?", "a": "A Day at the Lantern Festival", "w": ["a Day at the Lantern Festival", "A day At The lantern festival", "a day at the lantern festival"], "why": "書名第一個字、最後一個字和重要的字大寫；at、the 在中間小寫。"}], "write": ["用 Both… But… 寫兩句，比較你家過春節和另一個節日（例如中秋節）。", "Both Chinese New Year and Moon Festival are family holidays. But we eat dumplings on Chinese New Year, and we eat mooncakes on Moon Festival."]}, {"id": "u4w4", "tab": "U4 W4", "title": "Why the Sun and Moon Live in the Sky", "focus": "戲劇／民間故事・主旨・字根・不規則動詞 come／run／hide／give／sing／sit・書信標點", "bank": ["ashamed", "boast", "dash", "holler", "plenty", "similarities", "victory", "wisdom"], "cloze": [ ["After our team won the final game, we celebrated our ___ with a pizza party.", "victory", "贏了比賽：勝利。"], ["Don't ___ about your good grades. Nobody likes a show-off.", "boast", "*show-off* 愛現的人：吹噓。"], ["I felt ___ when I broke Mom's cup and then lied about it.", "ashamed", "做錯事又說謊：感到羞愧。"], ["There is ___ of rice, so everyone can have a second bowl.", "plenty", "*plenty of* 很多、足夠。"], ["Grandpa has great ___ because he has learned so much in his long life.", "wisdom", "活很久、學很多：智慧。"], ["When the bell rang, the kids made a ___ for the door.", "dash", "*make a dash for* 衝向。"], ["Cats and tigers have many ___: both have whiskers, sharp claws, and long tails.", "similarities", "冒號後面列出共同點：相似之處。"], ["My brother was far away in the garden, so I had to ___ his name three times.", "holler", "人很遠，要大聲喊。"] ], "read": [{"q": "The story is written to be acted out on a stage, and each character has lines to say. What genre is it?", "a": "Drama (a play)", "w": ["Biography", "Expository Text", "Free verse poem"], "why": "有角色台詞、可以在舞台上演＝戲劇。"}, {"q": "In a play, the words that tell actors how to move or act are called ___.", "a": "stage directions", "w": ["captions", "subheads", "a timeline"], "why": "戲劇的文本特徵：角色表、台詞、舞台指示。caption、subhead、timeline 是說明文和傳記的特徵。"}, {"q": "Why did Sun and Moon make their house bigger?", "a": "So there was room for their friend Water to visit", "w": ["To keep the rain out", "To hide from Water", "To sell the house"], "why": "太陽答應水，把房子加大讓水和家人能來作客。"}, {"q": "At the end of the play, why did Sun and Moon go up into the sky?", "a": "Water filled the house higher and higher.", "w": ["They wanted to see the stars.", "A storm blew the house down.", "They were angry with Water."], "why": "水和家人越漲越高，太陽和月亮只好飛上天空。"}], "skill_name": "Theme 主旨", "skill": [{"q": "Clue: Sun makes his house bigger so his friend can visit. What theme does this clue point to?", "a": "A good friend is happy to share.", "w": ["It is fun to build houses.", "Water is dangerous.", "Never invite guests."], "why": "主旨看角色「做了什麼」：為朋友把房子加大＝友誼、分享。"}, {"q": "Which clue BEST supports the theme \"True friends stay kind even when it costs them something\"?", "a": "Sun and Moon stay kind to Water even after their house is flooded.", "w": ["Water brings fish and frogs.", "Moon lives with Sun.", "The house has a tall roof."], "why": "要選「付出代價還是對朋友好」的線索。其他三句是細節，不支持主旨。"}, {"q": "This folktale explains ___.", "a": "why the sun and moon are in the sky", "w": ["why it rains in summer", "how fish learn to swim", "how to build a house"], "why": "民間故事常用來解釋大自然：太陽和月亮為什麼住在天上。"}], "grammar_name": "不規則動詞 come／run／hide／give／sing／sit＋書信標點（G2 文法本 U4 W4）", "grammar": [{"q": "The cat ___ under the bed when it heard the thunder.", "a": "hid", "w": ["hided", "hide", "hidden"], "why": "hide 的過去式是 hid。"}, {"q": "We ___ a birthday song for Grandpa last night.", "a": "sang", "w": ["singed", "sing", "sung"], "why": "sing 的過去式是 sang。"}, {"q": "Mom ___ me a red envelope yesterday.", "a": "gave", "w": ["gived", "give", "gives"], "why": "give 的過去式是 gave。"}, {"q": "Which letter greeting is correct?", "a": "Dear Amy,", "w": ["dear Amy,", "Dear amy", "dear amy"], "why": "開頭稱呼每個字都大寫，後面加逗號。"}, {"q": "Which letter closing is correct?", "a": "Your friend,", "w": ["Your Friend,", "your friend,", "Your friend"], "why": "結尾敬語只有第一個字大寫，後面加逗號。"}], "write": ["一個男孩下雨天把傘分給同學一起撐。用一句英文寫出這個故事的主旨。", "Being kind to others makes everyone happy."]}, {"id": "u4w5", "tab": "U4 W5", "title": "Snow Shape（三首詩）", "focus": "自由詩・主旨・重複・明喻・縮寫 Contractions", "bank": ["pale", "drops", "excite", "outdoors", "simile", "free verse", "repetition", "poet"], "cloze": [ ["After being sick for three days, my face looked ___.", "pale", "生病後臉色：蒼白的。"], ["In winter, the temperature ___ quickly after the sun goes down.", "drops", "太陽下山後氣溫：下降。"], ["Field trips always ___ my classmates; they talk about them for days.", "excite", "一直講好幾天：使興奮。"], ["On sunny weekends, we like to play ___ instead of staying inside.", "outdoors", "和 *staying inside* 相反：在戶外。"], ["\"The moon is like a silver plate\" is a ___ because it uses like to compare two things.", "simile", "用 like 比較＝明喻。"], ["A poem that does not rhyme and has no fixed beat is called ___.", "free verse", "不押韻、沒有固定節奏＝自由詩。"], ["When a poet uses the same words again and again, it is called ___.", "repetition", "一樣的字一再出現＝重複。"], ["The person who writes a poem is called a ___.", "poet", "寫詩的人：詩人。"] ], "read": [{"q": "The three poems share the writers' feelings about nature and do not rhyme. What genre are they?", "a": "Free verse poems", "w": ["Folktales", "Biographies", "Plays"], "why": "說出感受、不押韻＝自由詩。"}, {"q": "In \"In the Sky,\" what does the writer watch?", "a": "Clouds that keep changing shape", "w": ["Snow falling on the roof", "Leaves on the ground", "A river in the mountains"], "why": "作者抬頭看雲，雲一直變成不同的形狀。"}, {"q": "In \"Snow Shape,\" what does the child do in the snow?", "a": "Lies down in it and leaves a body shape", "w": ["Builds a snowman", "Throws snowballs", "Skis down a hill"], "why": "躺進雪裡、手腳動一動，站起來看到自己的形狀。"}, {"q": "Which line is an example of repetition?", "a": "Look! A bear! Look! A flower!", "w": ["The air is cool.", "I walk to school.", "The sky is blue today."], "why": "Look! 出現了兩次＝重複，用來強調興奮。"}], "skill_name": "Theme 主旨（找關鍵細節 → 歸納）", "skill": [{"q": "Clues: Leaves crunch under your feet. The air turns cool. The wind smells fresh. What is the theme?", "a": "A walk outdoors in fall is exciting.", "w": ["Winter is too cold to go out.", "Leaves make the ground dirty.", "Walking is boring."], "why": "三個細節都是秋天戶外的感覺，而且是開心的。"}, {"q": "Clues: The clouds look like a bear, then a flower, then a horse. What is the theme?", "a": "Nature keeps changing and is fun to watch.", "w": ["Clouds are scary.", "Bears live in the sky.", "It will rain soon."], "why": "雲一直變＝大自然一直在變化，而且好看。"}, {"q": "(反向題) The theme is \"Snow days are full of fun.\" Which clue supports it?", "a": "The child laughs while making a shape in the snow.", "w": ["The snow is cold and wet.", "The bus is late.", "The road is closed."], "why": "給主旨找線索：要選「好玩」的細節。"}], "grammar_name": "縮寫 Contractions＋撇號（G2 文法本 U4 W5）", "grammar": [{"q": "do not = ?", "a": "don't", "w": ["dont'", "do'nt", "dont"], "why": "撇號放在被省略的 o 的位置。"}, {"q": "I am = ?", "a": "I'm", "w": ["Im'", "I'am", "Im"], "why": "省略 a，用撇號代替。"}, {"q": "It ___ snowing yet. (is not)", "a": "isn't", "w": ["is'nt", "isnt", "isnt'"], "why": "is not → isn't。"}, {"q": "Which sentence is correct?", "a": "We can't go outside.", "w": ["We cant go outside.", "We ca'nt go outside.", "We cant' go outside."], "why": "cannot → can't。"}], "write": ["寫一個關於下雨的明喻（用 like 或 as）。", "The rain sounds like tiny drums on the roof."]}, {"id": "u5w1", "tab": "U5 W1", "title": "A Difficult Decision", "focus": "寫實小說・觀點 Point of View・字尾 -ful／-less・代名詞＋引號", "bank": ["champion", "determined", "issues", "promise", "responsibility", "rights", "volunteered", "votes"], "cloze": [ ["Feeding the fish every day is my ___ at home.", "responsibility", "每天要做的事：責任。"], ["Our class counted the ___, and Amy became class leader.", "votes", "選班長要數：票。"], ["Nobody asked her, but Jenny ___ to clean the board after class.", "volunteered", "*Nobody asked her*：自願。"], ["Every child has the ___ to go to school and be safe.", "rights", "*has the ___ to*：權利。"], ["I ___ I will finish my homework before I play games.", "promise", "保證自己會做到：答應、承諾。"], ["Leo won the spelling contest, so he is this year's ___.", "champion", "比賽贏了：冠軍。"], ["The class meeting talked about two ___: noise in the hallway and litter in the yard.", "issues", "冒號後面列出要討論的兩件事：問題、議題。"], ["She was ___ to win the race, so she practiced every morning.", "determined", "每天早上都練：下定決心的。"] ], "read": [{"q": "The characters in the story are made up, but the events could happen in real life. What genre is it?", "a": "Realistic Fiction", "w": ["Folktale", "Drama", "Biography"], "why": "寫實小說。"}, {"q": "What does Wyatt find in the park?", "a": "A game that someone lost", "w": ["A lost dog", "A wallet full of money", "A soccer ball"], "why": "Wyatt 在公園撿到別人掉的遊戲機。"}, {"q": "At first, what does Wyatt think he should do?", "a": "Keep it, because he found it", "w": ["Give it to his teacher", "Throw it away", "Sell it"], "why": "一開始他覺得「誰撿到就是誰的」。"}, {"q": "The word \"careless\" means ___.", "a": "without care", "w": ["full of care", "care again", "before care"], "why": "字尾 -less＝沒有；-ful＝充滿（careful）。"}], "skill_name": "Point of View 觀點", "skill": [{"q": "What is Paul's point of view?", "a": "You have a duty to return what you find.", "w": ["Finders keepers.", "Lost things should be thrown away.", "Games are a waste of time."], "why": "Paul 從頭到尾都說要物歸原主。"}, {"q": "How does Wyatt's point of view change?", "a": "He goes from wanting to keep it to wanting to return it.", "w": ["He goes from wanting to return it to wanting to keep it.", "He never changes his mind.", "He decides to give it to Paul."], "why": "觀點題常考「前後改變」。"}, {"q": "(反向題) Wyatt feels it is right to return the game. Which clue helps him decide?", "a": "He sees a boy who is very sad because he lost his game.", "w": ["He wins a race to the tower.", "The park has a new fort.", "It starts to rain."], "why": "給結論找線索：看到失主很難過，他更確定要還。"}], "grammar_name": "代名詞 Pronouns＋引號（G2 文法本 U5 W1）", "grammar": [{"q": "Kevin likes soccer. ___ plays every day.", "a": "He", "w": ["She", "It", "They"], "why": "Kevin 是男生，用 He。"}, {"q": "Mia and Lily are my friends. I play with ___ after school.", "a": "them", "w": ["they", "her", "it"], "why": "動詞、介系詞後面用受格 them。"}, {"q": "The game is new. ___ is red.", "a": "It", "w": ["He", "They", "We"], "why": "東西用 It。"}, {"q": "Which sentence uses quotation marks correctly?", "a": "Paul said, \"Give it back.\"", "w": ["Paul said, Give it back.\"", "Paul said, \"Give it back.", "\"Paul said, Give it back.\""], "why": "說的話前後都要加引號。"}], "write": ["如果你在公園撿到一個錢包，你會怎麼做？用 I would… because… 寫一句。", "I would give it to a police officer because the owner must be worried."]}, {"id": "u5w2", "tab": "U5 W2", "title": "Soccer Friends", "focus": "小說・成語・角色心情變化・I／me、we／us", "bank": ["amused", "cooperate", "describe", "entertained", "imagination", "interact", "patient", "peaceful"], "cloze": [ ["The clown ___ the children with funny tricks.", "entertained", "用把戲逗小孩：娛樂。"], ["Please be ___. The bus will come in five minutes.", "patient", "再等五分鐘：有耐心的。"], ["Use your ___ to draw an animal that nobody has ever seen.", "imagination", "沒人看過的動物要靠：想像力。"], ["Can you ___ the man you saw? Was he tall or short?", "describe", "問長相：描述。"], ["The lake was quiet and ___ early in the morning.", "peaceful", "和 quiet 並列：平靜的。"], ["We must ___ and work together to finish the big puzzle.", "cooperate", "和 *work together* 並列：合作。"], ["Dad was ___ by the puppy chasing its tail, and he laughed.", "amused", "*and he laughed*：被逗樂的。"], ["The new student was shy and did not ___ with the others at the party.", "interact", "害羞、不和別人：互動。"] ], "read": [{"q": "What problem does Kelly have at the beginning?", "a": "A new girl, Selena, runs faster than she does.", "w": ["She loses her soccer ball.", "Her coach is angry.", "She hurts her leg."], "why": "Kelly 本來最快，新來的 Selena 跑贏她。"}, {"q": "\"Kelly had butterflies in her stomach.\" This means she was ___.", "a": "nervous", "w": ["hungry", "sleepy", "sick from eating bugs"], "why": "成語：緊張得胃裡像有蝴蝶在飛。"}, {"q": "\"She held her tongue.\" This means she ___.", "a": "said nothing", "w": ["bit her tongue", "stuck out her tongue", "talked a lot"], "why": "成語：忍住不說話。"}, {"q": "\"It stinks to get beaten!\" Here, \"it stinks\" means ___.", "a": "it feels really bad", "w": ["it smells bad", "it is funny", "it is easy"], "why": "成語：糟透了。不是真的有臭味。"}], "skill_name": "角色心情變化與主旨", "skill": [{"q": "How does Kelly feel about Selena at the beginning?", "a": "Jealous and upset", "w": ["Proud and happy", "Calm and peaceful", "Bored"], "why": "被跑贏、不再是最快的，所以嫉妒又難過。"}, {"q": "What does Kelly learn by the end of the story?", "a": "Working together is better than being the fastest.", "w": ["Running fast is all that matters.", "Soccer is too hard.", "She should quit the team."], "why": "故事最後兩人合作讓球隊贏球＝合作的重要。"}, {"q": "(反向題) Kelly feels happy at the end. What caused this?", "a": "She and Selena work together and their team wins.", "w": ["She beats Selena in a race.", "The game is canceled.", "Selena leaves the team."], "why": "給結果找原因：合作贏球。"}], "grammar_name": "I／me、we／us＋I 永遠大寫（G2 文法本 U5 W2）", "grammar": [{"q": "Tom and ___ went to the park.", "a": "I", "w": ["me", "us", "him"], "why": "主詞位置用 I。"}, {"q": "Coach Troy gave ___ a new ball.", "a": "us", "w": ["we", "I", "they"], "why": "動詞後面用受格 us。"}, {"q": "___ are the best team!", "a": "We", "w": ["Us", "Me", "Him"], "why": "主詞用 We。"}, {"q": "Which sentence is correct?", "a": "Can I play with you?", "w": ["Can i play with you?", "can I play with you?", "Can i Play with you?"], "why": "I 永遠大寫，句首也大寫。"}], "write": ["寫一句你和同學合作完成一件事的經驗（用 We worked together to…）。", "We worked together to clean the classroom, so we finished in ten minutes."]}, {"id": "u5w3", "tab": "U5 W3", "title": "César Chávez", "focus": "傳記・時間軸・事件順序 Sequence・同義詞・所有格代名詞", "bank": ["agree", "challenging", "discover", "heroes", "interest", "perform", "study", "succeed"], "cloze": [ ["Firefighters are ___ because they help people in danger.", "heroes", "幫助有危險的人：英雄。"], ["Climbing Jade Mountain is ___, but the view at the top is worth it.", "challenging", "爬玉山很難：有挑戰性的。"], ["I ___ every night so I can do well on my test.", "study", "為了考好：讀書。"], ["If you keep practicing, you will ___.", "succeed", "一直練習就會：成功。"], ["My sister has a strong ___ in dinosaurs; she reads every book about them.", "interest", "*a strong ___ in*：興趣。"], ["The students will ___ a play for their parents on Friday.", "perform", "演一齣戲：表演。"], ["Do you ___ with me that recess should be longer?", "agree", "*___ with me*：同意。"], ["Scientists hope to ___ new animals deep in the ocean.", "discover", "找到以前不知道的：發現。"] ], "read": [{"q": "The text tells the true life story of César Chávez, and another person wrote it. What genre is it?", "a": "Biography", "w": ["Autobiography", "Fiction", "Folktale"], "why": "別人寫的真人一生＝傳記；自己寫自己＝自傳。"}, {"q": "Which text feature shows the dates of important events in order?", "a": "A timeline", "w": ["A glossary", "A map", "A play's cast list"], "why": "傳記常附時間軸。"}, {"q": "Why did César's family move to California?", "a": "A drought killed their crops, and they lost their farm.", "w": ["They wanted a bigger house.", "César got a new job there.", "They won a prize."], "why": "乾旱 → 作物枯死 → 付不出錢 → 搬家當移工。"}, {"q": "How did the farm workers finally get better pay?", "a": "They stopped picking grapes until the owners agreed.", "w": ["They moved to another state.", "They bought their own farms.", "They asked the government for money."], "why": "罷工讓葡萄賣不出去，業主只好答應加薪。"}], "skill_name": "Sequence 事件順序（first → next → then → last）", "skill": [{"q": "Which event happened FIRST?", "a": "César was born on a farm in Arizona.", "w": ["He started a group for farm workers.", "He led a strike.", "He was given a medal."], "why": "傳記依時間：出生最先。"}, {"q": "Which event goes in the NEXT box after \"César was born in Arizona\"?", "a": "A drought came, and his family lost their farm.", "w": ["He was given the Medal of Freedom.", "He led a strike for better pay.", "He gave speeches about fair pay."], "why": "出生 → 乾旱失去農場 → 搬家 → 幫助農工。"}, {"q": "(反向題) The LAST box says \"He was honored with the U.S. Medal of Freedom.\" Which event happened just before that?", "a": "He helped farm workers for the rest of his life.", "w": ["He was born in Arizona.", "His family moved to California.", "He finished eighth grade."], "why": "給最後一格回頭找前一格。勳章是他過世後追贈的。"}], "grammar_name": "所有格代名詞＋專有名詞大寫（G2 文法本 U5 W3）", "grammar": [{"q": "This is César's book. It is ___ book.", "a": "his", "w": ["he", "him", "he's"], "why": "表示「他的」用 his。"}, {"q": "The workers wanted better pay for ___ families.", "a": "their", "w": ["they", "them", "there"], "why": "「他們的」用 their。"}, {"q": "I can't find ___ pencil.", "a": "my", "w": ["me", "I", "mine"], "why": "名詞前面用 my。"}, {"q": "Which sentence is correct?", "a": "César Chávez lived in California.", "w": ["césar chávez lived in california.", "César Chávez lived in california.", "césar Chávez lived in California."], "why": "人名、地名是專有名詞，第一個字母大寫。"}], "write": ["誰是你生活中的英雄？寫一句並說明原因（用 because）。", "My mom is my hero because she works hard and always helps others."]}, {"id": "u5w4", "tab": "U5 W4", "title": "The Art Project", "focus": "小說・對話・問題與解決・預測・同音異義字・縮寫和所有格代名詞", "bank": ["curious", "distance", "Earth's resources", "enormous", "gently", "proudly", "rarely", "supply"], "cloze": [ ["A blue whale is an ___ animal; it is longer than a bus.", "enormous", "比公車還長：巨大的。"], ["Please hold the baby bird ___ so you do not hurt it.", "gently", "怕弄傷：輕輕地。"], ["Water, air, and trees are ___ that we must protect.", "Earth's resources", "水、空氣、樹：地球資源。"], ["Our class is running low on glue, so we need a new ___.", "supply", "快用完了要補：存量、供應。"], ["From a ___, the tall building looks very small.", "distance", "*from a ___* 從遠處看。"], ["My shy cousin ___ speaks in class, but today she raised her hand.", "rarely", "*but today* 表示平常很少：很少。"], ["The kitten was ___ about the box and climbed inside to look.", "curious", "想進去看看：好奇的。"], ["Tim ___ showed his medal to everyone at home.", "proudly", "給大家看獎牌：驕傲地。"] ], "read": [{"q": "The story has made-up characters, a problem and a solution, and many lines of dialogue. What genre is it?", "a": "Fiction", "w": ["Biography", "Expository Text", "Poem"], "why": "虛構人物＋問題與解決＋對話＝小說。"}, {"q": "What problem did the class have?", "a": "They had no art materials for the contest.", "w": ["They did not know about the contest.", "Their teacher was sick.", "The contest was canceled."], "why": "學年末美術材料用完了。"}, {"q": "Choose the homophone that fits: \"The ___ class cheered when they won.\"", "a": "whole", "w": ["hole", "hold", "hall"], "why": "whole＝整個的；hole＝洞。念起來一樣、意思不同。"}, {"q": "What did the class make for the contest?", "a": "A mobile of paper cranes made from old paper", "w": ["A painting of the Earth", "A robot made of cans", "A big clay statue"], "why": "用回收紙摺紙鶴做成吊飾。"}], "skill_name": "Problem and Solution 問題與解決", "skill": [{"q": "Which sentence belongs in the SOLUTION box?", "a": "They used recycled materials to make a paper crane mobile and won a prize.", "w": ["They had no art supplies.", "Mrs. Rice said new supplies would come next year.", "Grace told everyone about the contest."], "why": "Solution＝最後怎麼解決。其他三句是問題或開頭。"}, {"q": "Which is a STEP toward the solution?", "a": "Pablo suggests using paper from the recycling bin.", "w": ["The class wins the prize.", "The contest is announced.", "The class runs out of materials."], "why": "步驟在問題和解決中間。"}, {"q": "(反向題) The SOLUTION box says \"They won a prize for the most creative use of materials.\" What was the PROBLEM?", "a": "The class did not have art supplies for the contest.", "w": ["The class did not like art.", "The mobile was too heavy.", "The judges were late."], "why": "給解決回頭找問題，和 Into the Sea 因果表第 3 格同一種反向題。"}], "grammar_name": "縮寫 vs 所有格代名詞（it's／its、they're／their，G2 文法本 U5 W4）", "grammar": [{"q": "___ raining, so take your umbrella.", "a": "It's", "w": ["Its", "Its'", "It"], "why": "It's＝It is。"}, {"q": "The dog wagged ___ tail.", "a": "its", "w": ["it's", "its'", "it is"], "why": "its＝牠的（所有格，沒有撇號）。"}, {"q": "___ going to the art contest tomorrow.", "a": "They're", "w": ["Their", "There", "Theyre"], "why": "They're＝They are。"}, {"q": "The students showed ___ project to the judges.", "a": "their", "w": ["they're", "there", "theyre"], "why": "their＝他們的。"}], "write": ["預測：如果你們班也沒有美術材料，可以用什麼回收物做作品？寫一句（用 We could…）。", "We could use old bottles to make flower vases for the classroom."]}];
+const ICON = {u4w3:'🧧',u4w4:'🌞',u4w5:'❄️',u5w1:'🎮',u5w2:'⚽',u5w3:'🦸',u5w4:'🕊️'};
+const PART = ['🔤','📖','🧩','🛠️','✍️'];
 const $ = (s, el=document) => el.querySelector(s);
 const esc = s => s.replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 function shuffle(a){a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a}
@@ -56,16 +86,62 @@ function load(k){try{return JSON.parse(localStorage.getItem(k)||'null')}catch(e)
 function save(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}}
 let cur = null;
 
-function tabs(){
-  const best = load('wmt-best') || {};
-  $('#tabs').innerHTML = LESSONS.map(L => `<button data-id="${L.id}" aria-pressed="${cur&&cur.id===L.id}">${L.tab}${best[L.id]!=null?' · '+best[L.id]+'%':''}</button>`).join('');
-  $('#tabs').querySelectorAll('button').forEach(b => b.onclick = () => show(b.dataset.id));
+/* ---------- 主題 ---------- */
+let theme = load('wmt-theme') || 'dark';
+function applyTheme(){document.documentElement.dataset.theme = theme; $('#theme').textContent = theme === 'dark' ? '☀️' : '🌙'; $('#theme').title = theme === 'dark' ? '換成淺色' : '換成深色'}
+$('#theme').onclick = () => { theme = theme === 'dark' ? 'light' : 'dark'; save('wmt-theme', theme); applyTheme(); sfx('click') };
+applyTheme();
+
+/* ---------- 音效（Web Audio 合成，不需要音檔） ---------- */
+let muted = !!load('wmt-mute'), ac = null;
+function tone(f, t0, dur, type='sine', vol=.18){
+  const o = ac.createOscillator(), g = ac.createGain();
+  o.type = type; o.frequency.setValueAtTime(f, ac.currentTime + t0);
+  g.gain.setValueAtTime(vol, ac.currentTime + t0);
+  g.gain.exponentialRampToValueAtTime(.001, ac.currentTime + t0 + dur);
+  o.connect(g); g.connect(ac.destination); o.start(ac.currentTime + t0); o.stop(ac.currentTime + t0 + dur);
+}
+function sfx(kind){
+  if (muted) return;
+  try { ac = ac || new (window.AudioContext || window.webkitAudioContext)(); if (ac.state === 'suspended') ac.resume(); } catch(e) { return; }
+  if (kind === 'click') tone(660, 0, .08, 'triangle', .12);
+  if (kind === 'pick') { tone(520, 0, .07, 'triangle', .12); tone(780, .05, .08, 'triangle', .1); }
+  if (kind === 'ok') { tone(660, 0, .12); tone(880, .1, .18); }
+  if (kind === 'bad') { tone(220, 0, .18, 'square', .08); tone(180, .12, .2, 'square', .07); }
+  if (kind === 'good') [523,659,784].forEach((f,i)=>tone(f, i*.12, .25, 'triangle'));
+  if (kind === 'win') [523,659,784,1047,784,1047].forEach((f,i)=>tone(f, i*.11, .3, 'triangle', .2));
+  if (kind === 'try') [392,330,294].forEach((f,i)=>tone(f, i*.14, .25, 'sine', .14));
+}
+function applySound(){ $('#sound').textContent = muted ? '🔇' : '🔊'; $('#sound').title = muted ? '打開音效' : '關掉音效' }
+$('#sound').onclick = () => { muted = !muted; save('wmt-mute', muted); applySound(); sfx('click') };
+applySound();
+
+function confetti(n){
+  const pool = ['🎉','⭐','🌟','🎊','💜','✨', ICON[cur.id]];
+  for (let i=0;i<n;i++){
+    const s = document.createElement('div'); s.className = 'confetti';
+    s.textContent = pool[i % pool.length];
+    s.style.left = Math.random()*100 + 'vw';
+    s.style.animationDuration = (2 + Math.random()*2) + 's';
+    s.style.animationDelay = (Math.random()*.6) + 's';
+    document.body.appendChild(s); setTimeout(()=>s.remove(), 5000);
+  }
 }
 
-function mcBlock(prefix, items, startNo){
+/* ---------- 版面 ---------- */
+function tabs(){
+  const best = load('wmt-best') || {};
+  $('#tabs').innerHTML = LESSONS.map(L => {
+    const b = best[L.id], medal = b == null ? '' : b === 100 ? ' 🥇' : b >= 80 ? ' 🥈' : ' ' + b + '%';
+    return `<button data-id="${L.id}" aria-pressed="${cur&&cur.id===L.id}">${ICON[L.id]||'📘'} ${L.tab}${medal}</button>`;
+  }).join('');
+  $('#tabs').querySelectorAll('button').forEach(b => b.onclick = () => { sfx('click'); show(b.dataset.id) });
+}
+
+function mcBlock(items){
   return items.map((it,i)=>{
     const opts = shuffle([it.a].concat(it.w));
-    return `<div class="q" data-kind="mc" data-ans="${esc(it.a)}"><div><b>${startNo+i}.</b> ${esc(it.q)}</div>
+    return `<div class="q" data-kind="mc" data-ans="${esc(it.a)}"><div><b>${i+1}.</b> ${esc(it.q)}</div>
       <div class="opts">${opts.map(o=>`<button type="button" data-v="${esc(o)}">${esc(o)}</button>`).join('')}</div>
       <div class="fb" data-why="${esc(it.why)}"></div></div>`;
   }).join('');
@@ -80,26 +156,31 @@ function show(id){
     return `<div class="q" data-kind="cloze" data-ans="${esc(c[1])}"><b>${i+1}.</b> ${s}<div class="fb" data-why="${esc(c[2])}"></div></div>`;
   }).join('');
   $('#test').innerHTML = `
-  <div class="card"><h2>${esc(L.tab)}｜${esc(L.title)}</h2><div class="small">本課重點：${esc(L.focus)}</div></div>
-  <div class="card"><h2>Part 1　Vocabulary 單字庫填空</h2><div class="small">每個字只用一次。先看空格要填名詞、動詞還是形容詞。</div>
-    <div class="bank">${L.bank.map(w=>`<span>${esc(w)}</span>`).join('')}</div>${cloze}</div>
-  <div class="card"><h2>Part 2　Reading Comprehension 閱讀理解</h2>${mcBlock('r', L.read, 1)}</div>
-  <div class="card"><h2>Part 3　${esc(L.skill_name)}</h2><div class="small">標「反向題」的是給結果找原因、給答案找線索，老師考卷會這樣考。</div>${mcBlock('s', L.skill, 1)}</div>
-  <div class="card"><h2>Part 4　Grammar 文法</h2><div class="small">${esc(L.grammar_name)}</div>${mcBlock('g', L.grammar, 1)}</div>
-  <div class="card"><h2>Part 5　Writing 寫作（自己對答案）</h2><div>${esc(L.write[0])}</div>
+  <div class="card hero"><div class="big">${ICON[L.id]||'📘'}</div><div><h2>${esc(L.tab)}｜${esc(L.title)}</h2><div class="small">本課重點：${esc(L.focus)}</div></div></div>
+  <div class="prog"><span id="pcount">0/0</span><div class="track"><div class="fill" id="pfill"></div><div class="rocket" id="rocket">🚀</div></div><span>🏁</span></div>
+  <div class="card"><h2>${PART[0]} Part 1　Vocabulary 單字庫填空</h2><div class="small">每個字只用一次，用過的字會變淡。先看空格要填名詞、動詞還是形容詞。</div>
+    <div class="bank" id="bank">${L.bank.map(w=>`<span data-w="${esc(w)}">${esc(w)}</span>`).join('')}</div>${cloze}</div>
+  <div class="card"><h2>${PART[1]} Part 2　Reading Comprehension 閱讀理解</h2>${mcBlock(L.read)}</div>
+  <div class="card"><h2>${PART[2]} Part 3　${esc(L.skill_name)}</h2><div class="small">🔄 標「反向題」的是給結果找原因、給答案找線索，老師考卷會這樣考。</div>${mcBlock(L.skill)}</div>
+  <div class="card"><h2>${PART[3]} Part 4　Grammar 文法</h2><div class="small">${esc(L.grammar_name)}</div>${mcBlock(L.grammar)}</div>
+  <div class="card"><h2>${PART[4]} Part 5　Writing 寫作（自己對答案）</h2><div>${esc(L.write[0])}</div>
     <textarea placeholder="Write in English…"></textarea>
-    <div class="btns"><button type="button" class="alt" id="model">看參考答案</button></div>
+    <div class="btns"><button type="button" class="alt" id="model">💡 看參考答案</button></div>
     <div class="fb" id="modelfb">參考答案：${esc(L.write[1])}<br><span class="small">檢查：句子有主詞和動詞嗎？開頭大寫、結尾有句點嗎？</span></div></div>
-  <div class="btns"><button type="button" id="submit">交卷</button><button type="button" class="alt" id="redo">只重做錯題</button><button type="button" class="alt" id="reset">全部重來</button></div>
-  <div class="card hide" id="result"><div class="score" id="score"></div><div class="small" id="scorenote"></div></div>`;
+  <div class="btns"><button type="button" id="submit">📮 交卷</button><button type="button" class="alt" id="redo">🔁 只重做錯題</button><button type="button" class="alt" id="reset">🆕 全部重來</button></div>
+  <div class="card result hide" id="result"><div class="mascot" id="mascot">🦉</div><div class="stars" id="stars"></div><div class="score" id="score"></div><div class="small" id="scorenote"></div></div>`;
   $('#test').querySelectorAll('.opts').forEach(box => box.querySelectorAll('button').forEach(b => b.onclick = () => {
     if (box.dataset.locked) return;
     box.querySelectorAll('button').forEach(x => x.classList.remove('sel')); b.classList.add('sel');
+    b.classList.remove('pop'); void b.offsetWidth; b.classList.add('pop');
+    sfx('pick'); progress();
   }));
-  $('#model').onclick = () => $('#modelfb').classList.toggle('show');
+  $('#test').querySelectorAll('select').forEach(s => s.onchange = () => { sfx('pick'); progress(); });
+  $('#model').onclick = () => { sfx('click'); $('#modelfb').classList.toggle('show') };
   $('#submit').onclick = grade;
   $('#redo').onclick = redo;
-  $('#reset').onclick = () => show(L.id);
+  $('#reset').onclick = () => { sfx('click'); show(L.id) };
+  progress();
   window.scrollTo(0,0);
 }
 
@@ -108,25 +189,47 @@ function answerOf(q){
   const s = $('.opts .sel', q); return s ? s.dataset.v : '';
 }
 
+function progress(){
+  const qs = [...$('#test').querySelectorAll('.q')].filter(q => q.style.display !== 'none');
+  const done = qs.filter(q => answerOf(q)).length, pct = qs.length ? done*100/qs.length : 0;
+  $('#pcount').textContent = `${done}/${qs.length}`;
+  $('#pfill').style.width = pct + '%'; $('#rocket').style.left = pct + '%';
+  const used = new Set([...$('#test').querySelectorAll('select')].map(s => s.value));
+  $('#bank').querySelectorAll('span').forEach(sp => sp.classList.toggle('used', used.has(sp.dataset.w)));
+}
+
 function grade(){
-  const qs = [...$('#test').querySelectorAll('.q')];
+  const qs = [...$('#test').querySelectorAll('.q')].filter(q => q.style.display !== 'none');
+  const blank = qs.filter(q => !answerOf(q)).length;
+  if (blank && !confirm(`還有 ${blank} 題沒寫，確定要交卷嗎？`)) return;
+  const all = [...$('#test').querySelectorAll('.q')];
   let ok = 0;
-  qs.forEach(q => {
+  all.forEach(q => {
+    if (q.style.display === 'none') { ok++; return; }
     const right = answerOf(q) === q.dataset.ans;
     if (right) ok++;
     q.dataset.right = right ? '1' : '0';
     const fb = $('.fb', q);
     fb.className = 'fb show ' + (right ? 'ok' : 'bad');
-    fb.textContent = (right ? '✓ ' : '✗ 正解：' + q.dataset.ans + '。') + fb.dataset.why;
+    fb.textContent = (right ? '✅ ' : '❌ 正解：' + q.dataset.ans + '。') + fb.dataset.why;
+    if (!right) { q.classList.remove('shake'); void q.offsetWidth; q.classList.add('shake'); }
     const box = $('.opts', q);
     if (box){ box.dataset.locked = '1';
       box.querySelectorAll('button').forEach(b => { if (b.dataset.v === q.dataset.ans) b.classList.add('ok'); else if (b.classList.contains('sel')) b.classList.add('bad'); }); }
     else $('select', q).disabled = true;
   });
-  const pct = Math.round(ok * 100 / qs.length);
+  const pct = Math.round(ok * 100 / all.length);
+  const star = pct === 100 ? 3 : pct >= 80 ? 2 : pct >= 60 ? 1 : 0;
   $('#result').classList.remove('hide');
-  $('#score').textContent = `得分 ${ok} / ${qs.length}（${pct}%）`;
-  $('#scorenote').textContent = pct === 100 ? '全對！可以換下一課。' : '按「只重做錯題」把錯的再做一次，或回課本找那一段重讀。';
+  $('#stars').textContent = '⭐'.repeat(star) + '☆'.repeat(3 - star);
+  $('#mascot').textContent = pct === 100 ? '🏆' : pct >= 80 ? '🦉' : pct >= 60 ? '💪' : '🐢';
+  $('#score').textContent = `得分 ${ok} / ${all.length}（${pct}%）`;
+  $('#scorenote').textContent = pct === 100 ? '全對！可以挑戰下一課了 🎉'
+    : pct >= 80 ? '很棒！按「只重做錯題」把最後幾題拿下。'
+    : pct >= 60 ? '過關了！錯的題目看詳解，再重做一次。'
+    : '慢慢來，先回課本把那一段讀一遍，再重做錯題。';
+  sfx(pct === 100 ? 'win' : pct >= 60 ? 'good' : 'try');
+  if (pct === 100) confetti(40); else if (pct >= 80) confetti(12);
   const best = load('wmt-best') || {};
   if (best[cur.id] == null || pct > best[cur.id]) { best[cur.id] = pct; save('wmt-best', best); }
   tabs();
@@ -136,15 +239,18 @@ function grade(){
 function redo(){
   const qs = [...$('#test').querySelectorAll('.q')];
   if (!qs.some(q => q.dataset.right)) return;
+  sfx('click');
   qs.forEach(q => {
     if (q.dataset.right === '1') { q.style.display = 'none'; return; }
-    delete q.dataset.right;
+    if (q.style.display === 'none') return;
+    delete q.dataset.right; q.classList.remove('shake');
     const fb = $('.fb', q); fb.className = 'fb'; fb.textContent = '';
     const box = $('.opts', q);
     if (box){ delete box.dataset.locked; box.querySelectorAll('button').forEach(b => b.classList.remove('sel','ok','bad')); }
     else { const s = $('select', q); s.disabled = false; s.value = ''; }
   });
   $('#result').classList.add('hide');
+  progress();
   window.scrollTo(0,0);
 }
 
