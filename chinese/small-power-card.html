@@ -1,0 +1,743 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#f1f3f4">
+  <title>小小力量・三段思考寫作卡</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --paper: #f1f3f4;
+      --card: #fbfcfc;
+      --ink: #292d2e;
+      --muted: #687071;
+      --line: #d6dddf;
+      --leaf: #315f4c;
+      --leaf-soft: #e3eee5;
+      --tomato: #b84c36;
+      --tomato-soft: #f5e4dc;
+      --gold: #a87626;
+      --gold-soft: #f5edcf;
+      --blue: #4c778a;
+      --blue-soft: #e4eff0;
+      --violet-soft: #eee8f2;
+      --shadow: 0 14px 38px #263b3210, 0 2px 6px #263b3208;
+      --serif: "Noto Serif TC", "Source Han Serif TC", "PMingLiU", serif;
+      --sans: "Noto Sans TC", "PingFang TC", "Microsoft JhengHei", sans-serif;
+    }
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      color: var(--ink);
+      background:
+        radial-gradient(ellipse at 7% 2%, #e5ece7 0, transparent 27rem),
+        radial-gradient(ellipse at 96% 14%, #e9eceb 0, transparent 25rem),
+        repeating-linear-gradient(0deg, transparent 0 31px, #89969812 32px),
+        var(--paper);
+      font: 16px/1.75 var(--sans);
+    }
+    button, input, textarea, select { font: inherit; }
+    button, select { color: inherit; }
+    button:focus-visible, input:focus-visible, textarea:focus-visible, select:focus-visible {
+      outline: 3px solid var(--gold); outline-offset: 3px;
+    }
+    .wrap { width: min(1030px, calc(100% - 30px)); margin: 0 auto; padding: 26px 0 60px; }
+    .masthead {
+      display: flex; justify-content: space-between; align-items: center; gap: 14px;
+      padding-bottom: 12px; border-bottom: 1px solid var(--line); color: var(--muted);
+      font-size: 13px; letter-spacing: .08em;
+    }
+    .brand { display: flex; align-items: center; gap: 9px; font-weight: 900; }
+    .brand-mark {
+      width: 28px; height: 28px; display: grid; place-items: center; border-radius: 50% 50% 50% 8px;
+      transform: rotate(-35deg); background: var(--leaf); color: white; font: 800 14px var(--serif);
+    }
+    .hero { display: grid; grid-template-columns: 1fr auto; align-items: end; gap: 20px; padding: 30px 0 22px; }
+    .eyebrow { color: var(--tomato); font-size: 12px; font-weight: 900; letter-spacing: .17em; }
+    h1 { margin: 6px 0 9px; font: 800 clamp(30px, 5vw, 48px)/1.18 var(--serif); }
+    .hero p { max-width: 680px; margin: 0; color: var(--muted); }
+    .seal {
+      display: grid; place-items: center; width: 98px; height: 98px; padding: 10px; text-align: center;
+      border: 2px solid var(--leaf); border-radius: 50%; color: var(--leaf);
+      font: 800 13px/1.5 var(--serif); transform: rotate(7deg);
+      box-shadow: inset 0 0 0 4px var(--paper), inset 0 0 0 5px #315f4c36;
+    }
+    .task {
+      display: grid; grid-template-columns: auto 1fr; gap: 13px; padding: 15px 19px;
+      margin-bottom: 20px; border-radius: 4px 16px 4px 16px; color: #fffaf0; background: var(--ink);
+      box-shadow: var(--shadow);
+    }
+    .task-icon { font-size: 23px; }
+    .task b { display: block; color: #e9c77f; letter-spacing: .06em; }
+    .task p { margin: 3px 0 0; line-height: 1.7; }
+    .tabs { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 9px; margin-bottom: 17px; }
+    .tab.social small::after { content: " · 社會課"; }
+    .model { margin-bottom: 15px; border: 1px solid #ead9a8; border-radius: 12px; background: var(--gold-soft); }
+    .model summary { padding: 12px 16px; cursor: pointer; font: 800 15px var(--serif); color: #7a5a12; }
+    .model-body { padding: 0 16px 14px; }
+    .model-body p { margin: 0 0 9px; line-height: 1.9; text-indent: 2em; }
+    .model-body .model-note { text-indent: 0; color: var(--muted); font-size: 12px; }
+    .model-body mark { background: #fff3c4; padding: 0 2px; border-radius: 3px; }
+    .tab {
+      text-align: left; padding: 10px 13px; border: 1px solid var(--line); border-radius: 12px;
+      background: #fbfcfce8; cursor: pointer; transition: transform .16s, border-color .16s;
+    }
+    .tab:hover { transform: translateY(-2px); border-color: var(--leaf); }
+    .tab[aria-selected="true"] { color: white; background: var(--leaf); border-color: var(--leaf); }
+    .tab small { display: block; font-size: 11px; opacity: .76; letter-spacing: .08em; }
+    .tab strong { font: 800 15px/1.6 var(--serif); }
+    #panel { min-height: 380px; }
+    .sheet {
+      position: relative; overflow: hidden; background: var(--card); border: 1px solid var(--line);
+      border-radius: 18px 5px 18px 5px; box-shadow: var(--shadow); animation: arrive .32s ease both;
+    }
+    .sheet::before {
+      content: ""; position: absolute; inset: 0 auto 0 0; width: 7px;
+      background: linear-gradient(var(--leaf), #84a682 55%, var(--gold));
+    }
+    .inner { padding: clamp(19px, 4vw, 32px); }
+    .head { display: flex; align-items: start; justify-content: space-between; gap: 14px; margin-bottom: 18px; }
+    .kicker { color: var(--leaf); font-size: 12px; font-weight: 900; letter-spacing: .13em; }
+    h2 { margin: 3px 0 5px; font: 800 clamp(23px, 3.6vw, 32px)/1.3 var(--serif); }
+    .sub { margin: 0; color: var(--muted); }
+    .head-mark { color: #dfe6e2; font: 800 50px/.95 var(--serif); }
+    .profile-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+    .profile {
+      min-height: 140px; padding: 14px 15px; border: 1px solid var(--line); border-radius: 12px;
+      background: #f8faf9;
+    }
+    .profile:nth-child(1) { background: var(--blue-soft); border-color: #cbdfe1; }
+    .profile:nth-child(2) { background: var(--leaf-soft); border-color: #cbdccf; }
+    .profile:nth-child(3) { background: var(--gold-soft); border-color: #ead9a8; }
+    .profile b { display: flex; align-items: center; gap: 7px; margin-bottom: 6px; font: 800 15px var(--serif); }
+    .profile b span { display: grid; place-items: center; width: 22px; height: 22px; border-radius: 50%; border: 1px solid currentColor; font: 700 11px var(--sans); }
+    .profile p { margin: 0; line-height: 1.7; }
+    .quote {
+      margin-top: 14px; padding: 14px 17px; border-left: 4px solid var(--tomato);
+      background: #f8f6f2; border-radius: 4px 12px 12px 4px;
+    }
+    .quote b { color: var(--tomato); font: 800 13px var(--serif); }
+    .quote p { margin: 4px 0 0; }
+    .source-note { margin-top: 13px; padding: 11px 13px; border-radius: 10px; background: var(--blue-soft); color: #445d66; font-size: 13px; }
+    .source-note strong { color: #315d70; }
+    .example-actions, .actions { display: flex; flex-wrap: wrap; gap: 9px; align-items: center; margin-top: 17px; }
+    .btn {
+      border: 0; border-radius: 999px; padding: 10px 16px; color: white; background: var(--leaf);
+      font-weight: 800; cursor: pointer; box-shadow: 0 4px 10px #315f4c1c; transition: transform .15s, filter .15s;
+    }
+    .btn:hover { transform: translateY(-1px); filter: brightness(1.06); }
+    .btn.secondary { color: var(--leaf); border: 1px solid var(--leaf); background: transparent; box-shadow: none; }
+    .btn.warn { color: var(--tomato); border: 1px solid #d6aa9e; background: transparent; box-shadow: none; }
+    .essays { margin-top: 25px; }
+    .essays h2 { font-size: 23px; }
+    .essay { margin-bottom: 10px; background: var(--card); border: 1px solid var(--line); border-left: 4px solid var(--gold); border-radius: 12px; }
+    .essay summary { padding: 12px 16px; cursor: pointer; font: 800 16px/1.6 var(--serif); }
+    .essay summary span { display: inline-block; margin-right: 8px; padding: 0 8px; border-radius: 999px; background: var(--gold-soft); color: #7a5a12; font: 800 12px/1.9 var(--sans); }
+    .essay p { margin: 0 16px 10px; line-height: 1.95; text-indent: 2em; }
+    .essay p.essay-audio { text-indent: 0; color: var(--muted); font-size: 13px; }
+    .essay p.essay-audio audio { width: 100%; }
+    .essay mark { background: #fff3c4; padding: 0 2px; border-radius: 3px; }
+    .essay-note { color: var(--muted); font-size: 12px; margin: 4px 0 0; }
+    .map { margin-top: 25px; }
+    .map-head { display: flex; align-items: end; justify-content: space-between; gap: 12px; margin-bottom: 11px; }
+    .map h2 { font-size: 23px; }
+    .map-head p { margin: 0; color: var(--muted); font-size: 13px; }
+    .steps { display: grid; grid-template-columns: repeat(3, 1fr); gap: 9px; }
+    .step { padding: 12px 14px; border: 1px solid var(--line); border-top: 3px solid var(--leaf); border-radius: 4px 12px 4px 12px; background: #fbfcfcbf; }
+    .step:nth-child(2) { border-top-color: var(--gold); }
+    .step:nth-child(3) { border-top-color: var(--tomato); }
+    .step b { display: block; margin-bottom: 3px; font: 800 15px var(--serif); }
+    .step p { margin: 0; color: var(--muted); font-size: 13px; line-height: 1.65; }
+    .write-intro { margin-bottom: 15px; padding: 14px 16px; border-radius: 12px; background: var(--leaf-soft); }
+    .write-intro b { color: var(--leaf); }
+    .write-intro p { margin: 3px 0 0; color: #465c4b; font-size: 14px; }
+    .writing-block { padding: 16px; border: 1px solid var(--line); border-radius: 12px; background: #fffefa; margin-bottom: 12px; }
+    .writing-block.p1 { border-left: 4px solid var(--leaf); }
+    .writing-block.p2 { border-left: 4px solid var(--gold); }
+    .writing-block.p3 { border-left: 4px solid var(--tomato); }
+    .block-title { display: flex; align-items: center; gap: 9px; font: 800 17px var(--serif); }
+    .block-title span { display: grid; place-items: center; width: 25px; height: 25px; border-radius: 50%; background: var(--leaf); color: white; font: 700 12px var(--sans); }
+    .writing-block.p2 .block-title span { background: var(--gold); }
+    .writing-block.p3 .block-title span { background: var(--tomato); }
+    .block-hint { margin: 5px 0 9px; color: var(--muted); font-size: 12px; }
+    .field-label { display: block; margin: 9px 0 5px; font-size: 13px; font-weight: 800; }
+    .writing-block textarea, .writing-block select {
+      width: 100%; border: 1px solid var(--line); border-radius: 8px; padding: 10px 11px;
+      background: #f7f9f9; color: var(--ink); line-height: 1.7;
+    }
+    .writing-block textarea { min-height: 78px; resize: vertical; }
+    .writing-block textarea:focus, .writing-block select:focus { outline: 2px solid #315f4c45; border-color: var(--leaf); }
+    .chips { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
+    .chip {
+      border: 1px solid var(--line); border-radius: 999px; padding: 3px 9px; background: var(--paper);
+      color: var(--muted); font-size: 12px; cursor: pointer;
+    }
+    .chip:hover { border-color: var(--leaf); color: var(--leaf); }
+    .chip-more { border: 0; padding: 3px 2px; background: transparent; color: var(--leaf); font-size: 12px; font-weight: 800; cursor: pointer; }
+    .chip-more:hover { text-decoration: underline; }
+    .chips.extra { margin-top: 6px; padding-top: 7px; border-top: 1px dashed var(--line); }
+    .chips.extra[hidden] { display: none; }
+    .save-status { margin-left: auto; color: var(--muted); font-size: 12px; }
+    .result { margin-top: 15px; padding: 16px 18px; border: 1px dashed var(--leaf); border-radius: 13px; background: #f8fafa; }
+    .result-head { display: flex; justify-content: space-between; align-items: center; gap: 10px; margin-bottom: 7px; }
+    .result h3 { margin: 0; color: var(--leaf); font: 900 20px var(--serif); }
+    .count { color: var(--muted); font-size: 12px; }
+    #output { min-height: 64px; margin: 0; white-space: pre-wrap; line-height: 1.9; }
+    .privacy { margin: 9px 0 0; color: var(--muted); font-size: 12px; }
+    footer { display: flex; justify-content: space-between; flex-wrap: wrap; gap: 10px; margin-top: 26px; padding-top: 13px; border-top: 1px solid var(--line); color: var(--muted); font-size: 12px; }
+    footer strong { color: var(--leaf); }
+    @keyframes arrive { from { opacity: 0; transform: translateY(7px); } to { opacity: 1; transform: translateY(0); } }
+    @media (max-width: 740px) {
+      .hero { grid-template-columns: 1fr; }
+      .seal { display: none; }
+      .profile-grid { grid-template-columns: 1fr; }
+      .profile { min-height: 0; }
+      .map-head { display: block; }
+      .map-head p { margin-top: 4px; }
+    }
+    @media (max-width: 540px) {
+      .wrap { width: min(100% - 22px, 1030px); padding-top: 16px; }
+      .mast-note { display: none; }
+      .tabs { grid-template-columns: 1fr 1fr; }
+      .tab[data-write] { grid-column: 1 / -1; }
+      .steps { grid-template-columns: 1fr; }
+      .inner { padding: 17px; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { scroll-behavior: auto !important; animation-duration: .01ms !important; transition-duration: .01ms !important; }
+    }
+    @media print {
+      body { background: white; }
+      .masthead, .task, .tabs, .example-actions, .actions, footer, .privacy { display: none !important; }
+      .wrap { width: 100%; padding: 0; }
+      .sheet { box-shadow: none; }
+      .result { break-inside: avoid; }
+    }
+  </style>
+</head>
+<body>
+  <main class="wrap">
+    <div class="masthead">
+      <div class="brand"><span class="brand-mark" aria-hidden="true">光</span><span>寫作練習室</span></div>
+      <div class="mast-note">五、六年級・讀故事 × 找共同點 × 想行動</div>
+    </div>
+
+    <header class="hero">
+      <div>
+        <div class="eyebrow">SMALL ACTIONS · 三段思考</div>
+        <h1>小小力量，照亮世界</h1>
+        <p>讀懂人物做了什麼，再想想自己能做什麼。先整理想法，最後把三段文章寫出來。</p>
+      </div>
+      <div class="seal" aria-label="三段寫作卡">看見問題<br>開始行動<br>一起改變</div>
+    </header>
+
+    <section class="task" aria-label="寫作任務">
+      <div class="task-icon" aria-hidden="true">🌱</div>
+      <div>
+        <b>今天的任務</b>
+        <p>想想這些人物成功的共同因素（也可以選社會課學過的人物），選一位最讓你印象深刻的人物，再寫下自己可以為世界做的改變，最後作結論。</p>
+      </div>
+    </section>
+
+    <nav class="tabs" id="tabs" role="tablist" aria-label="閱讀人物範例或開始寫作">
+      <button class="tab" id="tab-0" role="tab" aria-selected="true" aria-controls="panel" data-index="0"><small>人物卡 01</small><strong>馬塔伊・種下希望</strong></button>
+      <button class="tab" id="tab-1" role="tab" aria-selected="false" aria-controls="panel" data-index="1" tabindex="-1"><small>人物卡 02</small><strong>菲利斯・邀大家植樹</strong></button>
+      <button class="tab social" id="tab-2" role="tab" aria-selected="false" aria-controls="panel" data-index="2" tabindex="-1"><small>人物卡 03</small><strong>陳永華・點亮讀書路</strong></button>
+      <button class="tab social" id="tab-3" role="tab" aria-selected="false" aria-controls="panel" data-index="3" tabindex="-1"><small>人物卡 04</small><strong>鄭成功・解決缺糧</strong></button>
+      <button class="tab" id="tab-4" role="tab" aria-selected="false" aria-controls="panel" data-index="4" tabindex="-1"><small>人物卡 05</small><strong>南郭國小・為移工請願</strong></button>
+      <button class="tab" id="tab-5" role="tab" aria-selected="false" aria-controls="panel" data-index="5" tabindex="-1"><small>人物卡 06</small><strong>萊恩・挖一口井</strong></button>
+      <button class="tab" id="tab-6" role="tab" aria-selected="false" aria-controls="panel" data-index="6" tabindex="-1"><small>人物卡 07</small><strong>瑪莎・午餐部落格</strong></button>
+      <button class="tab" id="tab-write" role="tab" aria-selected="false" aria-controls="panel" data-write="true" tabindex="-1"><small>換你整理</small><strong>我的三段文章</strong></button>
+    </nav>
+
+    <section id="panel" role="tabpanel" aria-live="polite" aria-labelledby="tab-0"></section>
+
+    <section class="essays" aria-labelledby="essay-title">
+      <div class="map-head">
+        <div><div class="eyebrow">MODEL ESSAYS · 國文範本</div><h2 id="essay-title">聽一聽、讀一讀三段範文</h2></div>
+        <p>每篇都照「共同點 → 人物＋我也可以 → 結論」寫。看完用自己的話寫，不要整篇照抄。</p>
+      </div>
+      <details class="essay" open>
+        <summary><span>範文 01</span>萊恩挖井：一個人的行動，感動更多人</summary>
+        <p class="essay-audio" >🔈 聽範文朗讀<audio controls preload="none" src="audio/small-power-01.mp3"></audio></p>
+        <p>世界上有許多年紀小的孩子，用自己的力量為世界點一盞燈。他們成功的共同因素，是<mark>先看見別人的需要</mark>，再<mark>勇敢的跨出第一步</mark>；遇到困難也不放棄，還會<mark>邀請更多人一起參與</mark>。</p>
+        <p>最讓我佩服的是加拿大的萊恩。他知道非洲的村落沒有乾淨的水，就決定為村民開挖全新的水井。村民有了乾淨的水可以喝，死亡的人數降低了，許多人也被他感動，紛紛捐款響應。<mark>我也可以</mark>從身邊做起，例如珍惜每一滴水，刷牙時關上水龍頭，並且提醒家人一起節約用水。</p>
+        <p>萊恩讓我明白，一個人的行動雖然小，卻能感動更多人一起幫忙。<mark>只要願意開始，小小的力量也能把世界照亮。</mark></p>
+      </details>
+      <details class="essay">
+        <summary><span>範文 02</span>南郭國小：替別人發聲，也是一種勇氣</summary>
+        <p class="essay-audio" >🔈 聽範文朗讀<audio controls preload="none" src="audio/small-power-02.mp3"></audio></p>
+        <p>照亮世界的孩子，都有一雙<mark>願意觀察的眼睛</mark>。他們注意到別人的不方便，不只是同情，而是<mark>想辦法行動</mark>，並且<mark>堅持到底</mark>。</p>
+        <p>彰化南郭國小的學生，讓我印象最深刻。他們發現東南亞的移工在火車站遇到語言不通的困難，於是向鐵路局請願，幫助移工克服語言的障礙，最後促成彰化車站成為全國第一座移工友善車站。<mark>我也可以</mark>多留意身邊需要幫助的人。例如有新同學轉來，還不熟悉校園，我<mark>一</mark>發現，<mark>就</mark>主動帶他認識環境。</p>
+        <p>替別人發聲，也是一種勇氣。<mark>只要多點觀察，多點付諸實行的勇氣，我們也能讓世界變得更溫暖。</mark></p>
+      </details>
+      <details class="essay">
+        <summary><span>範文 03</span>瑪莎：方法行不通，就換一個方法</summary>
+        <p class="essay-audio" >🔈 聽範文朗讀<audio controls preload="none" src="audio/small-power-03.mp3"></audio></p>
+        <p>小小的孩子也能改變世界，關鍵在於<mark>不怕困難、願意想辦法</mark>。當第一個方法行不通時，他們會<mark>換一個方法，繼續努力</mark>。</p>
+        <p>英國的瑪莎讓我很佩服。九歲的她覺得學校的午餐吃不飽，也不夠營養，向學校反映，卻沒有被重視。她沒有放棄，而是每天在部落格上傳午餐的照片，讓大家看見問題。後來，學校的午餐開始改變，她還成立網站募款，幫助貧困地區的孩子吃到健康的午餐。<mark>我也可以</mark>學習她，遇到問題時不只抱怨，而是用適當的方法，把問題清楚的告訴大人。</p>
+        <p>瑪莎告訴我們，改變世界不一定要等到長大。<mark>只要用心觀察、勇敢表達，再加上堅持，小小的力量也能帶來大大的改變。</mark></p>
+      </details>
+      <p class="essay-note">黃色標記是每段的任務句。範文為自編，人物事實依課文與習作整理。</p>
+    </section>
+
+    <section class="map" aria-labelledby="map-title">
+      <div class="map-head">
+        <div><div class="eyebrow">THREE-PARAGRAPH PLAN · 文章架構</div><h2 id="map-title">三段各有一個任務</h2></div>
+        <p>先列想法，再用自己的話寫成完整句子。</p>
+      </div>
+      <div class="steps">
+        <article class="step"><b>第一段・找共同點</b><p>他們先注意到問題、勇敢開始，也持續行動或邀請別人一起參加。</p></article>
+        <article class="step"><b>第二段・人物與自己</b><p>說明最受觸動的人物和原因，再寫自己能做的一件小事。</p></article>
+        <article class="step"><b>第三段・收束想法</b><p>整理這些故事帶給你的啟發，回扣「小小力量也能帶來改變」。</p></article>
+      </div>
+    </section>
+
+    <footer>
+      <span><strong>資料提醒：</strong>馬塔伊、菲利斯依課文照片整理；南郭國小學生、萊恩、瑪莎依習作整理；陳永華、鄭成功取自五上社會課的重點；未提供的故事不自行補寫。</span>
+      <span>草稿只存在這台裝置的瀏覽器，不會上傳。<a href="../index.html" style="color:inherit;text-decoration:none">← 回學習小站</a></span>
+    </footer>
+  </main>
+
+  <script>
+    "use strict";
+    const KEY = "ch-small-actions-three-paragraph-v1";
+    const FIELDS = [
+      { key: "common", label: "第一段・成功的共同因素", hint: "想想他們如何發現問題、開始行動、堅持或找夥伴。", placeholder: "例如：他們都先注意到問題，願意開始行動，也找其他人一起努力。", chips: ["先注意到問題", "不怕年紀小", "從小事開始", "持續不放棄", "邀請別人一起", "實際付諸行動"], more: ["先觀察需要幫助的地方", "把想法變成計畫", "遇到困難仍然堅持", "讓更多人了解問題", "用自己擅長的方式幫忙", "想得長遠，不只看眼前", "解決問題時也替別人著想", "願意學習新的知識", "相信自己做得到", "把一次的行動變成習慣"] },
+      { key: "personThought", label: "第二段・最受觸動的人物", hint: "選一位人物，寫出他／她做了什麼，以及你佩服的原因。", placeholder: "例如：她發起植樹行動，也邀請婦女一起參與。這讓我佩服她願意持續努力。", chips: ["馬塔伊發起綠腰帶運動", "鼓勵婦女參與植樹", "菲利斯九歲時開始關心氣候", "菲利斯和同伴推動植樹"], more: ["我佩服他／她願意持續努力", "這讓我想到……", "如果是我，我會……", "他／她讓我知道，改變可以從一個想法開始", "我最欣賞他／她的地方是……", "他／她的行動影響了很多人", "讀完以後，我開始注意身邊的……", "原來一個人的選擇，也能幫助別人"] },
+      { key: "myAction", label: "第二段・我可以做的事", hint: "挑一件你真的做得到的小行動，寫清楚怎麼開始。", placeholder: "例如：我可以少用一次性餐具，並邀請家人一起做好資源回收。", chips: ["自備水壺和餐具", "做好資源回收", "珍惜用水用電", "照顧校園植物", "邀家人一起行動"], more: ["少拿一次性塑膠袋", "參加社區清潔活動", "先從每天做一件小事", "和同學一起提醒彼此", "教同學一題不會的功課", "把看完的書分享給別人", "主動幫忙打掃教室", "隨手關燈、關水龍頭", "整理不用的玩具和衣服送給需要的人", "陪家裡的長輩聊天", "上學走路或搭公車，少讓家人開車", "把每天做到的事記在小本子裡"] },
+      { key: "conclusion", label: "第三段・我的結論", hint: "把人物故事和自己的想法收在一起。", placeholder: "例如：只要願意開始並持續努力，小小的行動也能帶來改變。", chips: ["小行動累積起來也有力量", "改變世界不必等到長大", "一個人開始，大家一起做", "從身邊做得到的事開始"], more: ["堅持比一次做很多更重要", "每個人都能成為改變的一部分", "願意關心，就是行動的開始", "一盞小燈也能照亮一個角落", "今天種下的種子，明天會長成大樹", "與其等待別人，不如自己先開始", "我想成為照亮別人的那道光", "很多人的小小力量，可以合成大大的力量"] }
+    ];
+    const PEOPLE = [
+      {
+        name: "馬塔伊",
+        subtitle: "從肯亞的一場植樹行動開始",
+        facts: [
+          ["她關心的問題", "環境破壞、土壤流失，也關心當地婦女的生活。"],
+          ["她採取的行動", "1977 年發起「綠腰帶」運動，鼓勵婦女參與植樹。"],
+          ["課文提到的成果", "2004 年獲得諾貝爾和平獎；課文以眼前與未來的選擇，提醒讀者重視長遠行動。"]
+        ],
+        takeaway: "可以從人物身上找「看見問題 → 發起行動 → 持續影響」這條線索。",
+        story: "她在肯亞發起「綠腰帶」運動，鼓勵婦女參與植樹。這讓我佩服她願意持續改善環境和生活。"
+      },
+      {
+        name: "菲利斯",
+        subtitle: "把課堂上的關心變成植樹行動",
+        facts: [
+          ["他注意到的問題", "九歲時因課堂報告接觸氣候變遷議題。"],
+          ["他採取的行動", "2007 年開始推動植樹，並與同伴推動 Plant-for-the-Planet。"],
+          ["他帶來的想法", "鼓勵兒童和青少年用實際行動面對氣候變遷；年紀小也可以開始做事。"]
+        ],
+        takeaway: "可以留意他如何把學到的知識，轉成自己和同伴能做的事。",
+        story: "他九歲時因課堂報告接觸氣候變遷，後來和同伴推動植樹。這讓我佩服他願意從小開始行動。"
+      },
+      {
+        name: "陳永華",
+        subtitle: "五上社會・鄭氏時期的文教推手",
+        facts: [
+          ["他看見的需要", "臺灣要有人讀書識字，也需要能管理地方事務的人才。"],
+          ["他採取的行動", "建議鄭經推動文教：興建孔廟、設立學校、制定考試制度。"],
+          ["留下的影響", "臺南孔廟是全臺第一座孔廟，稱「全臺首學」，保存至今；臺南永華宮紀念他。"]
+        ],
+        takeaway: "他不是自己蓋房子、教書，而是提出好建議，讓讀書的路一直延續下去。這也是「點亮別人」的力量。",
+        source: "整理自五上社會「大航海時代對臺灣的影響」（評量 P75 屯墾與文教政策）。注意：陳永華是鄭經的老師，不是鄭成功的老師。",
+        story: "他建議鄭經興建孔廟、設立學校、制定考試制度，讓更多人有機會讀書識字。這讓我佩服他用教育照亮別人的未來。",
+        chips: ["陳永華建議鄭經推動文教", "興建孔廟、設立學校", "臺南孔廟被稱為「全臺首學」", "用教育照亮別人的未來"]
+      },
+      {
+        name: "鄭成功",
+        subtitle: "五上社會・來臺後先解決糧食問題",
+        facts: [
+          ["他遇到的問題", "來到臺灣後，軍隊的糧食不夠吃。"],
+          ["他採取的行動", "實行屯墾：軍隊平常開墾、種田，有戰事才回戰場；並規定不能占用漢人和原住民族原有的土地。"],
+          ["帶來的改變", "開墾面積增加、農業產量提高；「左營」「前鎮」等地名都和屯墾有關。"]
+        ],
+        takeaway: "遇到困難先想辦法解決，同時顧及別人的土地與生活——解決問題也要替別人著想。",
+        source: "整理自五上社會「荷西鄭的經營」「大航海時代對臺灣的影響」（評量 P70、P75）。他是帶兵的人物，寫作時聚焦「解決問題的方法」，不必寫戰爭。",
+        story: "他來臺後先解決軍隊缺糧的問題，實行屯墾，也規定不能占用原住民族和漢人原有的土地。這讓我佩服他解決問題時也替別人著想。",
+        chips: ["鄭成功先解決軍隊缺糧", "實行屯墾，平時開墾種田", "不能占用別人原有的土地", "解決問題時也替別人著想"]
+      }
+    ];
+    PEOPLE[2].social = PEOPLE[3].social = true;
+    PEOPLE.push(
+      {
+        name: "南郭國小的學生",
+        subtitle: "彰化・幫移工跨過語言的牆",
+        facts: [
+          ["他們看見的問題", "東南亞的移工在火車站遇到語言不通的障礙。"],
+          ["他們採取的行動", "為移工向鐵路局請願，幫助他們克服語言不通的障礙。"],
+          ["帶來的改變", "促成彰化車站成為全國首座移工友善車站。"]
+        ],
+        takeaway: "看見別人的不方便，就替對方發聲——小學生也能讓大人聽見。",
+        source: "依南一版五上國語習作 P66「依課文內容完成表格」整理；民國年份與新增服務的確切名稱，請以課本為準。",
+        story: "他們為東南亞的移工請願，幫助移工克服語言不通的障礙，促成彰化車站成為全國首座移工友善車站。這讓我佩服他們願意替別人發聲。",
+        chips: ["他們為東南亞的移工請願", "幫助移工克服語言不通的障礙", "促成全國首座移工友善車站", "願意替別人發聲"]
+      },
+      {
+        name: "萊恩",
+        subtitle: "加拿大・為非洲村落挖一口井",
+        facts: [
+          ["他看見的問題", "非洲村落沒有乾淨的水可以喝。"],
+          ["他採取的行動", "為非洲村落開挖全新的水井。"],
+          ["帶來的改變", "村民有乾淨的水喝，降低死亡人數，也獲得許多人捐款響應。"]
+        ],
+        takeaway: "一個人的行動會吸引更多人加入：從一口井開始，引來許多人捐款響應。",
+        source: "依南一版五上國語習作 P66 表格整理；萊恩的年齡、募款方式與基金會名稱，請以課本為準。",
+        story: "他為非洲村落開挖全新的水井，讓村民有乾淨的水喝，也獲得許多人捐款響應。這讓我佩服他的行動能感動更多人一起幫忙。",
+        chips: ["萊恩為非洲村落開挖水井", "讓村民有乾淨的水喝", "降低死亡人數", "獲得許多人捐款響應"]
+      },
+      {
+        name: "瑪莎",
+        subtitle: "英國・用部落格改變學校午餐",
+        facts: [
+          ["她注意到的問題", "9 歲時覺得學校午餐吃不飽、也不夠營養，反映卻沒被重視。"],
+          ["她採取的行動", "每天在部落格拍照上傳午餐，引起大廚師和媒體關注；後來成立網站募款。"],
+          ["帶來的改變", "學校午餐開始改變、採購預算增加兩倍；募款幫助貧困地區的孩子吃到健康午餐。"]
+        ],
+        takeaway: "說了沒人聽，就換一個方法讓大家看見——拍照記錄也是一種行動。",
+        source: "依南一版五上國語習作 P64～65 短文整理（習作改寫，不是課文本文）。",
+        story: "她每天在部落格上傳學校午餐的照片，讓大家看見午餐的問題，後來還成立網站募款，幫助貧困地區的孩子。這讓我佩服她不放棄、換方法繼續努力。",
+        chips: ["瑪莎每天上傳午餐照片", "引起大廚師和媒體關注", "學校午餐開始改變", "成立網站募款幫助別的孩子"]
+      }
+    );
+    PEOPLE[0].chips = ["馬塔伊發起綠腰帶運動", "鼓勵婦女參與植樹", "她關心環境與婦女生活", "她在 2004 年獲得諾貝爾和平獎", "她重視長遠的未來，不只看眼前"];
+    PEOPLE[1].chips = ["菲利斯九歲時開始關心氣候", "菲利斯和同伴推動植樹", "他把課堂報告變成行動", "他鼓勵兒童和青少年一起行動", "他證明年紀小也可以開始做事"];
+    PEOPLE[2].chips.push("他是鄭經的老師", "學校教大家讀書識字", "考試制度選出管理地方的人才");
+    PEOPLE[3].chips.push("軍隊平常種田，有戰事才回戰場", "開墾面積增加，農業產量提高", "「左營」「前鎮」等地名和屯墾有關");
+    const OTHER = "其他人物（請依課文補充）";
+    const MODEL = {
+      person: "陳永華",
+      paragraphs: [
+        "馬塔伊、菲利斯和陳永華，都是<mark>先看見身邊的問題</mark>，再<mark>想辦法開始行動</mark>的人。他們不只靠自己，還<mark>邀請別人一起參與</mark>，讓改變慢慢擴大。",
+        "最讓我佩服的是陳永華。他建議鄭經興建孔廟、設立學校、制定考試制度，讓更多人有機會讀書識字。教育就像一盞燈，能照亮很多人的未來。<mark>我也可以</mark>從教同學一題數學開始，把自己會的東西分享出去。",
+        "這些故事讓我明白，<mark>小小的行動只要持續下去，就能累積成大大的力量</mark>。改變世界不一定要等到長大，從身邊做得到的事開始就好。"
+      ]
+    };
+    const panel = document.getElementById("panel");
+    const tabs = Array.from(document.querySelectorAll(".tab"));
+    let draft = readDraft();
+
+    function readDraft() {
+      try { return JSON.parse(localStorage.getItem(KEY) || "{}"); }
+      catch (_) { return {}; }
+    }
+    function storeDraft() {
+      try {
+        localStorage.setItem(KEY, JSON.stringify(draft));
+        const status = document.getElementById("save-status");
+        if (status) status.textContent = "草稿已保存在這台裝置";
+      } catch (_) {
+        const status = document.getElementById("save-status");
+        if (status) status.textContent = "瀏覽器未開放本機儲存，請下載文字備份";
+      }
+    }
+    function node(tag, cls, text) {
+      const item = document.createElement(tag);
+      if (cls) item.className = cls;
+      if (text !== undefined) item.textContent = text;
+      return item;
+    }
+    function setTab(index, writing) {
+      tabs.forEach(tab => {
+        const selected = writing ? tab.dataset.write === "true" : Number(tab.dataset.index) === index;
+        tab.setAttribute("aria-selected", selected ? "true" : "false");
+        tab.tabIndex = selected ? 0 : -1;
+      });
+      panel.setAttribute("aria-labelledby", writing ? "tab-write" : "tab-" + index);
+    }
+    function renderPerson(index) {
+      setTab(index, false);
+      const person = PEOPLE[index];
+      panel.replaceChildren();
+      const sheet = node("article", "sheet");
+      const inner = node("div", "inner");
+      const head = node("div", "head");
+      const title = node("div");
+      title.append(node("div", "kicker", "閱讀人物卡 · 0" + (index + 1)));
+      title.append(node("h2", "", person.name));
+      title.append(node("p", "sub", person.subtitle));
+      head.append(title, node("div", "head-mark", "0" + (index + 1)));
+      inner.append(head);
+
+      const grid = node("div", "profile-grid");
+      person.facts.forEach((fact, i) => {
+        const card = node("section", "profile");
+        const label = node("b");
+        label.append(node("span", "", String(i + 1)), document.createTextNode(fact[0]));
+        card.append(label, node("p", "", fact[1]));
+        grid.append(card);
+      });
+      inner.append(grid);
+
+      const quote = node("div", "quote");
+      quote.append(node("b", "", "把故事讀成線索"), node("p", "", person.takeaway));
+      inner.append(quote);
+
+      const source = node("div", "source-note");
+      source.append(node("strong", "", "資料範圍："), document.createTextNode(person.source || "只整理本次課文照片中可確認的人物與內容；其他人物故事需等補齊課文頁再加入。"));
+      inner.append(source);
+
+      const actions = node("div", "example-actions");
+      const use = node("button", "btn", "用這位人物開始寫");
+      use.type = "button";
+      use.addEventListener("click", () => loadPerson(index));
+      actions.append(use);
+      inner.append(actions);
+      sheet.append(inner);
+      panel.append(sheet);
+    }
+    function loadPerson(index) {
+      const hasDraft = FIELDS.some(field => (draft[field.key] || "").trim());
+      if (hasDraft && !window.confirm("代入人物範例會更新目前的人物選擇與人物想法，其他草稿保留。確定繼續嗎？")) return;
+      draft.person = PEOPLE[index].name;
+      draft.personThought = PEOPLE[index].story;
+      storeDraft();
+      renderWrite();
+      document.getElementById("field-personThought").focus();
+    }
+    function appendHint(key, text, replace) {
+      const textarea = document.getElementById("field-" + key);
+      if (!textarea) return;
+      if (replace) {
+        textarea.value = text;
+        textarea.focus({ preventScroll: true });
+        textarea.setSelectionRange(textarea.value.length, textarea.value.length);
+      } else {
+        const value = textarea.value;
+        const start = textarea.selectionStart ?? value.length;
+        const end = textarea.selectionEnd ?? start;
+        const before = value.slice(0, start);
+        const after = value.slice(end);
+        const left = before && !/[，、。；：！？\s]$/.test(before) ? "，" : "";
+        const right = after && !/^[，、。；：！？\s]/.test(after) ? "，" : "";
+        textarea.setRangeText(left + text + right, start, end, "end");
+        textarea.focus({ preventScroll: true });
+      }
+      draft[key] = textarea.value;
+      storeDraft();
+    }
+    function sentence(text) {
+      const value = (text || "").trim();
+      if (!value) return "";
+      return /[。！？!?]$/.test(value) ? value : value + "。";
+    }
+    function compose() {
+      const first = sentence(draft.common);
+      const person = (draft.person || "我選擇的人物").trim();
+      const detail = sentence(draft.personThought);
+      const rawAction = (draft.myAction || "").trim();
+      const action = rawAction
+        ? sentence(/^(我也可以|我可以)/.test(rawAction) ? rawAction : "我也可以" + rawAction)
+        : "";
+      const secondParts = [];
+      if (person) secondParts.push("最讓我佩服的是" + person + "。");
+      if (detail) secondParts.push(detail);
+      if (action) secondParts.push(action);
+      const second = secondParts.join("");
+      const third = sentence(draft.conclusion);
+      return [first, second, third].filter(Boolean).join("\n\n");
+    }
+    function renderPersonTab() {
+      // Initial person card is displayed by renderPerson(0).
+    }
+    function renderWrite() {
+      setTab(-1, true);
+      panel.replaceChildren();
+      const sheet = node("article", "sheet");
+      const inner = node("div", "inner");
+      const head = node("div", "head");
+      const title = node("div");
+      title.append(node("div", "kicker", "換你試試 · 三段文章草稿"));
+      title.append(node("h2", "", "把閱讀想法寫成三段"));
+      title.append(node("p", "sub", "每段完成一個任務：共同點、人物與自己的行動、結論。"));
+      head.append(title, node("div", "head-mark", "✎"));
+      inner.append(head);
+
+      const intro = node("div", "write-intro");
+      intro.append(node("b", "", "先想再寫"));
+      intro.append(node("p", "", "提示按鈕會把詞句加入欄位，點完仍可修改。人物事實只根據已提供的課文頁，自己的行動請寫成你做得到的事。"));
+      inner.append(intro);
+
+      const model = node("details", "model");
+      model.append(node("summary", "", "📖 看一篇範文（以社會課人物陳永華為例）"));
+      const modelBody = node("div", "model-body");
+      MODEL.paragraphs.forEach(html => { const p = node("p"); p.innerHTML = html; modelBody.append(p); });
+      modelBody.append(node("p", "model-note", "黃色標記是每段的任務句：第一段寫共同點、第二段「人物＋我也可以」、第三段收束想法。請用自己的話寫，不要整篇照抄。"));
+      const useModel = node("button", "btn secondary", "把範文的人物想法放進第二段");
+      useModel.type = "button";
+      useModel.addEventListener("click", () => loadPerson(PEOPLE.findIndex(p => p.name === MODEL.person)));
+      modelBody.append(useModel);
+      model.append(modelBody);
+      inner.append(model);
+
+      const first = makeBlock("p1", 1, "第一段・成功的共同因素", "整理兩三個共同點，用完整句子說明。", "common");
+      inner.append(first);
+
+      const second = node("section", "writing-block p2");
+      const secondTitle = node("div", "block-title");
+      secondTitle.append(node("span", "", "2"), document.createTextNode("第二段・選一位人物，也想自己的行動"));
+      second.append(secondTitle, node("p", "block-hint", "先說明哪一個想法打動你，再寫自己可以做的一件小事。"));
+
+      const personLabel = node("label", "field-label", "我最受觸動的人物");
+      personLabel.htmlFor = "field-person";
+      const select = document.createElement("select");
+      select.id = "field-person";
+      PEOPLE.map(p => p.name).concat(OTHER).forEach(value => {
+        const option = document.createElement("option");
+        option.value = value; option.textContent = value + ((PEOPLE.find(p => p.name === value) || {}).social ? "（社會課）" : ""); select.append(option);
+      });
+      select.value = draft.person || "馬塔伊";
+      if (!select.value) select.value = "馬塔伊";
+      select.addEventListener("change", () => {
+        draft.person = select.value;
+        // 欄位還是某位人物的範例句時，換成新人物的範例句；學生自己寫的內容不動。
+        const thought = (draft.personThought || "").trim();
+        if (!thought || PEOPLE.some(p => p.story === thought)) {
+          const next = PEOPLE.find(p => p.name === select.value);
+          draft.personThought = next ? next.story : "";
+        }
+        storeDraft(); renderWrite(); document.getElementById("field-person").focus(); });
+      second.append(personLabel, select);
+      second.append(node("label", "field-label", "他／她做了什麼？為什麼讓你印象深刻？"));
+      const chosen = PEOPLE.find(p => p.name === select.value);
+      const baseField = FIELDS.find(field => field.key === "personThought");
+      const personField = makeTextarea(chosen ? Object.assign({}, baseField, { chips: chosen.chips, placeholder: "例如：" + chosen.story }) : baseField);
+      second.append(personField.wrap);
+      second.append(node("label", "field-label", "我可以做的事"));
+      const actionField = makeTextarea(FIELDS.find(field => field.key === "myAction"));
+      second.append(actionField.wrap);
+      inner.append(second);
+
+      inner.append(makeBlock("p3", 3, "第三段・我的結論", "把人物故事和自己的想法收在一起。", "conclusion"));
+
+      const actions = node("div", "actions");
+      const composeButton = node("button", "btn", "組成三段短文");
+      composeButton.type = "button";
+      composeButton.addEventListener("click", () => {
+        const output = document.getElementById("output");
+        const result = compose();
+        output.textContent = result || "先完成一段或幾個想法，再按「組成三段短文」。";
+        document.getElementById("count").textContent = result ? result.replace(/\s/g, "").length + " 字（不含空白）" : "";
+      });
+      const copy = node("button", "btn secondary", "複製短文");
+      copy.type = "button";
+      copy.addEventListener("click", async () => {
+        const text = compose();
+        if (!text) { document.getElementById("output").textContent = "先寫一點內容，再複製短文。"; return; }
+        try {
+          await navigator.clipboard.writeText(text);
+          copy.textContent = "已複製";
+          window.setTimeout(() => { copy.textContent = "複製短文"; }, 1500);
+        } catch (_) {
+          document.getElementById("output").textContent = text + "\n\n（剪貼簿未開放，請手動選取複製。）";
+        }
+      });
+      const download = node("button", "btn secondary", "下載文字檔");
+      download.type = "button";
+      download.addEventListener("click", () => {
+        const text = compose();
+        if (!text) { document.getElementById("output").textContent = "先寫一點內容，再下載短文。"; return; }
+        const blob = new Blob([text], { type: "text/plain;charset=utf-8" });
+        const link = document.createElement("a");
+        link.href = URL.createObjectURL(blob);
+        link.download = "小小力量三段作文.txt";
+        link.click();
+        URL.revokeObjectURL(link.href);
+      });
+      const clear = node("button", "btn warn", "清空草稿");
+      clear.type = "button";
+      clear.addEventListener("click", () => {
+        if (!window.confirm("確定清空這份三段草稿嗎？")) return;
+        draft = {};
+        storeDraft();
+        renderWrite();
+      });
+      const status = node("span", "save-status", "草稿會自動保存在這台裝置");
+      status.id = "save-status";
+      actions.append(composeButton, copy, download, clear, status);
+      inner.append(actions);
+
+      const result = node("section", "result");
+      const resultHead = node("div", "result-head");
+      resultHead.append(node("h3", "", "我的三段短文"), node("span", "count", ""));
+      resultHead.lastChild.id = "count";
+      result.append(resultHead, node("p", "", "按下「組成三段短文」，這裡就會出現你的草稿。"));
+      result.lastChild.id = "output";
+      result.append(node("p", "privacy", "文字只存在目前瀏覽器的本機儲存空間。若使用公用電腦，完成後請清空草稿。"));
+      inner.append(result);
+      sheet.append(inner);
+      panel.append(sheet);
+    }
+    function makeTextarea(field) {
+      const wrap = node("div", "field-wrap");
+      const textarea = document.createElement("textarea");
+      textarea.id = "field-" + field.key;
+      textarea.placeholder = field.placeholder;
+      textarea.value = draft[field.key] || "";
+      textarea.setAttribute("aria-label", field.label);
+      textarea.addEventListener("input", () => { draft[field.key] = textarea.value; storeDraft(); });
+      wrap.append(textarea);
+      const chips = node("div", "chips");
+      field.chips.forEach(text => {
+        const chip = node("button", "chip", "+ " + text);
+        chip.type = "button";
+        chip.addEventListener("click", () => appendHint(field.key, text, false));
+        chips.append(chip);
+      });
+      wrap.append(chips);
+      if (field.more && field.more.length) {
+        const moreId = "more-" + field.key;
+        const more = node("div", "chips extra");
+        more.id = moreId;
+        more.hidden = true;
+        field.more.forEach(text => {
+          const chip = node("button", "chip", "+ " + text);
+          chip.type = "button";
+          chip.addEventListener("click", () => appendHint(field.key, text, false));
+          more.append(chip);
+        });
+        const toggle = node("button", "chip-more", "更多靈感＋");
+        toggle.type = "button";
+        toggle.setAttribute("aria-expanded", "false");
+        toggle.setAttribute("aria-controls", moreId);
+        toggle.addEventListener("click", () => {
+          const expanded = toggle.getAttribute("aria-expanded") === "true";
+          toggle.setAttribute("aria-expanded", String(!expanded));
+          more.hidden = expanded;
+          toggle.textContent = expanded ? "更多靈感＋" : "收起靈感−";
+        });
+        wrap.append(toggle, more);
+      }
+      return { wrap, textarea };
+    }
+    function makeBlock(cls, number, title, hint, key) {
+      const block = node("section", "writing-block " + cls);
+      const heading = node("div", "block-title");
+      heading.append(node("span", "", String(number)), document.createTextNode(title));
+      block.append(heading, node("p", "block-hint", hint));
+      const field = FIELDS.find(item => item.key === key);
+      const made = makeTextarea(field);
+      block.append(made.wrap);
+      return block;
+    }
+    tabs.forEach(tab => {
+      tab.addEventListener("click", () => tab.dataset.write === "true" ? renderWrite() : renderPerson(Number(tab.dataset.index)));
+      tab.addEventListener("keydown", event => {
+        const current = tabs.indexOf(tab);
+        let next = current;
+        if (event.key === "ArrowRight") next = (current + 1) % tabs.length;
+        else if (event.key === "ArrowLeft") next = (current - 1 + tabs.length) % tabs.length;
+        else if (event.key === "Home") next = 0;
+        else if (event.key === "End") next = tabs.length - 1;
+        else return;
+        event.preventDefault();
+        tabs[next].focus();
+        tabs[next].click();
+      });
+    });
+    renderPerson(0);
+  </script>
+</body>
+</html>

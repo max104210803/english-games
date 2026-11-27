@@ -1,0 +1,231 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>唐詩創作坊</title>
+<style>
+:root{--bg:#f4efe4;--card:#fffdf7;--ink:#26221c;--muted:#6f675a;--line:#e1d6c1;--accent:#8a3b2e;--accent-soft:#f4e1d9;--jade:#2f6f5e;--jade-soft:#dcefe7;--gold:#a56a12;--gold-soft:#f8ecd3;--bad:#b23a2e;--bad-soft:#f9e1dd}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#181a1c;--card:#222629;--ink:#ece7dc;--muted:#a9a294;--line:#3b4045;--accent:#e49a86;--accent-soft:#45291f;--jade:#6fc5ab;--jade-soft:#1f3a33;--gold:#e0b060;--gold-soft:#3b3020;--bad:#ef9488;--bad-soft:#442825}}
+:root[data-theme="dark"]{--bg:#181a1c;--card:#222629;--ink:#ece7dc;--muted:#a9a294;--line:#3b4045;--accent:#e49a86;--accent-soft:#45291f;--jade:#6fc5ab;--jade-soft:#1f3a33;--gold:#e0b060;--gold-soft:#3b3020;--bad:#ef9488;--bad-soft:#442825}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+body{margin:0;background:var(--bg);color:var(--ink);font:17px/1.75 "Noto Sans TC","PingFang TC","Microsoft JhengHei",sans-serif}
+main{max-width:720px;margin:0 auto;padding:18px 16px 48px}
+h1{font:800 30px/1.3 "Noto Serif TC","Songti TC",serif;margin:8px 0 4px}
+h2{font:800 21px/1.4 "Noto Serif TC","Songti TC",serif;margin:0 0 6px}
+.sub{color:var(--muted);margin:0 0 16px}
+.tabs{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:8px;margin-bottom:16px}
+.tab{border:1.5px solid var(--line);background:var(--card);color:inherit;border-radius:12px;padding:9px 12px;text-align:left;font:inherit;cursor:pointer}
+.tab small{display:block;color:var(--muted);font-size:13px}
+.tab b{font-family:"Noto Serif TC","Songti TC",serif}
+.tab[aria-selected="true"]{background:var(--accent);border-color:var(--accent);color:var(--card)}
+.tab[aria-selected="true"] small{color:inherit;opacity:.8}
+.card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:18px;margin-bottom:14px}
+.step{color:var(--gold);font-weight:800;font-size:14px;letter-spacing:.06em;margin:0 0 2px}
+.poem{text-align:center;font:700 25px/1.9 "Noto Serif TC","Songti TC",serif;letter-spacing:.12em;margin:8px 0}
+.poem small{display:block;font:500 15px/1.6 inherit;letter-spacing:0;color:var(--muted)}
+.plain{background:var(--gold-soft);border-radius:10px;padding:10px 14px;margin-top:8px}
+.btn{border:0;border-radius:999px;padding:9px 16px;background:var(--jade);color:var(--card);font:inherit;font-weight:800;cursor:pointer}
+.btn.ghost{background:transparent;color:var(--jade);border:1.5px solid var(--jade)}
+.row{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-top:10px}
+.phrase{border:1.5px solid var(--line);border-radius:12px;padding:10px 12px;margin-top:9px}
+.phrase b{font:700 19px "Noto Serif TC","Songti TC",serif;letter-spacing:.08em}
+.cats{display:flex;gap:6px;flex-wrap:wrap;margin-top:6px}
+.cat{border:1.5px solid var(--line);background:transparent;color:inherit;border-radius:999px;padding:3px 14px;font:inherit;cursor:pointer}
+.cat.ok{background:var(--jade-soft);border-color:var(--jade);font-weight:800}
+.cat.no{background:var(--bad-soft);border-color:var(--bad)}
+.fb{font-size:15px;color:var(--muted);margin-top:4px}
+.chips{display:flex;flex-wrap:wrap;gap:6px;margin:6px 0}
+.chip{border:1.5px solid var(--line);background:var(--bg);color:inherit;border-radius:999px;padding:3px 12px;font:inherit;font-size:16px;cursor:pointer}
+.chip[aria-pressed="true"]{background:var(--accent-soft);border-color:var(--accent);font-weight:800}
+.slot-label{font-size:14px;color:var(--muted);margin-top:8px}
+.made{font:700 24px/1.7 "Noto Serif TC","Songti TC",serif;letter-spacing:.12em;text-align:center;background:var(--accent-soft);border-radius:12px;padding:10px;margin-top:10px}
+textarea,input[type=text]{width:100%;border:1.5px solid var(--line);border-radius:10px;background:var(--bg);color:var(--ink);font:inherit;padding:9px 11px}
+textarea{min-height:120px;resize:vertical}
+input.line{font:700 21px "Noto Serif TC","Songti TC",serif;letter-spacing:.12em;text-align:center}
+.count{font-size:14px;color:var(--muted)}
+.count.good{color:var(--jade);font-weight:800}
+.count.warn{color:var(--bad)}
+.tips{margin:6px 0 10px;padding-left:20px;color:var(--muted);font-size:15px}
+details.model{background:var(--gold-soft);border-radius:10px;padding:8px 12px;margin-top:10px}
+details.model summary{cursor:pointer;font-weight:800;color:var(--gold)}
+.out{white-space:pre-wrap;font:700 22px/1.9 "Noto Serif TC","Songti TC",serif;text-align:center;letter-spacing:.1em;border:1.5px dashed var(--accent);border-radius:12px;padding:12px;margin-top:10px}
+footer{color:var(--muted);font-size:14px;margin-top:22px}
+a.back{color:var(--muted);text-decoration:none;font-size:15px}
+button:focus-visible,input:focus-visible,textarea:focus-visible{outline:3px solid var(--gold);outline-offset:2px}
+@media (max-width:540px){.tabs{grid-template-columns:1fr 1fr}.poem{font-size:22px;letter-spacing:.06em}}
+</style>
+</head>
+<body>
+<main id="app">
+  <a class="back" href="../index.html">← 回學習小站</a>
+  <h1>唐詩創作坊</h1>
+  <p class="sub">選一首唐詩，四步驟玩創作：讀懂詩意 → 找聲色景情 → 換字仿寫 → 改寫成短文。最後寫一首自己的小詩。</p>
+  <nav class="tabs" id="tabs" role="tablist" aria-label="選一首唐詩"></nav>
+  <section id="poem-area"></section>
+  <section class="card" aria-labelledby="mine-title">
+    <p class="step">STEP 5 · 我的小詩</p>
+    <h2 id="mine-title">寫一首自己的五言小詩</h2>
+    <p class="fb">四句、每句五個字。可以寫校園、下雨天、家鄉、家人……用上「聲、色、景、情」至少各一個。</p>
+    <label class="slot-label" for="my-title">詩題</label>
+    <input type="text" id="my-title" placeholder="例如：雨後操場">
+    <div id="my-lines"></div>
+    <div class="row"><button class="btn" id="my-show" type="button">完成小詩</button><button class="btn ghost" id="my-copy" type="button">複製</button><span class="count" id="my-status"></span></div>
+    <div class="out" id="my-out" hidden></div>
+    <details class="model"><summary>看一首示範小詩（自編）</summary>
+      <p class="poem" style="font-size:21px">〈雨後操場〉<br>雨停操場亮，<br>水窪映天藍。<br>球聲響四處，<br>同學笑聲甜。</p>
+      <p class="fb">聲：球聲、笑聲　色：天藍　景：操場、水窪　情：甜（開心）</p>
+    </details>
+  </section>
+  <footer>唐詩為古典公版作品；白話翻譯、仿寫範例與示範小詩皆為自編。草稿只存在這台裝置的瀏覽器。</footer>
+</main>
+<script>
+"use strict";
+var KEY = "tang-poem-workshop-v1";
+var CAT = {"聲":"聽到的聲音","色":"看到的顏色或光","景":"景物、地方","情":"心情、感受"};
+var POEMS = [
+ {id:"niao", title:"鳥鳴澗", author:"王維（詩佛）", lines:["人閒桂花落","夜靜春山空","月出驚山鳥","時鳴春澗中"],
+  plain:"人的心很悠閒，連桂花輕輕飄落都察覺得到；夜晚寧靜，春天的山顯得空空蕩蕩。月亮升起，驚動了山裡的鳥兒，牠們不時在春天的山澗中鳴叫。",
+  key:"用一點點聲音和動靜，反襯山林的安靜（以動襯靜）。",
+  phrases:[["人閒",["情"],"「閒」是心情悠閒，心靜下來才感受得到細微的動靜。"],["桂花落",["景","色"],"桂花是景物；也可以想像淡黃色的小花。"],["春山空",["景"],"空曠的春山是景物。"],["月出",["色","景"],"月光照亮山谷，是光和顏色，也是景物。"],["時鳴春澗中",["聲"],"鳥兒不時鳴叫，是聽到的聲音。"]],
+  remix:{label:"仿「人閒桂花落」",slots:[["人閒","心靜","風輕","雨停","天晴"],["桂花落","落葉飛","蟬聲遠","小溪流","燕子歸"]],models:["風輕落葉飛","雨停燕子歸"]},
+  write:["什麼時間？在哪裡？","詩人看到什麼、聽到什麼？","為什麼這麼小的聲音也聽得到？","詩人的心情怎麼樣？"],
+  model:"春天的夜晚，山裡安安靜靜的。我的心也很平靜，連桂花輕輕掉下來都感覺得到。月亮慢慢爬上山頭，明亮的月光嚇醒了山鳥，牠們在山谷的小溪邊叫了幾聲，叫完又恢復安靜，整座山好像更靜了。"},
+ {id:"bai", title:"早發白帝城", author:"李白（詩仙）", lines:["朝辭白帝彩雲間","千里江陵一日還","兩岸猿聲啼不住","輕舟已過萬重山"],
+  plain:"早晨告別高高聳立在彩雲之間的白帝城，千里遠的江陵，一天就回到了。兩岸猿猴的叫聲還沒停，輕快的小船已經駛過重重的高山。",
+  key:"全詩沒有一個「快」字，卻寫出船行很快，也寫出李白獲赦後輕快的心情。",
+  phrases:[["彩雲間",["色","景"],"彩色的雲是顏色；白帝城高入雲間是景物。"],["千里江陵一日還",["情","景"],"一天就回到千里外，寫出速度，也寫出歸心似箭的高興。"],["兩岸猿聲啼不住",["聲"],"猿猴的叫聲不斷，是聽到的聲音。"],["輕舟已過萬重山",["景","情"],"小船越過重重高山是景物；「輕」也透出輕鬆愉快的心情。"]],
+  remix:{label:"仿「輕舟已過萬重山」",slots:[["輕舟","單車","火車","風箏","飛鳥"],["已過"],["萬重山","千條街","十座橋","滿天雲","一片海"]],models:["單車已過千條街","風箏已過滿天雲"]},
+  write:["詩人早上從哪裡出發？","一路上聽到什麼？看到什麼？","船走得快還是慢？從哪裡看出來？","詩人的心情怎麼樣？為什麼？"],
+  model:"清晨，我告別了高高的白帝城，城牆好像藏在彩雲裡。小船順著江水往下衝，兩岸的猿猴叫個不停，我還來不及數清楚有幾聲，船已經穿過一座又一座的大山。千里外的江陵，一天就到了，我的心情也跟小船一樣輕快。"},
+ {id:"lu", title:"鹿柴", author:"王維（詩佛）", lines:["空山不見人","但聞人語響","返景入深林","復照青苔上"],
+  plain:"空曠的山裡看不見一個人，只聽到有人說話的聲音。夕陽的光照進深深的樹林，又照在青苔上。",
+  key:"看不見人、只聽見人聲，讓山更顯得空靜；一道夕陽光，寫出深林的幽暗。",
+  phrases:[["空山不見人",["景"],"空曠的山、看不到人，是景物。"],["但聞人語響",["聲"],"只聽到說話聲，是聲音。"],["返景入深林",["色","景"],"返景是夕陽的光，是光和顏色；深林是景物。"],["復照青苔上",["色"],"夕陽照在綠色的青苔上，是顏色。"]],
+  remix:{label:"仿「空山不見人，但聞人語響」",slots:[["空山","海邊","教室","操場","竹林"],["不見人，但聞"],["人語","浪花","鐘聲","球聲","風聲"],["響"]],models:["海邊不見人，但聞浪花響","教室不見人，但聞鐘聲響"]},
+  write:["山裡看得到人嗎？聽得到什麼？","夕陽的光照到哪裡？","光照進來的地方是什麼顏色？","這座山給你什麼感覺？"],
+  model:"山裡空蕩蕩的，一個人也看不到，只有遠遠傳來幾句說話聲，一下子又不見了。傍晚的夕陽從樹葉縫隙中鑽進來，在暗暗的樹林裡畫出一條金色的光，最後落在綠綠的青苔上。整座山安靜得好像在睡覺。"},
+ {id:"song", title:"送元二使安西", author:"王維（詩佛）", lines:["渭城朝雨浥輕塵","客舍青青柳色新","勸君更盡一杯酒","西出陽關無故人"],
+  plain:"渭城早晨的一場雨，打濕了路上輕輕的灰塵；旅店旁的柳樹青翠，顏色顯得格外清新。請你再喝完這一杯酒吧，往西走出陽關，就再也沒有老朋友了。",
+  key:"前兩句寫清新的送別場景，後兩句一句勸酒，寫出捨不得朋友的深厚情誼。",
+  phrases:[["渭城朝雨浥輕塵",["景"],"早上的雨、路上的灰塵，是景物。"],["客舍青青柳色新",["色","景"],"青青的柳樹是顏色；旅店是地方。"],["勸君更盡一杯酒",["情"],"一再勸朋友喝酒，是捨不得的心情。"],["西出陽關無故人",["情"],"擔心朋友到遠方沒有老朋友，是關心與不捨。"]],
+  remix:{label:"仿「渭城朝雨浥輕塵」",slots:[["校園","山村","海港","老街"],["午後","夜雨","清晨","黃昏"],["灑操場","敲窗臺","映船帆","照屋簷"]],models:["校園午後灑操場","海港清晨映船帆"]},
+  write:["送別的時間、地點、天氣？","看到什麼顏色的景物？","詩人對朋友說了什麼？","你和好朋友分開時，會說什麼？"],
+  model:"清晨下過一場小雨，路上的灰塵都被洗乾淨了，旅店旁的柳樹綠得發亮。好朋友就要出發去很遠的地方，我端起酒杯說：「再喝一杯吧！走出陽關以後，就沒有老朋友陪你了。」我捨不得他，卻也只能祝福他一路平安。"}
+];
+var state = readState();
+var current = state.poem || 0;
+function readState(){try{return JSON.parse(localStorage.getItem(KEY)||"{}")}catch(e){return {}}}
+function save(){try{localStorage.setItem(KEY,JSON.stringify(state))}catch(e){}}
+function el(tag,cls,text){var n=document.createElement(tag);if(cls)n.className=cls;if(text!==undefined)n.textContent=text;return n}
+function hanzi(s){return (s.match(/[㐀-鿿]/g)||[]).length}
+
+var tabs=document.getElementById("tabs");
+POEMS.forEach(function(p,i){
+  var b=el("button","tab");b.type="button";b.setAttribute("role","tab");b.id="poem-tab-"+i;
+  b.appendChild(el("small","",p.author.replace(/（.*）/,"")));b.appendChild(el("b","",p.title));
+  b.onclick=function(){current=i;state.poem=i;save();render()};
+  tabs.appendChild(b);
+});
+
+function render(){
+  var p=POEMS[current], area=document.getElementById("poem-area");
+  [].forEach.call(tabs.children,function(t,i){t.setAttribute("aria-selected",i===current?"true":"false")});
+  area.textContent="";
+
+  var c1=el("section","card");
+  c1.appendChild(el("p","step","STEP 1 · 讀懂詩意"));
+  c1.appendChild(el("h2","",p.title));
+  var poem=el("div","poem"); poem.appendChild(el("small","",p.author));
+  p.lines.forEach(function(l,i){poem.appendChild(document.createTextNode(l+(i%2?"。":"，")));if(i%2)poem.appendChild(el("br"))});
+  c1.appendChild(poem);
+  var t=el("button","btn ghost","看白話翻譯");t.type="button";
+  var plain=el("div","plain");plain.hidden=true;plain.appendChild(el("p","",p.plain));plain.appendChild(el("p","fb","寫作亮點："+p.key));
+  t.onclick=function(){plain.hidden=!plain.hidden;t.textContent=plain.hidden?"看白話翻譯":"收起白話翻譯"};
+  var r=el("div","row");r.appendChild(t);c1.appendChild(r);c1.appendChild(plain);
+  area.appendChild(c1);
+
+  var c2=el("section","card");
+  c2.appendChild(el("p","step","STEP 2 · 找聲色景情"));
+  c2.appendChild(el("h2","","這句詩寫的是什麼？"));
+  c2.appendChild(el("p","fb","每一句選一個：聲＝"+CAT["聲"]+"，色＝"+CAT["色"]+"，景＝"+CAT["景"]+"，情＝"+CAT["情"]+"。有些句子可以有兩個答案。"));
+  p.phrases.forEach(function(ph){
+    var box=el("div","phrase");box.appendChild(el("b","",ph[0]));
+    var cats=el("div","cats"), fb=el("p","fb");
+    Object.keys(CAT).forEach(function(k){
+      var b=el("button","cat",k);b.type="button";
+      b.onclick=function(){
+        var ok=ph[1].indexOf(k)>=0;
+        [].forEach.call(cats.children,function(x){x.classList.remove("ok","no")});
+        b.classList.add(ok?"ok":"no");
+        fb.textContent=(ok?"答對了！":"再想想。")+(ok?ph[2]+(ph[1].length>1?"（也可以選："+ph[1].filter(function(x){return x!==k}).join("、")+"）":""):"");
+      };
+      cats.appendChild(b);
+    });
+    box.appendChild(cats);box.appendChild(fb);c2.appendChild(box);
+  });
+  area.appendChild(c2);
+
+  var c3=el("section","card"), rm=p.remix, picks=(state.remix&&state.remix[p.id])||rm.slots.map(function(s){return s[0]});
+  c3.appendChild(el("p","step","STEP 3 · 換字仿寫"));
+  c3.appendChild(el("h2","",rm.label));
+  c3.appendChild(el("p","fb","保留詩的骨架，換掉景物和動作。每一格點一個詞，或在下面自己寫。"));
+  var made=el("div","made");
+  function update(){made.textContent=picks.join("");state.remix=state.remix||{};state.remix[p.id]=picks;save()}
+  rm.slots.forEach(function(opts,si){
+    if(opts.length===1)return;
+    c3.appendChild(el("p","slot-label","第 "+(si+1)+" 格"));
+    var chips=el("div","chips");
+    opts.forEach(function(o){
+      var b=el("button","chip",o);b.type="button";b.setAttribute("aria-pressed",picks[si]===o?"true":"false");
+      b.onclick=function(){picks[si]=o;[].forEach.call(chips.children,function(x){x.setAttribute("aria-pressed",x===b?"true":"false")});update()};
+      chips.appendChild(b);
+    });
+    c3.appendChild(chips);
+  });
+  update();c3.appendChild(made);
+  c3.appendChild(el("p","slot-label","自己寫一句（字數要和原句一樣）"));
+  var own=el("input");own.type="text";own.className="line";own.value=(state.own&&state.own[p.id])||"";own.setAttribute("aria-label","自己寫的仿寫句");
+  var target=hanzi(rm.models[0]), cnt=el("span","count");
+  function check(){var n=hanzi(own.value);cnt.textContent=n?("已寫 "+n+" 字／要 "+target+" 字"+(n===target?" ✓":"")):"";cnt.className="count"+(n===target?" good":(n>target?" warn":""));state.own=state.own||{};state.own[p.id]=own.value;save()}
+  own.oninput=check;c3.appendChild(own);var cr=el("div","row");cr.appendChild(cnt);c3.appendChild(cr);check();
+  var md=el("details","model");md.appendChild(el("summary","","看仿寫示範"));rm.models.forEach(function(m){md.appendChild(el("p","poem",m))});c3.appendChild(md);
+  area.appendChild(c3);
+
+  var c4=el("section","card");
+  c4.appendChild(el("p","step","STEP 4 · 把詩變成短文"));
+  c4.appendChild(el("h2","","用白話寫出詩裡的畫面"));
+  var ul=el("ul","tips");p.write.forEach(function(w){ul.appendChild(el("li","",w))});c4.appendChild(ul);
+  var ta=el("textarea");ta.placeholder="想像自己就站在詩裡，用 80～150 字寫下看到、聽到和感受到的。";ta.value=(state.prose&&state.prose[p.id])||"";ta.setAttribute("aria-label","改寫短文");
+  var pc=el("span","count");
+  function pcount(){var n=hanzi(ta.value);pc.textContent=n?n+" 字"+(n>=80?" ✓":"（建議 80 字以上）"):"";pc.className="count"+(n>=80?" good":"");state.prose=state.prose||{};state.prose[p.id]=ta.value;save()}
+  ta.oninput=pcount;c4.appendChild(ta);var pr=el("div","row");pr.appendChild(pc);c4.appendChild(pr);pcount();
+  var m4=el("details","model");m4.appendChild(el("summary","","看示範短文（自編）"));m4.appendChild(el("p","",p.model));c4.appendChild(m4);
+  area.appendChild(c4);
+}
+
+var lines=document.getElementById("my-lines"), my=state.mine||{title:"",lines:["","","",""]};
+document.getElementById("my-title").value=my.title;
+document.getElementById("my-title").oninput=function(e){my.title=e.target.value;state.mine=my;save()};
+my.lines.forEach(function(v,i){
+  lines.appendChild(el("p","slot-label","第 "+(i+1)+" 句"));
+  var inp=el("input");inp.type="text";inp.className="line";inp.value=v;inp.setAttribute("aria-label","第 "+(i+1)+" 句");
+  var c=el("span","count");
+  function chk(){var n=hanzi(inp.value);c.textContent=n?n+"／5 字"+(n===5?" ✓":""):"";c.className="count"+(n===5?" good":(n>5?" warn":""));my.lines[i]=inp.value;state.mine=my;save()}
+  inp.oninput=chk;lines.appendChild(inp);var r=el("div","row");r.appendChild(c);lines.appendChild(r);chk();
+});
+function poemText(){return (my.title?"〈"+my.title+"〉\n":"")+my.lines.map(function(l,i){return l.replace(/[，。,.\s]/g,"")+(i%2?"。":"，")}).join("\n")}
+document.getElementById("my-show").onclick=function(){
+  var bad=my.lines.filter(function(l){return hanzi(l)!==5}).length, st=document.getElementById("my-status"), out=document.getElementById("my-out");
+  if(bad){st.textContent="還有 "+bad+" 句不是五個字，再修改看看。";st.className="count warn";out.hidden=true;return}
+  st.textContent="完成！可以抄在作業簿上。";st.className="count good";out.textContent=poemText();out.hidden=false;
+};
+document.getElementById("my-copy").onclick=function(){
+  var st=document.getElementById("my-status");
+  try{navigator.clipboard.writeText(poemText()).then(function(){st.textContent="已複製";st.className="count good"},function(){st.textContent="無法複製，請手動選取";st.className="count warn"})}catch(e){st.textContent="無法複製，請手動選取";st.className="count warn"}
+};
+render();
+</script>
+</body>
+</html>
