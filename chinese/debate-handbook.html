@@ -1,0 +1,1619 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>國中生辯論比賽練習手冊｜規劃與三場正反方實戰</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&family=Noto+Serif+TC:wght@700;900&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#f5f1ea; --paper:#fffdf9; --ink:#2a2420; --muted:#6c6158; --line:#e2d9cc;
+  --accent:#b5502f; --accent-soft:#f8e4da; --gold:#b98a1e; --gold-soft:#f7ecd0;
+  --pro:#1f5f99; --pro-soft:#e4effa;
+  --con:#a8382b; --con-soft:#fbe6e3;
+  --green:#2b7a4b; --green-soft:#e1f2e8;
+  --shadow:0 1px 0 rgba(42,36,32,.05),0 6px 20px rgba(42,36,32,.06);
+}
+:root[data-theme="dark"]{
+  --bg:#161310; --paper:#221d18; --ink:#efe8dd; --muted:#b0a596; --line:#3b332a;
+  --accent:#e8845f; --accent-soft:#3d261b; --gold:#e0b54f; --gold-soft:#3a2f17;
+  --pro:#7db6ed; --pro-soft:#1b2c3d;
+  --con:#f0887b; --con-soft:#3c211d;
+  --green:#68c290; --green-soft:#1a3124;
+  --shadow:0 1px 0 rgba(0,0,0,.35);
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.8 "Noto Sans TC",system-ui,sans-serif}
+.wrap{max-width:920px;margin:0 auto;padding:18px 16px 48px}
+header{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:flex-start;gap:12px;padding:6px 0 8px}
+h1{font:900 clamp(25px,5vw,36px)/1.25 "Noto Serif TC",serif;margin:0 0 6px;letter-spacing:.02em}
+h2{font:700 22px/1.4 "Noto Serif TC",serif;margin:26px 0 10px}
+h3{font-size:18px;margin:0 0 8px}
+h4{font-size:15px;margin:12px 0 6px;color:var(--accent)}
+.sub{color:var(--muted);margin:0;font-size:15px}
+.muted{color:var(--muted)}
+.badge{display:inline-block;font-size:12px;font-weight:700;padding:2px 9px;border-radius:999px;vertical-align:middle}
+.b-gold{background:var(--gold-soft);color:var(--gold)}
+.b-pro{background:var(--pro-soft);color:var(--pro)}
+.b-con{background:var(--con-soft);color:var(--con)}
+.b-green{background:var(--green-soft);color:var(--green)}
+.theme-btn{font:inherit;font-size:14px;border:1px solid var(--line);background:var(--paper);color:var(--ink);border-radius:999px;padding:5px 13px;cursor:pointer;white-space:nowrap}
+.summary{border-left:5px solid var(--accent);background:var(--accent-soft);padding:12px 16px;border-radius:0 12px 12px 0;margin:14px 0;font-weight:500}
+nav.tabs{position:sticky;top:0;z-index:10;background:var(--bg);display:flex;gap:6px;padding:10px 0;border-bottom:1px solid var(--line);overflow-x:auto;scrollbar-width:none}
+nav.tabs::-webkit-scrollbar{display:none}
+/* 桌機：分頁按鈕自動換行，全部看得到；手機：維持橫向滑動，右側加漸層提示還有更多 */
+@media (min-width:701px){nav.tabs{flex-wrap:wrap;overflow-x:visible}}
+@media (max-width:700px){nav.tabs{-webkit-mask-image:linear-gradient(to right,#000 85%,transparent);mask-image:linear-gradient(to right,#000 85%,transparent)}}
+nav.tabs button{flex:0 0 auto;white-space:nowrap;font:inherit;font-size:15px;border:1px solid var(--line);background:var(--paper);color:var(--ink);border-radius:999px;padding:6px 14px;cursor:pointer;transition:.15s}
+nav.tabs button[aria-selected="true"]{background:var(--accent);border-color:var(--accent);color:#fff;font-weight:700}
+.panel{display:none;animation:fade .18s ease-out}.panel.on{display:block}
+@keyframes fade{from{opacity:.2;transform:translateY(4px)}to{opacity:1;transform:none}}
+.card{background:var(--paper);border:1px solid var(--line);border-radius:14px;padding:16px 18px;margin:14px 0;box-shadow:var(--shadow)}
+.grid2{display:grid;grid-template-columns:repeat(2,1fr);gap:14px}
+.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+@media (max-width:700px){.grid2,.grid3{grid-template-columns:1fr}}
+.step-card{background:var(--paper);border:1px solid var(--line);border-top:4px solid var(--accent);border-radius:12px;padding:14px 16px}
+.step-num{font-size:13px;font-weight:700;color:var(--accent);letter-spacing:.04em}
+ul{padding-left:1.3em;margin:6px 0}
+li{margin:4px 0}
+table{border-collapse:collapse;width:100%;font-size:15px}
+th,td{border-bottom:1px solid var(--line);padding:10px 8px;text-align:left;vertical-align:top}
+th{color:var(--accent);white-space:nowrap}
+.side-box{border-radius:14px;padding:16px 18px;margin:14px 0;border:1px solid var(--line);background:var(--paper);box-shadow:var(--shadow)}
+.side-box.pro{border-top:5px solid var(--pro)}
+.side-box.con{border-top:5px solid var(--con)}
+.side-head{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:8px;margin-bottom:10px}
+.side-title{font:700 19px/1.3 "Noto Serif TC",serif;margin:0}
+.side-box.pro .side-title{color:var(--pro)}
+.side-box.con .side-title{color:var(--con)}
+.strategy{background:var(--bg);border-radius:10px;padding:12px 14px;margin-bottom:14px;font-size:15px}
+.audio-zone{background:var(--gold-soft);border:1px dashed var(--gold);border-radius:12px;padding:12px 14px;margin:12px 0}
+.audio-top{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:8px;margin-bottom:8px;font-size:14px}
+.audio-zone audio{width:100%;height:40px;display:block;margin:6px 0}
+.audio-status{font-size:13px;color:var(--muted)}
+.audio-status.ok{color:var(--green);font-weight:700}
+.controls{display:flex;flex-wrap:wrap;gap:6px;align-items:center}
+.btn{font:inherit;font-size:13px;border:1px solid var(--line);background:var(--paper);color:var(--ink);border-radius:8px;padding:5px 11px;cursor:pointer;display:inline-flex;align-items:center;gap:4px}
+.btn:hover{border-color:var(--accent)}
+.btn.main{background:var(--accent);border-color:var(--accent);color:#fff;font-weight:700}
+.btn.copied{background:var(--green);border-color:var(--green);color:#fff}
+.script-text{background:var(--bg);border-left:4px solid var(--line);border-radius:0 10px 10px 0;padding:14px 16px;font-size:16px;line-height:1.9}
+.side-box.pro .script-text{border-left-color:var(--pro)}
+.side-box.con .script-text{border-left-color:var(--con)}
+.script-text p{margin:0 0 12px}
+.script-text p:last-child{margin-bottom:0}
+.qa-box{background:var(--paper);border:1px solid var(--line);border-radius:12px;padding:12px 14px;margin:10px 0}
+.qa-box summary{cursor:pointer;font-weight:700;color:var(--pro)}
+.qa-box p{margin:8px 0 0}
+.round-card{background:var(--paper);border:1px solid var(--line);border-radius:14px;padding:14px 16px;margin:12px 0;box-shadow:var(--shadow)}
+.round-card summary{cursor:pointer;font:700 17px/1.4 "Noto Serif TC",serif;list-style:none;display:flex;justify-content:space-between;align-items:center;gap:8px}
+.round-card summary::-webkit-details-marker{display:none}
+.round-card summary::after{content:"展開詳解 ▾";font:500 13px "Noto Sans TC",sans-serif;color:var(--accent);flex-shrink:0}
+.round-card[open] summary::after{content:"收合 ▴"}
+.vs-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:12px 0}
+@media (max-width:700px){.vs-grid{grid-template-columns:1fr}}
+.vs-col{border-radius:10px;padding:12px 14px;font-size:15px}
+.vs-col.pro{background:var(--pro-soft);border-left:4px solid var(--pro)}
+.vs-col.con{background:var(--con-soft);border-left:4px solid var(--con)}
+.vs-col h4{margin:0 0 6px;font-size:15px}
+.vs-col.pro h4{color:var(--pro)}
+.vs-col.con h4{color:var(--con)}
+.clash-note{background:var(--gold-soft);border-left:4px solid var(--gold);border-radius:0 10px 10px 0;padding:10px 14px;font-size:14.5px;margin-top:8px}
+.quote-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:10px}
+@media (max-width:700px){.quote-grid{grid-template-columns:1fr}}
+.quote-card{background:var(--bg);border:1px solid var(--line);border-radius:10px;padding:12px 14px;font-size:14.5px}
+.quote-card strong{color:var(--accent);display:block;margin-bottom:4px}
+.timer-wrap{text-align:center;padding:20px 16px}
+.timer-display{font:900 clamp(48px,10vw,72px)/1.1 "Noto Serif TC",serif;letter-spacing:.04em;margin:12px 0;color:var(--ink)}
+.timer-display.warn{color:var(--gold)}
+.timer-display.over{color:var(--con)}
+.presets{display:flex;flex-wrap:wrap;justify-content:center;gap:8px;margin-bottom:14px}
+.presets button.on{background:var(--accent);border-color:var(--accent);color:#fff}
+.file-input{display:none}
+/* SVG 圖解卡片與全螢幕檢視器 */
+.svg-card{background:var(--paper);border:1px solid var(--line);border-radius:14px;padding:14px 16px;margin:14px 0;box-shadow:var(--shadow)}
+.svg-head{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:8px;margin-bottom:8px}
+.svg-head h3{margin:0;font-size:17px}
+.svg-box{background:var(--bg);border:1px solid var(--line);border-radius:10px;padding:8px;overflow-x:auto;cursor:zoom-in}
+.svg-box svg{display:block;width:100%;height:auto;min-width:620px;font-family:"Noto Sans TC",system-ui,sans-serif}
+.svg-cap{font-size:13px;color:var(--muted);margin:8px 0 0}
+.svg-modal{position:fixed;inset:0;z-index:100;background:rgba(15,12,10,.86);display:none;flex-direction:column;padding:14px}
+.svg-modal.on{display:flex}
+.svg-mbar{display:flex;justify-content:space-between;align-items:center;gap:10px;color:#fff;margin-bottom:10px}
+.svg-mbody{flex:1;overflow:auto;display:flex;align-items:center;justify-content:center;background:var(--bg);border-radius:12px;padding:16px}
+.svg-mbody svg{width:100%;max-width:1150px;height:auto;font-family:"Noto Sans TC",system-ui,sans-serif}
+/* 二辯對話氣泡與三辯子分頁 */
+.sub-tabs{display:flex;flex-wrap:wrap;gap:8px;margin:12px 0 16px}
+.sub-tabs button{font:inherit;font-size:14px;border:1px solid var(--line);background:var(--paper);color:var(--ink);border-radius:999px;padding:6px 14px;cursor:pointer;transition:.15s}
+.sub-tabs button.on{background:var(--pro);border-color:var(--pro);color:#fff;font-weight:700}
+.chat-head{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:8px;margin-bottom:10px}
+.chat-wrap{display:flex;flex-direction:column;gap:10px;margin:10px 0}
+.msg{max-width:92%;padding:11px 14px;border-radius:12px;font-size:15px;line-height:1.75;border:1px solid var(--line)}
+.msg.q{align-self:flex-start;background:var(--pro-soft);border-left:4px solid var(--pro)}
+.msg.a{align-self:flex-end;background:var(--con-soft);border-right:4px solid var(--con)}
+.msg.q.con-q{background:var(--con-soft);border-left:4px solid var(--con)}
+.msg.a.pro-a{background:var(--pro-soft);border-right:4px solid var(--pro)}
+.msg-role{font-size:12.5px;font-weight:700;margin-bottom:4px;display:flex;flex-wrap:wrap;align-items:center;gap:6px}
+.tac-tag{display:inline-block;font-size:11.5px;font-weight:700;padding:1px 8px;border-radius:999px;background:var(--gold-soft);color:var(--gold)}
+.hide-tactics .tac-tag,.hide-tactics .tac-note{display:none}
+.skeleton-box{background:var(--bg);border:1px dashed var(--accent);border-radius:12px;padding:14px 16px;font-size:15px;line-height:1.85;margin-top:10px}
+footer{margin-top:36px;padding-top:16px;border-top:1px solid var(--line);color:var(--muted);font-size:13px;text-align:center}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div>
+      <span class="badge b-gold"><a href="../index.html" style="color:inherit;text-decoration:none">← 回學習小站</a>｜辯論思辨訓練</span>
+      <h1>國中生辯論比賽練習手冊</h1>
+      <p class="sub">四週備賽規劃 × 《奇葩說》拆解 × 三場正反方完整講稿</p>
+    </div>
+    <button class="theme-btn" id="themeBtn" aria-label="切換深淺色">🌙 深色模式</button>
+  </header>
+
+  <nav class="tabs" role="tablist">
+    <button role="tab" data-tab="plan" aria-selected="true">🗺️ 四週練習規劃</button>
+    <button role="tab" data-tab="qipa" aria-selected="false">📺 奇葩說拆解</button>
+    <button role="tab" data-tab="r1" aria-selected="false">🥊 實戰 1：親子觀念</button>
+    <button role="tab" data-tab="r2" aria-selected="false">📱 實戰 2：校園手機</button>
+    <button role="tab" data-tab="r3" aria-selected="false">🤖 實戰 3：AI 寫作業</button>
+    <button role="tab" data-tab="cross" aria-selected="false">⚔️ 二辯質詢對話稿</button>
+    <button role="tab" data-tab="close" aria-selected="false">🏆 三辯結辯範本</button>
+    <button role="tab" data-tab="tools" aria-selected="false">⏱️ 計時與防禦卡</button>
+  </nav>
+
+  <!-- 分頁 1：練習規劃 -->
+  <section class="panel on" id="p-plan">
+    <h2>一、國中辯論賽 3 對 3 角色分工與 AREL 公式</h2>
+    <div class="grid3">
+      <div class="step-card">
+        <div class="step-num">角色 1｜一辯（立論手）</div>
+        <h3>定規則、立主軸</h3>
+        <p class="muted">負責開局下定義、提出「怎麼算贏」的判準，並清楚講出己方 2～3 個核心論點。</p>
+      </div>
+      <div class="step-card">
+        <div class="step-num">角色 2｜二辯（攻防質詢手）</div>
+        <h3>找漏洞、問倒對方</h3>
+        <p class="muted">專攻「交叉質詢」與「駁論」，用短問題鎖死對方矛盾，並補上反擊證據。</p>
+      </div>
+      <div class="step-card">
+        <div class="step-num">角色 3｜三辯（總結結辯手）</div>
+        <h3>收戰場、定勝負</h3>
+        <p class="muted">整理全場雙方的交鋒點，向評審說明「為什麼己方論點更重要、更站得住腳」。</p>
+      </div>
+    </div>
+
+    <div class="card">
+      <h3>🧱 國中比賽最穩的論證骨架：AREL 四步法</h3>
+      <ul>
+        <li><b>A（Assertion 主張）</b>：先講結論！「我方認為校園應該全面禁止手機，第一點是保護專注力。」</li>
+        <li><b>R（Reasoning 理由）</b>：為什麼會這樣？「因為手機在抽屜裡就會讓人分心想看訊息。」</li>
+        <li><b>E（Evidence 證據／例子）</b>：拿出生活觀察、數據或實際案例支撐。</li>
+        <li><b>L（Link / Impact 影響）</b>：最後連回辯題價值，「專注力一旦破碎，國中最重要的基礎學習就會受損。」</li>
+      </ul>
+    </div>
+
+    <div class="svg-card">
+      <div class="svg-head">
+        <h3>📊 圖 1｜國中 3v3 賽程流向 × AREL 論證積木圖</h3>
+        <button class="btn zoom-btn" type="button">🔍 放大看圖</button>
+      </div>
+      <div class="svg-box" data-title="圖 1｜國中 3v3 賽程流向 × AREL 論證積木圖">
+        <svg viewBox="0 0 840 315" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="國中 3v3 辯論賽程流向與 AREL 論證積木圖">
+          <defs>
+            <marker id="arr1" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+              <path d="M0,1 L9,5 L0,9 z" fill="var(--accent)"/>
+            </marker>
+          </defs>
+          <!-- 上半部：3v3 賽程流向 -->
+          <text x="16" y="24" font-size="14" font-weight="700" fill="var(--accent)">PART A｜國中 3 對 3 標準攻防流程（球權流向）</text>
+          <rect x="16" y="38" width="178" height="104" rx="12" fill="var(--paper)" stroke="var(--pro)" stroke-width="2"/>
+          <rect x="16" y="38" width="178" height="28" rx="10" fill="var(--pro-soft)"/>
+          <text x="105" y="57" text-anchor="middle" font-size="13" font-weight="700" fill="var(--pro)">1. 一辯申論（各 2 分）</text>
+          <text x="105" y="84" text-anchor="middle" font-size="12.5" fill="var(--ink)">下定義・定判準</text>
+          <text x="105" y="104" text-anchor="middle" font-size="12.5" fill="var(--ink)">提出 2～3 個核心論點</text>
+          <text x="105" y="128" text-anchor="middle" font-size="11.5" fill="var(--muted)">正一先立 → 反一後立</text>
+
+          <line x1="198" y1="90" x2="224" y2="90" stroke="var(--accent)" stroke-width="2.5" marker-end="url(#arr1)"/>
+
+          <rect x="228" y="38" width="178" height="104" rx="12" fill="var(--paper)" stroke="var(--con)" stroke-width="2"/>
+          <rect x="228" y="38" width="178" height="28" rx="10" fill="var(--con-soft)"/>
+          <text x="317" y="57" text-anchor="middle" font-size="13" font-weight="700" fill="var(--con)">2. 二辯質詢（各 1.5 分）</text>
+          <text x="317" y="84" text-anchor="middle" font-size="12.5" fill="var(--ink)">用是非題／短問題</text>
+          <text x="317" y="104" text-anchor="middle" font-size="12.5" fill="var(--ink)">鎖死對方邏輯漏洞</text>
+          <text x="317" y="128" text-anchor="middle" font-size="11.5" fill="var(--muted)">確認前提 → 反例 → 收網</text>
+
+          <line x1="410" y1="90" x2="436" y2="90" stroke="var(--accent)" stroke-width="2.5" marker-end="url(#arr1)"/>
+
+          <rect x="440" y="38" width="178" height="104" rx="12" fill="var(--paper)" stroke="var(--accent)" stroke-width="2"/>
+          <rect x="440" y="38" width="178" height="28" rx="10" fill="var(--accent-soft)"/>
+          <text x="529" y="57" text-anchor="middle" font-size="13" font-weight="700" fill="var(--accent)">3. 駁論／自由辯</text>
+          <text x="529" y="84" text-anchor="middle" font-size="12.5" fill="var(--ink)">正面拆解對方證據</text>
+          <text x="529" y="104" text-anchor="middle" font-size="12.5" fill="var(--ink)">補防己方被攻擊點</text>
+          <text x="529" y="128" text-anchor="middle" font-size="11.5" fill="var(--muted)">搶回戰場主導權</text>
+
+          <line x1="622" y1="90" x2="648" y2="90" stroke="var(--accent)" stroke-width="2.5" marker-end="url(#arr1)"/>
+
+          <rect x="652" y="38" width="172" height="104" rx="12" fill="var(--paper)" stroke="var(--gold)" stroke-width="2"/>
+          <rect x="652" y="38" width="172" height="28" rx="10" fill="var(--gold-soft)"/>
+          <text x="738" y="57" text-anchor="middle" font-size="13" font-weight="700" fill="var(--gold)">4. 三辯結辯（各 1.5 分）</text>
+          <text x="738" y="84" text-anchor="middle" font-size="12.5" fill="var(--ink)">盤點全場交鋒點</text>
+          <text x="738" y="104" text-anchor="middle" font-size="12.5" fill="var(--ink)">價值升華・說服評審</text>
+          <text x="738" y="128" text-anchor="middle" font-size="11.5" fill="var(--muted)">反方先結 → 正方壓軸</text>
+
+          <!-- 分隔線 -->
+          <line x1="16" y1="162" x2="824" y2="162" stroke="var(--line)" stroke-dasharray="6 5"/>
+
+          <!-- 下半部：AREL 四步積木 -->
+          <text x="16" y="186" font-size="14" font-weight="700" fill="var(--pro)">PART B｜每一個論點必備的 AREL 四步積木（缺一不可）</text>
+
+          <rect x="16" y="200" width="186" height="98" rx="10" fill="var(--pro-soft)" stroke="var(--pro)" stroke-width="1.5"/>
+          <text x="109" y="224" text-anchor="middle" font-size="14" font-weight="700" fill="var(--pro)">A｜Assertion 主張</text>
+          <text x="109" y="248" text-anchor="middle" font-size="12.5" fill="var(--ink)">一句話亮出結論</text>
+          <text x="109" y="274" text-anchor="middle" font-size="11.5" fill="var(--muted)">例：禁手機能保護專注力</text>
+
+          <line x1="206" y1="249" x2="226" y2="249" stroke="var(--accent)" stroke-width="2" marker-end="url(#arr1)"/>
+
+          <rect x="230" y="200" width="186" height="98" rx="10" fill="var(--green-soft)" stroke="var(--green)" stroke-width="1.5"/>
+          <text x="323" y="224" text-anchor="middle" font-size="14" font-weight="700" fill="var(--green)">R｜Reasoning 理由</text>
+          <text x="323" y="248" text-anchor="middle" font-size="12.5" fill="var(--ink)">解釋「為什麼會這樣」</text>
+          <text x="323" y="274" text-anchor="middle" font-size="11.5" fill="var(--muted)">例：放抽屜也會想看訊息</text>
+
+          <line x1="420" y1="249" x2="440" y2="249" stroke="var(--accent)" stroke-width="2" marker-end="url(#arr1)"/>
+
+          <rect x="444" y="200" width="186" height="98" rx="10" fill="var(--gold-soft)" stroke="var(--gold)" stroke-width="1.5"/>
+          <text x="537" y="224" text-anchor="middle" font-size="14" font-weight="700" fill="var(--gold)">E｜Evidence 證據</text>
+          <text x="537" y="248" text-anchor="middle" font-size="12.5" fill="var(--ink)">舉數據、研究或生活實例</text>
+          <text x="537" y="274" text-anchor="middle" font-size="11.5" fill="var(--muted)">例：下課低頭滑取代聊天</text>
+
+          <line x1="634" y1="249" x2="654" y2="249" stroke="var(--accent)" stroke-width="2" marker-end="url(#arr1)"/>
+
+          <rect x="658" y="200" width="166" height="98" rx="10" fill="var(--accent-soft)" stroke="var(--accent)" stroke-width="1.5"/>
+          <text x="741" y="224" text-anchor="middle" font-size="14" font-weight="700" fill="var(--accent)">L｜Link 影響</text>
+          <text x="741" y="248" text-anchor="middle" font-size="12.5" fill="var(--ink)">扣回辯題價值與後果</text>
+          <text x="741" y="274" text-anchor="middle" font-size="11.5" fill="var(--muted)">例：守護國中基礎學習</text>
+        </svg>
+      </div>
+      <p class="svg-cap">💡 練習時先記住：只要每個論點都走完 A → R → E → L，就不會變成「空喊口號」。</p>
+    </div>
+
+    <div class="svg-card">
+      <div class="svg-head">
+        <h3>📝 圖 2｜四欄 Flowing 辯論筆記示範圖（以「校園手機題」為例）</h3>
+        <button class="btn zoom-btn" type="button">🔍 放大看圖</button>
+      </div>
+      <div class="svg-box" data-title="圖 2｜四欄 Flowing 辯論筆記示範圖">
+        <svg viewBox="0 0 840 278" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="四欄 Flowing 辯論筆記示範圖">
+          <defs>
+            <marker id="arrB" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0,1 L9,5 L0,9 z" fill="var(--pro)"/></marker>
+            <marker id="arrR" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0,1 L9,5 L0,9 z" fill="var(--con)"/></marker>
+            <marker id="arrG" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0,1 L9,5 L0,9 z" fill="var(--gold)"/></marker>
+          </defs>
+          <!-- 四欄底框 -->
+          <rect x="14" y="14" width="190" height="250" rx="10" fill="var(--paper)" stroke="var(--line)"/>
+          <rect x="220" y="14" width="194" height="250" rx="10" fill="var(--paper)" stroke="var(--line)"/>
+          <rect x="430" y="14" width="194" height="250" rx="10" fill="var(--paper)" stroke="var(--line)"/>
+          <rect x="640" y="14" width="186" height="250" rx="10" fill="var(--paper)" stroke="var(--gold)" stroke-width="1.8"/>
+
+          <!-- 欄標題 -->
+          <rect x="14" y="14" width="190" height="34" rx="10" fill="var(--pro-soft)"/>
+          <text x="109" y="36" text-anchor="middle" font-size="13.5" font-weight="700" fill="var(--pro)">第 1 欄｜正方立論</text>
+
+          <rect x="220" y="14" width="194" height="34" rx="10" fill="var(--con-soft)"/>
+          <text x="317" y="36" text-anchor="middle" font-size="13.5" font-weight="700" fill="var(--con)">第 2 欄｜反方反擊</text>
+
+          <rect x="430" y="14" width="194" height="34" rx="10" fill="var(--pro-soft)"/>
+          <text x="527" y="36" text-anchor="middle" font-size="13.5" font-weight="700" fill="var(--pro)">第 3 欄｜正方補防</text>
+
+          <rect x="640" y="14" width="186" height="34" rx="10" fill="var(--gold-soft)"/>
+          <text x="733" y="36" text-anchor="middle" font-size="13.5" font-weight="700" fill="var(--gold)">第 4 欄｜結辯收斂</text>
+
+          <!-- 戰場一 -->
+          <rect x="24" y="62" width="170" height="52" rx="8" fill="var(--bg)" stroke="var(--pro)"/>
+          <text x="34" y="83" font-size="12.5" font-weight="700" fill="var(--pro)">① 專注力＆偷拍</text>
+          <text x="34" y="102" font-size="11.5" fill="var(--ink)">放抽屜也分心、易霸凌</text>
+
+          <line x1="196" y1="88" x2="226" y2="88" stroke="var(--con)" stroke-width="2" marker-end="url(#arrR)"/>
+
+          <rect x="230" y="62" width="174" height="52" rx="8" fill="var(--bg)" stroke="var(--con)"/>
+          <text x="240" y="83" font-size="12.5" font-weight="700" fill="var(--con)">✗ 鎖手機櫃即可</text>
+          <text x="240" y="102" font-size="11.5" fill="var(--ink)">早鎖晚領，不必一刀切</text>
+
+          <line x1="406" y1="88" x2="436" y2="88" stroke="var(--pro)" stroke-width="2" marker-end="url(#arrB)"/>
+
+          <rect x="440" y="62" width="174" height="52" rx="8" fill="var(--bg)" stroke="var(--pro)"/>
+          <text x="450" y="83" font-size="12.5" font-weight="700" fill="var(--pro)">✓ 備用機＆賠償</text>
+          <text x="450" y="102" font-size="11.5" fill="var(--ink)">遺失誰賠？老師變警察</text>
+
+          <!-- 戰場二 -->
+          <rect x="24" y="132" width="170" height="52" rx="8" fill="var(--bg)" stroke="var(--pro)"/>
+          <text x="34" y="153" font-size="12.5" font-weight="700" fill="var(--pro)">② 放學聯絡替代</text>
+          <text x="34" y="172" font-size="11.5" fill="var(--ink)">學務處、公共電話足夠</text>
+
+          <line x1="196" y1="158" x2="226" y2="158" stroke="var(--con)" stroke-width="2" marker-end="url(#arrR)"/>
+
+          <rect x="230" y="132" width="174" height="52" rx="8" fill="var(--bg)" stroke="var(--con)"/>
+          <text x="240" y="153" font-size="12.5" font-weight="700" fill="var(--con)">✗ 通勤路上突發</text>
+          <text x="240" y="172" font-size="11.5" fill="var(--ink)">搭公車出事無法即時求救</text>
+
+          <line x1="406" y1="158" x2="436" y2="158" stroke="var(--pro)" stroke-width="2" marker-end="url(#arrB)"/>
+
+          <rect x="440" y="132" width="174" height="52" rx="8" fill="var(--bg)" stroke="var(--pro)"/>
+          <text x="450" y="153" font-size="12.5" font-weight="700" fill="var(--pro)">✓ 純通話聯絡錶</text>
+          <text x="450" y="172" font-size="11.5" fill="var(--ink)">反對的是智慧手機上網</text>
+
+          <!-- 戰場三 -->
+          <rect x="230" y="200" width="174" height="50" rx="8" fill="var(--con-soft)" stroke="var(--con)"/>
+          <text x="240" y="220" font-size="12.5" font-weight="700" fill="var(--con)">★ 新開戰場：自律</text>
+          <text x="240" y="239" font-size="11.5" fill="var(--ink)">國中禁止→高中報復沉迷</text>
+
+          <line x1="406" y1="225" x2="436" y2="225" stroke="var(--pro)" stroke-width="2" marker-end="url(#arrB)"/>
+
+          <rect x="440" y="200" width="174" height="50" rx="8" fill="var(--bg)" stroke="var(--pro)"/>
+          <text x="450" y="220" font-size="12.5" font-weight="700" fill="var(--pro)">✓ 回家再練自律</text>
+          <text x="450" y="239" font-size="11.5" fill="var(--ink)">學校應先守住學習環境</text>
+
+          <!-- 收斂箭頭到第 4 欄 -->
+          <path d="M616,88 C628,88 628,118 646,125" fill="none" stroke="var(--gold)" stroke-width="2" marker-end="url(#arrG)"/>
+          <path d="M616,158 L646,158" fill="none" stroke="var(--gold)" stroke-width="2" marker-end="url(#arrG)"/>
+          <path d="M616,225 C628,225 628,195 646,188" fill="none" stroke="var(--gold)" stroke-width="2" marker-end="url(#arrG)"/>
+
+          <rect x="652" y="76" width="162" height="156" rx="10" fill="var(--gold-soft)" stroke="var(--gold)"/>
+          <text x="733" y="102" text-anchor="middle" font-size="13" font-weight="700" fill="var(--gold)">⚖️ 給評審的比較</text>
+          <text x="733" y="128" text-anchor="middle" font-size="12" fill="var(--ink)">正方守住：</text>
+          <text x="733" y="146" text-anchor="middle" font-size="12" font-weight="700" fill="var(--pro)">專注＋防霸凌＋公平</text>
+          <text x="733" y="176" text-anchor="middle" font-size="12" fill="var(--ink)">反方主打：</text>
+          <text x="733" y="194" text-anchor="middle" font-size="12" font-weight="700" fill="var(--con)">通勤安全＋自律教育</text>
+          <text x="733" y="220" text-anchor="middle" font-size="11" fill="var(--muted)">→ 誰解決方案更可行？</text>
+        </svg>
+      </div>
+      <p class="svg-cap">💡 聽 NeuralReader 音檔時，拿一張 A4 紙照這四欄畫，只寫 4～6 字關鍵詞＋箭頭，不要抄整句！</p>
+    </div>
+
+    <h2>二、四週備賽練習藍圖（每週 3 次，每次 45–60 分鐘）</h2>
+    <div class="grid2">
+      <div class="step-card">
+        <div class="step-num">WEEK 1｜拆題與雙立場立論</div>
+        <h3>學會「正反都能打」</h3>
+        <ul>
+          <li>每拿到一題，先拆題目關鍵字（例如「全面禁止」vs「分級管理」）。</li>
+          <li>強迫自己同時寫正方與反方各 2 個論點，提前預判對手會打哪裡。</li>
+          <li>把每個論點套進 AREL 公式，避免只講口號沒有理由。</li>
+        </ul>
+      </div>
+      <div class="step-card">
+        <div class="step-num">WEEK 2｜聽力筆記與質詢反駁</div>
+        <h3>NeuralReader 單人對打法</h3>
+        <ul>
+          <li>把 A4 紙直分成四欄（正方立論｜反方反擊｜正方防守｜總結），練 <b>Flowing 關鍵字筆記</b>。</li>
+          <li>播放本頁的「正方音檔」，一邊記筆記，播完馬上計時 1 分 30 秒口頭反駁。</li>
+          <li>練習「三連問質詢」：確認前提 → 舉反例 → 收網歸謬。</li>
+        </ul>
+      </div>
+      <div class="step-card">
+        <div class="step-num">WEEK 3｜語速控制與跟讀演練</div>
+        <h3>打造 2 分鐘黃金節奏</h3>
+        <ul>
+          <li>比賽語速參考：每分鐘約 <b>220～260 字</b>（2 分鐘約 440～520 字）。本手冊申論稿約 500～560 字，是偏快的完整版；講不完時先刪舉例句，保留 AREL 主幹。</li>
+          <li><b>三遍法</b>：第 1 遍跟音檔抓換氣 → 第 2 遍只看 3 個關鍵詞脫稿講 → 第 3 遍錄音抓口頭禪。</li>
+          <li>結尾 15 秒放慢語速、眼神直視評審，留下記憶點。</li>
+        </ul>
+      </div>
+      <div class="step-card">
+        <div class="step-num">WEEK 4｜防禦卡與全真計時</div>
+        <h3>臨場突襲不慌張</h3>
+        <ul>
+          <li>寫出對方最可能攻擊自己的 5 個致命問題，準備好 30 秒標準應答。</li>
+          <li>搭配本網站「⏱️ 計時與防禦卡」分頁，練到剩 30 秒時能自然收尾。</li>
+          <li>每次練完做 3 問複盤：最有力的一句？卡住的地方？下次怎麼修？</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="card">
+      <h3>📂 NeuralReader 聲音檔案命名對照表</h3>
+      <p class="muted">將 NeuralReader 生成的 MP3 放進 <code>800-課外延伸/辯論節目/聲音檔案/</code>，建議正方與反方選不同人聲，聽起來更有真實交鋒感！</p>
+      <table>
+        <thead><tr><th>實戰場次</th><th>辯題</th><th>正方檔名</th><th>反方檔名</th></tr></thead>
+        <tbody>
+          <tr><td>實戰 1</td><td>父母觀念過時又固執己見：暫時沉默 vs 據理力爭</td><td><code>round1-pro.mp3</code></td><td><code>round1-con.mp3</code></td></tr>
+          <tr><td>實戰 2</td><td>國中校園應不應該全面禁止攜帶手機到校？</td><td><code>round2-pro.mp3</code></td><td><code>round2-con.mp3</code></td></tr>
+          <tr><td>實戰 3</td><td>國中生寫作業應不應該被允許使用生成式 AI？</td><td><code>round3-pro.mp3</code></td><td><code>round3-con.mp3</code></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- 分頁 2：奇葩說拆解 -->
+  <section class="panel" id="p-qipa">
+    <h2>📺 向《奇葩說》偷學：經典戰局完全拆解</h2>
+    <p class="muted">觀摩節目：《奇葩說》半決賽「父母觀念過時還固執己見，我該閉嘴還是 Battle？」（以下為重點整理，引號內為大意，非逐字引用）</p>
+
+    <!-- 1. 30 秒看懂戰局 -->
+    <div class="card">
+      <h3>🎯 先花 30 秒看懂：這場比賽在吵什麼？最後誰贏了？</h3>
+      <p>這場辯論討論的是每個家庭都會遇到的難題：<b>「父母觀念過時，而且已經講不通（固執己見）了，你應該選擇『閉嘴』，還是繼續跟他們『Battle（據理力爭／交鋒）』？」</b></p>
+      <div class="vs-grid">
+        <div class="vs-col pro">
+          <h4>🔵 正方：應該「閉嘴」（江小白戰隊）</h4>
+          <p style="margin:0"><b>出戰辯手：</b>一辯趙英男、二辯傅首爾、三辯邱晨、後排小黑</p>
+          <p style="margin:6px 0 0"><b>核心主軸：</b>吵贏了只會傷感情＋激發父母逆反心理；「閉嘴」不是絕交，而是先降溫，改用<b>行動與陪伴</b>化解兩代人的時差。</p>
+        </div>
+        <div class="vs-col con">
+          <h4>🔴 反方：應該「Battle」（海瀾之家戰隊）</h4>
+          <p style="margin:0"><b>出戰辯手：</b>一辯楊奇函、二辯高嘉程、三辯陳凌岳、後排程璐</p>
+          <p style="margin:6px 0 0"><b>核心主軸：</b>閉嘴才是冷漠與傲慢；透過有原則的 Battle，既能阻止迷信等有害觀念，也能讓父母看見孩子長大、願意與他們平等對話。</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- 2. 全場局勢起伏圖 SVG -->
+    <div class="svg-card">
+      <div class="svg-head">
+        <h3>🗺️ 圖 3A｜整場比賽四輪攻防圖（看懂雙方如何一來一往）</h3>
+        <button class="btn zoom-btn" type="button">🔍 放大看圖</button>
+      </div>
+      <div class="svg-box" data-title="圖 3A｜《奇葩說》整場比賽四輪攻防圖">
+        <svg viewBox="0 0 840 250" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="奇葩說整場比賽四輪攻防圖">
+          <defs>
+            <marker id="arrQ" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0,1 L9,5 L0,9 z" fill="var(--accent)"/></marker>
+          </defs>
+          <!-- 四輪卡片 -->
+          <rect x="14" y="20" width="184" height="210" rx="12" fill="var(--paper)" stroke="var(--con)" stroke-width="1.8"/>
+          <rect x="14" y="20" width="184" height="32" rx="10" fill="var(--con-soft)"/>
+          <text x="106" y="41" text-anchor="middle" font-size="13" font-weight="700" fill="var(--con)">第 1 輪｜一辯開局</text>
+          <text x="106" y="72" text-anchor="middle" font-size="12.5" font-weight="700" fill="var(--ink)">趙英男 vs 楊奇函</text>
+          <text x="106" y="98" text-anchor="middle" font-size="11.5" fill="var(--pro)">正：抓「固執」前提</text>
+          <text x="106" y="116" text-anchor="middle" font-size="11.5" fill="var(--pro)">＋騎母肩看煙火故事</text>
+          <text x="106" y="144" text-anchor="middle" font-size="11.5" fill="var(--con)">反：開槓咬死正方</text>
+          <text x="106" y="162" text-anchor="middle" font-size="11.5" fill="var(--con)">「溫柔溝通≠閉嘴」</text>
+          <rect x="28" y="182" width="156" height="34" rx="8" fill="var(--con-soft)"/>
+          <text x="106" y="203" text-anchor="middle" font-size="11.5" font-weight="700" fill="var(--con)">看點：反方抓定義破綻</text>
+
+          <line x1="202" y1="125" x2="220" y2="125" stroke="var(--accent)" stroke-width="2" marker-end="url(#arrQ)"/>
+
+          <rect x="224" y="20" width="184" height="210" rx="12" fill="var(--paper)" stroke="var(--line)" stroke-width="1.8"/>
+          <rect x="224" y="20" width="184" height="32" rx="10" fill="var(--gold-soft)"/>
+          <text x="316" y="41" text-anchor="middle" font-size="13" font-weight="700" fill="var(--gold)">第 2 輪｜二辯故事戰</text>
+          <text x="316" y="72" text-anchor="middle" font-size="12.5" font-weight="700" fill="var(--ink)">傅首爾 vs 高嘉程</text>
+          <text x="316" y="98" text-anchor="middle" font-size="11.5" fill="var(--pro)">正：動腦給甜頭（衣服）</text>
+          <text x="316" y="116" text-anchor="middle" font-size="11.5" fill="var(--pro)">＋拆穿「有害≠過時」</text>
+          <text x="316" y="144" text-anchor="middle" font-size="11.5" fill="var(--con)">反：大仙烏龜迷信故事</text>
+          <text x="316" y="162" text-anchor="middle" font-size="11.5" fill="var(--con)">＋當父母看世界的眼鏡</text>
+          <rect x="238" y="182" width="156" height="34" rx="8" fill="var(--gold-soft)"/>
+          <text x="316" y="203" text-anchor="middle" font-size="11.5" font-weight="700" fill="var(--gold)">看點：雙方各講真實故事</text>
+
+          <line x1="412" y1="125" x2="430" y2="125" stroke="var(--accent)" stroke-width="2" marker-end="url(#arrQ)"/>
+
+          <rect x="434" y="20" width="188" height="210" rx="12" fill="var(--paper)" stroke="var(--pro)" stroke-width="2.2"/>
+          <rect x="434" y="20" width="188" height="32" rx="10" fill="var(--pro-soft)"/>
+          <text x="528" y="41" text-anchor="middle" font-size="13" font-weight="700" fill="var(--pro)">第 3 輪｜三辯關鍵翻盤</text>
+          <text x="528" y="72" text-anchor="middle" font-size="12.5" font-weight="700" fill="var(--ink)">邱晨 vs 陳凌岳</text>
+          <text x="528" y="98" text-anchor="middle" font-size="11.5" fill="var(--pro)">正：概念光譜反殺！</text>
+          <text x="528" y="116" text-anchor="middle" font-size="11.5" fill="var(--pro)">逆反抗體＋兩代時差</text>
+          <text x="528" y="144" text-anchor="middle" font-size="11.5" fill="var(--con)">反：閉嘴才是傲慢</text>
+          <text x="528" y="162" text-anchor="middle" font-size="11.5" fill="var(--con)">＋讓媽看到我翅膀硬了</text>
+          <rect x="448" y="182" width="160" height="34" rx="8" fill="var(--pro-soft)"/>
+          <text x="528" y="203" text-anchor="middle" font-size="11.5" font-weight="700" fill="var(--pro)">看點：邱晨重新整理戰場</text>
+
+          <line x1="626" y1="125" x2="644" y2="125" stroke="var(--accent)" stroke-width="2" marker-end="url(#arrQ)"/>
+
+          <rect x="648" y="20" width="178" height="210" rx="12" fill="var(--paper)" stroke="var(--green)" stroke-width="2"/>
+          <rect x="648" y="20" width="178" height="32" rx="10" fill="var(--green-soft)"/>
+          <text x="737" y="41" text-anchor="middle" font-size="13" font-weight="700" fill="var(--green)">第 4 輪｜後排補刀</text>
+          <text x="737" y="72" text-anchor="middle" font-size="12.5" font-weight="700" fill="var(--ink)">小黑 / 程璐 / 結辯</text>
+          <text x="737" y="98" text-anchor="middle" font-size="11.5" fill="var(--pro)">小黑：陪父母的時間</text>
+          <text x="737" y="116" text-anchor="middle" font-size="11.5" fill="var(--pro)">其實很少，別拿來吵</text>
+          <text x="737" y="144" text-anchor="middle" font-size="11.5" fill="var(--con)">程璐：吵架才是一家</text>
+          <text x="737" y="162" text-anchor="middle" font-size="11.5" fill="var(--con)">人，閉嘴讓父母失落</text>
+          <rect x="662" y="182" width="150" height="34" rx="8" fill="var(--green-soft)"/>
+          <text x="737" y="203" text-anchor="middle" font-size="12" font-weight="700" fill="var(--green)">⚖️ 交給評審投票</text>
+        </svg>
+      </div>
+      <p class="svg-cap">💡 辯論比賽不是誰聲音大就贏，而是看誰能像第 3 輪邱晨一樣，把戰場重新整理清楚、解決對手最痛的攻擊！</p>
+    </div>
+
+    <!-- 3. 逐輪詳細拆解 -->
+    <h3>🔍 逐輪詳解：每一輪他們實際說了什麼？國中生該偷學哪一招？</h3>
+
+    <details class="round-card" open>
+      <summary>第一輪｜一辯立論與開槓：趙英男（正）⚔️ 楊奇函（反）</summary>
+      <div class="vs-grid">
+        <div class="vs-col pro">
+          <h4>🔵 正方一辯・趙英男（抓前提＋感性故事）</h4>
+          <ul>
+            <li><b>抓題目前提：</b>題目已經說父母「<b>固執己見</b>」，代表早就溝通過、講不通了，這時誰先退一步才是尊重。</li>
+            <li><b>打破「過時」標籤：</b>沒有絕對過時的觀念，潮流會輪迴，你只是不認同而已。</li>
+            <li><b>故事收尾：</b>小時候騎在舉重媽媽肩膀上看煙火，媽媽抱著我看不到卻說「你替媽媽多看兩眼」——我們今天的眼界，是站在父母肩膀上看來的。</li>
+          </ul>
+        </div>
+        <div class="vs-col con">
+          <h4>🔴 反方一辯・楊奇函（雙向成長＋批判思維）</h4>
+          <ul>
+            <li><b>金句立論：</b>「18 歲前父母不該溺愛孩子，18 歲後孩子也不該溺愛父母。」透過 Battle 幫父母跟上時代，才不會被詐騙或被當成肥羊。</li>
+            <li><b>高度拔升：</b>舉猶太家庭為例——父母每天問孩子「今天有沒有提出好問題、質疑誰？」，而不是只問「有沒有聽話」。跟父母 Battle 是在練獨立人格與批判性思維。</li>
+          </ul>
+        </div>
+      </div>
+      <div class="clash-note">
+        <b>⚡ 本輪開槓交鋒＆國中生必學教訓：</b><br>
+        開槓時趙英男不小心說了「我們只是先閉嘴，隔兩天可以<b>溫柔溝通</b>」，楊奇函立刻抓住破綻反咬：「你都說要溝通了，就不是閉嘴！你離題了！」<br>
+        👉 <b>現場點評：</b>楊奇函用了「雙重標準」——他把對方的閉嘴定義成「嘴巴用拉鍊縫死」，卻把自己的 Battle 放寬成所有溝通。<b>教訓：一辯下定義一定要先講清楚邊界，才不會在質詢時被對手帶溝裡！</b>
+      </div>
+    </details>
+
+    <details class="round-card">
+      <summary>第二輪｜二辯故事戰與開槓：傅首爾（正）⚔️ 高嘉程（反）</summary>
+      <div class="vs-grid">
+        <div class="vs-col pro">
+          <h4>🔵 正方二辯・傅首爾（動腦不吵架＋換位同理）</h4>
+          <ul>
+            <li><b>真實妙招（動腦取代動嘴）：</b>想改變媽媽節儉的消費觀，吵架沒用！她買了一件新衣服給媽媽，媽媽說穿不了；她不爭辯，只是假裝打電話給大姨說要把衣服送人，媽媽馬上說「誰說穿不了」，隔天就穿出門。</li>
+            <li><b>戳破盲點：</b>「花時間 Battle，不如花時間把自己活好，用事實證明自己是對的。」</li>
+            <li><b>金句收尾：</b>當你代表一個時代俯瞰父母時，他們已是弱者；「<b>只有強者閉嘴，弱者才有表達的權力</b>。」</li>
+          </ul>
+        </div>
+        <div class="vs-col con">
+          <h4>🔴 反方二辯・高嘉程（幽默定規則＋防有害迷信）</h4>
+          <ul>
+            <li><b>先排雷：</b>定下 Battle 兩大原則——① 不能動手（打不過）、② 不能口出惡言（何況吵的對象就是自己媽媽），瞬間消除觀眾對「吵架」的敵意。</li>
+            <li><b>荒謬實例：</b>媽媽迷信大仙，花錢請烏龜插雞毛叫「歸心似箭」，又聽大仙在廁所砌 10 公分門檻害自己摔傷躺兩週。有些陳舊觀念是真的會害父母吃虧，不 Battle 行嗎？</li>
+            <li><b>感性翻轉：</b>硬把媽媽拉到節目現場後，媽媽打開了新世界。「Battle 的對象不是父母，而是<b>拉起父母的手，一起 Battle 陳舊觀念</b>！」</li>
+          </ul>
+        </div>
+      </div>
+      <div class="clash-note">
+        <b>⚡ 本輪開槓交鋒＆國中生必學教訓：</b><br>
+        傅首爾精準反擊：「你講的封建迷信是<b>『有害的觀念』</b>，不是一般的『過時觀念』！而且你一直在把『溝通』混成『Battle』。」<br>
+        👉 <b>國中生必學：</b>這就是超好用的「<b>切割概念</b>」技巧——對手舉極端例子（如詐騙、迷信）時，不要硬扛，直接切割：「那是違法或有害，當然要阻止；今天討論的是一般生活觀念過時！」
+      </div>
+    </details>
+
+    <details class="round-card">
+      <summary>第三輪｜三辯巔峰對決（本場最精采！）：邱晨（正）⚔️ 陳凌岳（反）</summary>
+      <div class="vs-grid">
+        <div class="vs-col pro">
+          <h4>🔵 正方三辯・邱晨（邏輯教科書級的三連擊）</h4>
+          <ul>
+            <li><b>第一擊・拆穿偷換概念：</b>「概念要公平！」不能你的 Battle 是溫柔溝通，我的閉嘴卻是絕交。兩邊都在光譜上，要比的是「先閉嘴降溫」還是「一直吵」，誰更容易走回良性溝通？（見下方圖 3B）</li>
+            <li><b>第二擊・逆反與抗體效應：</b>勸爸爸少吃肥肉，結果越吵爸爸越想證明「人要有吃肉的自由」。<b>你的每一次 Battle，都是在幫父母的舊觀念生產抗體、提高免疫力！</b>真正該 Battle 的是外面騙錢的大師，或是自己的懶惰。</li>
+            <li><b>第三擊・時差比喻（全場高光）：</b>「父母不是過時了，而是我們離開家 20 年，彼此活出了<b>時差</b>。」重要的不是逼全家調成同一個標準時間，而是時不時坐飛機去對方的時區看看。</li>
+          </ul>
+        </div>
+        <div class="vs-col con">
+          <h4>🔴 反方三辯・陳凌岳（直戳內心的情感反殺）</h4>
+          <ul>
+            <li><b>反打傲慢論：</b>正方怕 Battle 顯得傲慢，但你想想——當你選擇閉嘴不跟父母爭了，父母心裡收到的是什麼訊號？是「<b>他懶得理我、不跟我一般見識</b>」，到底誰才傲慢？</li>
+            <li><b>重定義溝通：</b>溝通最重要的不是心平氣和，而是「先把真心話說出來」，別因為怕有情緒就把真心藏起來。</li>
+            <li><b>個人故事（翅膀硬了）：</b>科研媽媽反對他花時間打辯論，他一直想用成績讓媽媽知道——其實不是要媽媽改口，而是想讓媽媽看見「我在自己選的路上有多堅定」。父母最欣慰的瞬間，是吵完架回房暗想：「這小子翅膀硬了，會飛了！」</li>
+          </ul>
+        </div>
+      </div>
+      <div class="clash-note">
+        <b>⚡ 本輪開槓交鋒＆國中生必學教訓：</b><br>
+        邱晨一句話問倒核心：「如果你一邊做事、一邊溝通都算 Battle，那我方閉嘴是不是得跟家人絕交？而且如果你一直吵，根本沒空去做事證明自己！」<br>
+        👉 <b>國中生必學：</b>三辯結辯／立論的最高境界，就是像邱晨一樣用「<b>一個好比喻（時差）＋一個心理機制（逆反抗體）</b>」，直接把原本陷入泥淖的定義戰，拉升到評審一聽就點頭的新高度！
+      </div>
+    </details>
+
+    <details class="round-card">
+      <summary>第四輪｜後排補刀＆導師觀點（蔡康永、薛兆豐、黃渤）</summary>
+      <div class="vs-grid">
+        <div class="vs-col pro">
+          <h4>🔵 正方後排・小黑（算一筆眼淚帳）</h4>
+          <p style="margin:0">提醒大家：長大後在外打拚，扣掉上班與陪朋友，真正能陪父母的時間其實<b>少得可憐</b>——這麼少的時間，你真的想拿來跟他們吵架嗎？這段話讓不少人紅了眼眶。</p>
+        </div>
+        <div class="vs-col con">
+          <h4>🔴 反方後排・程璐（輕鬆破除悲情）</h4>
+          <p style="margin:0">立刻用幽默拉回氣氛：「話不投機半句多，一言不合就 Battle，恰恰是因為我們是一家人！」閉嘴是一種自以為是的成熟，反而讓父母覺得「孩子飛走了、不需要我了」。</p>
+        </div>
+      </div>
+      <div class="quote-grid">
+        <div class="quote-card">
+          <strong>蔡康永（為什麼吵贏反而輸了）</strong>
+          他說每次跟爸媽吵贏，都是人生最後悔的時刻；父母辛苦養大孩子，不是為了被孩子證明觀念過時。
+        </div>
+        <div class="quote-card">
+          <strong>薛兆豐（經濟學視角）</strong>
+          大意：想法和行動是兩回事，腦中留著舊觀念幾乎沒有成本；只要不害人，討論本身也可以是一種樂趣。
+        </div>
+        <div class="quote-card">
+          <strong>黃渤（生活中的平衡解）</strong>
+          大意：家人之間的爭論是生活的熱鬧，安靜聆聽則讓家裡放鬆；兩者都需要，家才會溫暖。
+        </div>
+      </div>
+    </details>
+
+    <!-- 4. 概念光譜圖 SVG -->
+    <div class="svg-card">
+      <div class="svg-head">
+        <h3>⚖️ 圖 3B｜概念光譜圖：用一張圖徹底搞懂「偷換概念」</h3>
+        <button class="btn zoom-btn" type="button">🔍 放大看圖</button>
+      </div>
+      <div class="svg-box" data-title="圖 3B｜概念光譜圖：一眼看懂偷換概念">
+        <svg viewBox="0 0 840 255" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="概念光譜圖：拆穿偷換概念">
+          <defs>
+            <linearGradient id="specGrad" x1="0" y1="0" x2="1" y2="0">
+              <stop offset="0%" stop-color="var(--pro)"/>
+              <stop offset="50%" stop-color="var(--green)"/>
+              <stop offset="100%" stop-color="var(--con)"/>
+            </linearGradient>
+          </defs>
+          <!-- 上方：雙重標準畫法 -->
+          <text x="20" y="24" font-size="13.5" font-weight="700" fill="var(--con)">❌ 常見陷阱（不公平定義）：把對方推到極端，把自己包進中間溫和區！</text>
+          <path d="M60,82 L60,64 L165,64 L165,82" fill="none" stroke="var(--pro)" stroke-width="2" stroke-dasharray="4 3"/>
+          <text x="112" y="54" text-anchor="middle" font-size="12" font-weight="700" fill="var(--pro)">硬說正方＝絕交</text>
+
+          <path d="M185,82 L185,56 L780,56 L780,82" fill="none" stroke="var(--con)" stroke-width="2.5"/>
+          <rect x="355" y="42" width="255" height="24" rx="12" fill="var(--con-soft)" stroke="var(--con)"/>
+          <text x="482" y="58" text-anchor="middle" font-size="12" font-weight="700" fill="var(--con)">反方雙重標準：溫柔溝通也算 Battle！</text>
+
+          <!-- 中央光譜軸 -->
+          <rect x="60" y="102" width="720" height="16" rx="8" fill="url(#specGrad)"/>
+          <circle cx="95" cy="110" r="8" fill="var(--paper)" stroke="var(--pro)" stroke-width="3"/>
+          <circle cx="310" cy="110" r="8" fill="var(--paper)" stroke="var(--pro)" stroke-width="3"/>
+          <circle cx="420" cy="110" r="10" fill="var(--green-soft)" stroke="var(--green)" stroke-width="3"/>
+          <circle cx="530" cy="110" r="8" fill="var(--paper)" stroke="var(--con)" stroke-width="3"/>
+          <circle cx="745" cy="110" r="8" fill="var(--paper)" stroke="var(--con)" stroke-width="3"/>
+
+          <text x="95" y="142" text-anchor="middle" font-size="12" font-weight="700" fill="var(--pro)">極端左端</text>
+          <text x="95" y="158" text-anchor="middle" font-size="11.5" fill="var(--muted)">永遠閉嘴・冷暴力</text>
+
+          <text x="310" y="142" text-anchor="middle" font-size="12" font-weight="700" fill="var(--pro)">暫時沉默</text>
+          <text x="310" y="158" text-anchor="middle" font-size="11.5" fill="var(--muted)">先降溫、用行動</text>
+
+          <text x="420" y="142" text-anchor="middle" font-size="12.5" font-weight="700" fill="var(--green)">★ 理想目標</text>
+          <text x="420" y="158" text-anchor="middle" font-size="11.5" fill="var(--green)">溫柔有效溝通</text>
+
+          <text x="530" y="142" text-anchor="middle" font-size="12" font-weight="700" fill="var(--con)">據理力爭</text>
+          <text x="530" y="158" text-anchor="middle" font-size="11.5" fill="var(--muted)">當場表達不退讓</text>
+
+          <text x="745" y="142" text-anchor="middle" font-size="12" font-weight="700" fill="var(--con)">極端右端</text>
+          <text x="745" y="158" text-anchor="middle" font-size="11.5" fill="var(--muted)">瘋狂吵架・傷感情</text>
+
+          <!-- 下方：公平比較 -->
+          <rect x="60" y="182" width="720" height="58" rx="10" fill="var(--gold-soft)" stroke="var(--gold)" stroke-width="1.6"/>
+          <text x="420" y="206" text-anchor="middle" font-size="13.5" font-weight="700" fill="var(--gold)">✅ 邱晨反殺金句：「概念要公平！」</text>
+          <text x="420" y="227" text-anchor="middle" font-size="12.5" fill="var(--ink)">雙方都不打極端，真正要比的是：從衝突出發，先「暫時沉默」還是繼續「Battle」，誰更容易走回中間的溫柔溝通？</text>
+        </svg>
+      </div>
+      <p class="svg-cap">💡 國中比賽時只要發現對手偷換概念（例如把己方合理化、把你極端化），馬上用這張光譜圖的邏輯反問評審！</p>
+    </div>
+
+    <!-- 5. 綜藝 vs 正式賽 -->
+    <div class="grid2">
+      <div class="card">
+        <h3>✅ 綜藝辯論「可以學」</h3>
+        <ul>
+          <li><b>抓題目前提</b>（如「固執己見」）與<b>切割概念</b>（如「有害 ≠ 過時」）。</li>
+          <li>用<b>好記的比喻</b>取代枯燥大道理（如「兩代人的時差」、「替舊觀念生抗體」）。</li>
+          <li><b>邏輯＋30 秒故事</b>：講完論點後補一個具體畫面，讓評審記住你。</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3>⚠️ 國中正式比賽「要避開」</h3>
+        <ul>
+          <li>不可以插話搶麥、人身攻擊或過度搞笑（正式賽會扣儀態分）。</li>
+          <li>不能只講笑點沒邏輯，每個論點都要有 <b>AREL 完整論證</b>。</li>
+          <li>質詢要問「是非題／短問題」，不能像綜藝開槓那樣雙方互吼。</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- 分頁 3：實戰 1 -->
+  <section class="panel" id="p-r1"></section>
+  <!-- 分頁 4：實戰 2 -->
+  <section class="panel" id="p-r2"></section>
+  <!-- 分頁 5：實戰 3 -->
+  <section class="panel" id="p-r3"></section>
+
+  <!-- 分頁 6：二辯交叉質詢逐字對話稿 -->
+  <section class="panel" id="p-cross">
+    <h2>⚔️ 二辯交叉質詢實戰指南與逐字攻防對話稿</h2>
+    <p class="muted">質詢（各 1 分 30 秒）是國中比賽最容易拉開分數的環節！重點不是讓對手當場認輸，而是<b>逼出矛盾、切出前提，留給三辯結辯收割</b>。</p>
+
+    <div class="svg-card">
+      <div class="svg-head">
+        <h3>🎯 圖 7｜二辯交叉質詢「三步鎖死術」攻防流程圖</h3>
+        <button class="btn zoom-btn" type="button">🔍 放大看圖</button>
+      </div>
+      <div class="svg-box" data-title="圖 7｜二辯交叉質詢「三步鎖死術」攻防流程圖">
+        <svg viewBox="0 0 840 230" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="二辯交叉質詢三步鎖死術流程圖">
+          <defs>
+            <marker id="arrX" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,1 L9,5 L0,9 z" fill="var(--accent)"/></marker>
+          </defs>
+          <rect x="14" y="18" width="248" height="122" rx="12" fill="var(--paper)" stroke="var(--pro)" stroke-width="2"/>
+          <rect x="14" y="18" width="248" height="32" rx="10" fill="var(--pro-soft)"/>
+          <text x="138" y="39" text-anchor="middle" font-size="13.5" font-weight="700" fill="var(--pro)">第 1 步｜鎖前提（是非短題）</text>
+          <text x="138" y="68" text-anchor="middle" font-size="12.5" fill="var(--ink)">用溫和短問題讓對手先點頭</text>
+          <text x="138" y="90" text-anchor="middle" font-size="12" fill="var(--muted)">「請問您承不承認……？」</text>
+          <text x="138" y="118" text-anchor="middle" font-size="11.5" font-weight="700" fill="var(--pro)">⚠️ 絕不一次問長篇大論</text>
+
+          <line x1="266" y1="79" x2="292" y2="79" stroke="var(--accent)" stroke-width="2.5" marker-end="url(#arrX)"/>
+
+          <rect x="296" y="18" width="248" height="122" rx="12" fill="var(--paper)" stroke="var(--gold)" stroke-width="2"/>
+          <rect x="296" y="18" width="248" height="32" rx="10" fill="var(--gold-soft)"/>
+          <text x="420" y="39" text-anchor="middle" font-size="13.5" font-weight="700" fill="var(--gold)">第 2 步｜切情境（具體反例）</text>
+          <text x="420" y="68" text-anchor="middle" font-size="12.5" fill="var(--ink)">丟出對手方案會失靈的真實情境</text>
+          <text x="420" y="90" text-anchor="middle" font-size="12" fill="var(--muted)">「如果發生 X，您方怎麼辦？」</text>
+          <text x="420" y="118" text-anchor="middle" font-size="11.5" font-weight="700" fill="var(--gold)">🎯 逼對方陷入二難選擇</text>
+
+          <line x1="548" y1="79" x2="574" y2="79" stroke="var(--accent)" stroke-width="2.5" marker-end="url(#arrX)"/>
+
+          <rect x="578" y="18" width="248" height="122" rx="12" fill="var(--paper)" stroke="var(--con)" stroke-width="2"/>
+          <rect x="578" y="18" width="248" height="32" rx="10" fill="var(--con-soft)"/>
+          <text x="702" y="39" text-anchor="middle" font-size="13.5" font-weight="700" fill="var(--con)">第 3 步｜收網定性（換題！）</text>
+          <text x="702" y="68" text-anchor="middle" font-size="12.5" fill="var(--ink)">抓到破綻立刻替評審做結論</text>
+          <text x="702" y="90" text-anchor="middle" font-size="12" fill="var(--muted)">「謝謝！評審可以看到……」</text>
+          <text x="702" y="118" text-anchor="middle" font-size="11.5" font-weight="700" fill="var(--con)">✅ 果斷換下一題，不糾纏</text>
+
+          <rect x="14" y="158" width="812" height="54" rx="10" fill="var(--green-soft)" stroke="var(--green)" stroke-width="1.5"/>
+          <text x="420" y="180" text-anchor="middle" font-size="13" font-weight="700" fill="var(--green)">🛡️ 被質詢方 3 大防守口訣</text>
+          <text x="420" y="200" text-anchor="middle" font-size="12" fill="var(--ink)">① 不掉進非黑即白（加前提再答）　② 回答限 10–15 秒不多話送破綻　③ 承認小代價，但立刻拉回己方大判準！</text>
+        </svg>
+      </div>
+      <p class="svg-cap">💡 練習時可以點擊下方「🙈 隱藏戰術提示」，先自己看對話猜猜看每一句在設什麼陷阱！</p>
+    </div>
+
+    <div class="chat-head">
+      <div class="sub-tabs" id="crossTabs" style="margin:0">
+        <button class="on" data-cid="r1">🥊 實戰 1：親子觀念</button>
+        <button data-cid="r2">📱 實戰 2：校園手機</button>
+        <button data-cid="r3">🤖 實戰 3：AI 寫作業</button>
+      </div>
+      <button class="btn" id="toggleTacticsBtn" type="button">🙈 隱藏戰術標註</button>
+    </div>
+    <div id="crossContainer"></div>
+  </section>
+
+  <!-- 分頁 7：三辯結辯範本 -->
+  <section class="panel" id="p-close">
+    <h2>🏆 三辯結辯萬用四步公式與實戰範本</h2>
+    <p class="muted">三辯結辯（1 分 30 秒，本手冊範本約 340–370 字）<b>不可丟出全新論點</b>，而是幫評審整理全場交鋒、證明己方判準更重要，並用一句有力金句收尾。</p>
+
+    <div class="svg-card">
+      <div class="svg-head">
+        <h3>⏱️ 圖 8｜三辯結辯 90 秒四步黃金配速圖</h3>
+        <button class="btn zoom-btn" type="button">🔍 放大看圖</button>
+      </div>
+      <div class="svg-box" data-title="圖 8｜三辯結辯 90 秒四步黃金配速圖">
+        <svg viewBox="0 0 840 190" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="三辯結辯 90 秒四步黃金配速圖">
+          <rect x="16" y="24" width="136" height="122" rx="10" fill="var(--pro-soft)" stroke="var(--pro)" stroke-width="2"/>
+          <text x="84" y="48" text-anchor="middle" font-size="12.5" font-weight="700" fill="var(--pro)">0:00–0:15（15s）</text>
+          <text x="84" y="74" text-anchor="middle" font-size="14" font-weight="700" fill="var(--ink)">1. 定調戰場</text>
+          <text x="84" y="100" text-anchor="middle" font-size="11.5" fill="var(--muted)">先肯定共同目標</text>
+          <text x="84" y="120" text-anchor="middle" font-size="11.5" fill="var(--muted)">點出 2 個核心分歧</text>
+
+          <rect x="166" y="24" width="212" height="122" rx="10" fill="var(--con-soft)" stroke="var(--con)" stroke-width="2"/>
+          <text x="272" y="48" text-anchor="middle" font-size="12.5" font-weight="700" fill="var(--con)">0:15–0:40（25s）</text>
+          <text x="272" y="74" text-anchor="middle" font-size="14" font-weight="700" fill="var(--ink)">2. 收割對手漏洞</text>
+          <text x="272" y="100" text-anchor="middle" font-size="11.5" fill="var(--muted)">把二辯質詢抓到的破綻</text>
+          <text x="272" y="120" text-anchor="middle" font-size="11.5" fill="var(--muted)">整理成一句致命結論</text>
+
+          <rect x="392" y="24" width="246" height="122" rx="10" fill="var(--gold-soft)" stroke="var(--gold)" stroke-width="2"/>
+          <text x="515" y="48" text-anchor="middle" font-size="12.5" font-weight="700" fill="var(--gold)">0:40–1:10（30s）</text>
+          <text x="515" y="74" text-anchor="middle" font-size="14" font-weight="700" fill="var(--ink)">3. 鞏固己方＋權衡比較</text>
+          <text x="515" y="100" text-anchor="middle" font-size="11.5" fill="var(--muted)">重申己方最大收益與替代方案</text>
+          <text x="515" y="120" text-anchor="middle" font-size="11.5" fill="var(--muted)">說明為何己方代價更小</text>
+
+          <rect x="652" y="24" width="172" height="122" rx="10" fill="var(--accent-soft)" stroke="var(--accent)" stroke-width="2"/>
+          <text x="738" y="48" text-anchor="middle" font-size="12.5" font-weight="700" fill="var(--accent)">1:10–1:30（20s）</text>
+          <text x="738" y="74" text-anchor="middle" font-size="14" font-weight="700" fill="var(--ink)">4. 價值升華收尾</text>
+          <text x="738" y="100" text-anchor="middle" font-size="11.5" fill="var(--muted)">放慢語速・眼神看評審</text>
+          <text x="738" y="120" text-anchor="middle" font-size="11.5" fill="var(--muted)">金句留韻＋謝謝大家</text>
+
+          <text x="420" y="172" text-anchor="middle" font-size="12" fill="var(--muted)">⚡ 配速提醒：聽到計時器剩 30 秒提示音時，剛好應該準備進入「第 4 步：價值升華」！</text>
+        </svg>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="side-head">
+        <h3 style="margin:0">📝 三辯結辯萬用填空骨架（任何新題目都能套用）</h3>
+        <button class="btn" id="copySkeletonBtn" type="button">📋 複製萬用骨架</button>
+      </div>
+      <div class="skeleton-box" id="skeletonText">主席、各位評審，大家好。聽完整場比賽，雙方其實都同意「【雙方共同目標】」，今天真正決定勝負的關鍵只有兩個戰場：第一是【戰場一】，第二是【戰場二】。
+
+先看對方的主張。剛才在質詢中我們已經清楚看到，對方始終無法解決「【對手被質詢抓出的致命漏洞】」，如果照對方的做法，只會導致「【對方的負面後果】」。
+
+反觀我方，不僅正面回應了對方的擔憂，更守住了今天最重要的價值：「【己方核心論點一】」與「【己方核心論點二】」。兩相權衡之下，我方的方案顯然更務實、代價更小。
+
+最後想請評審思考，「【一句有溫度的比喻或金句】」。因此，請評審堅定支持我方立場，謝謝大家！</div>
+    </div>
+
+    <h3>🎙️ 三場實戰正反方三辯結辯完整範本（可一鍵複製給 NeuralReader）</h3>
+    <div class="sub-tabs" id="closeTabs">
+      <button class="on" data-cid="r1">🥊 實戰 1：親子觀念</button>
+      <button data-cid="r2">📱 實戰 2：校園手機</button>
+      <button data-cid="r3">🤖 實戰 3：AI 寫作業</button>
+    </div>
+    <div id="closeContainer"></div>
+  </section>
+
+  <!-- 分頁 8：計時器與質詢練功 -->
+  <section class="panel" id="p-tools">
+    <h2>⏱️ 國中辯論實戰倒數計時器</h2>
+    <div class="card timer-wrap">
+      <div class="presets">
+        <button class="btn on" data-sec="120">一辯申論（2:00）</button>
+        <button class="btn" data-sec="90">質詢／駁論（1:30）</button>
+        <button class="btn" data-sec="90">三辯結辯（1:30）</button>
+        <button class="btn" data-sec="60">自由辯快攻（1:00）</button>
+      </div>
+      <div class="timer-display" id="timerDisplay">02:00</div>
+      <p class="muted" id="timerHint">剩餘 30 秒會變黃提醒，時間到會發出提示音。</p>
+      <div class="controls" style="justify-content:center;margin-top:12px">
+        <button class="btn main" id="tStart">▶ 開始計時</button>
+        <button class="btn" id="tPause">⏸ 暫停</button>
+        <button class="btn" id="tReset">↺ 重設</button>
+      </div>
+    </div>
+
+    <h2>🛡️ 質詢突襲防禦卡（先想 30 秒再點開參考應答）</h2>
+    <details class="qa-box">
+      <summary>實戰 1 質詢模擬：對方問正方「你選擇沉默，不就是冷暴力、讓父母覺得你懶得理他們嗎？」</summary>
+      <p><b>30 秒穩健接招：</b>「對方辯友，冷暴力是長期拒絕溝通、刻意懲罰對方；但我方說的『暫時沉默』是在情緒最高點先按下暫停鍵，避免說出傷人的話。等雙方冷靜後，我們會用實際行動或溫和的語氣溝通，這恰恰是為了保護關係，而不是冷暴力。」</p>
+    </details>
+    <details class="qa-box">
+      <summary>實戰 2 質詢模擬：對方問正方「全面禁止手機，那學生放學搭公車遇到緊急狀況怎麼聯絡家長？」</summary>
+      <p><b>30 秒穩健接招：</b>「對方辯友，聯絡安全確實重要，但這不需要靠『把智慧型手機帶進校園』來解決。學校有學務處與公共電話，通勤途中也可以改用純通話功能的聯絡手錶或約定固定接送點；我們反對的是具上網、拍照與遊戲功能的智慧型手機進入學習場域。」</p>
+    </details>
+    <details class="qa-box">
+      <summary>實戰 3 質詢模擬：對方問反方「AI 是未來趨勢，你現在禁止國中生用，難道要讓他們輸在起跑點嗎？」</summary>
+      <p><b>30 秒穩健接招：</b>「對方辯友，我方從未反對在『資訊課』教學生認識 AI；我們反對的是在『回家寫各科作業』時用 AI。就像小學生學九九乘法時不准用計算機，並不是反對科技，而是要先打好基本功，未來才有能力駕馭工具，而不是被工具取代。」</p>
+    </details>
+  </section>
+
+</div>
+
+<div class="svg-modal" id="svgModal" role="dialog" aria-modal="true" aria-label="放大檢視圖表">
+  <div class="svg-mbar">
+    <strong id="svgModalTitle">圖表檢視</strong>
+    <button class="btn" id="svgModalClose" type="button">✕ 關閉（ESC）</button>
+  </div>
+  <div class="svg-mbody" id="svgModalBody"></div>
+</div>
+
+<script>
+const ROUNDS = [
+  {
+    id: "r1",
+    tag: "生活價值題・銜接《奇葩說》母題",
+    title: "實戰 1：面對父母觀念過時又固執己見，國中生該「暫時沉默」還是「據理力爭」？",
+    pro: {
+      side: "正方：應該選擇「暫時沉默」",
+      audio: "audio/debate-round1-pro.mp3",
+      tips: [
+        "<b>定義防守：</b>強調「暫時沉默」是在衝突當下按暫停鍵，絕非冷暴力，事後改用行動與成果證明。",
+        "<b>核心判準：</b>親子互動的目標是「促成理解與保護關係」，不是在餐桌上吵贏。",
+        "<b>質詢武器：</b>反問對方「父母都已固執己見、情緒上頭了，硬要當場爭辯只會激發逆反心理，真的能改變他們嗎？」"
+      ],
+      script: [
+        "主席、各位評審、對方辯友，大家好。今天我方的立場非常明確：面對父母觀念過時又固執己見，國中生應該選擇暫時沉默。",
+        "首先，請大家看清楚今天的辯題前提——父母已經「固執己見」了。這代表什麼？代表雙方早就表達過意見，卻誰也說服不了誰。在這個情緒已經升溫的當下，如果我們還堅持要「據理力爭」，結果往往不是誰被說服，而是把一場觀念討論，變成一場傷感情的勝負之爭。心理學上有一個很常見的現象叫作「逆反心理」：當一個人覺得自己的經驗被否定、被貼上「過時」的標籤時，他不會敞開心胸聽你講道理，反而會拼命找更多理由來防衛自己。吵得越兇，父母就越固執；就算我們靠著口才吵贏了那一瞬間，換來的往往也是餐桌上的冰冷與事後的後悔。",
+        "其次，我方主張的「暫時沉默」，絕不是冷暴力，也不是放棄溝通，而是給情緒一個降溫的空間，把力氣從「動嘴」轉向「動腦與行動」。例如，父母覺得買某個新工具太浪費，你當場吵一小時沒用，不如先安靜下來，事後用實際的成績、自律的表現，或者讓他們親身體驗新方法帶來的好處。當父母親眼看見改變的成果，往往比你在餐桌上爭得面紅耳赤更有說服力。",
+        "最後，我們和父母的觀念差異，很多時候只是因為成長的時代不同，就像活在不同的時區。暫時沉默，不是認輸，而是用溫柔與耐心，保護我們最在乎的家人關係。因此，我方堅定主張，應該選擇暫時沉默。謝謝大家！"
+      ]
+    },
+    con: {
+      side: "反方：應該選擇「據理力爭」",
+      audio: "audio/debate-round1-con.mp3",
+      tips: [
+        "<b>定義防守：</b>強調「據理力爭」是有禮貌、有根據地堅持說真話，絕非大吼大叫。",
+        "<b>核心判準：</b>真正的尊重是平等對話，且不能放任有害或錯誤的觀念繼續傷人。",
+        "<b>質詢武器：</b>反問對方「如果每次分歧都閉嘴，父母會覺得孩子懶得理他們，這難道不是更深的疏離？」"
+      ],
+      script: [
+        "主席、各位評審、對方辯友，大家好。對方辯友把「暫時沉默」說得很溫柔，但我方認為，面對父母觀念過時又固執己見，國中生應該選擇「據理力爭」。",
+        "第一，我們必須先釐清，什麼叫作「據理力爭」？它不是對父母大吼大叫、口出惡言，而是「有根據、有條理地堅持把真話說出來」。對方說沉默可以保護關係，但請大家想一想，在真實的家庭裡，當你因為覺得父母「觀念過時、講不通」而選擇閉嘴不談時，父母接收到的訊號是什麼？是「孩子長大了，懶得跟我溝通了」，甚至覺得你只是在敷衍他。久而久之，家裡表面上風平浪靜，實際上卻築起了一道看不見的高牆，這才是對親子關係最深的傷害。",
+        "第二，有些過時的觀念，如果不據理力爭，是真的會造成實質傷害的。比如父母誤信網路上的健康謠言、差點掉進詐騙陷阱，或者用過去的高壓標準安排孩子的人生方向。這時候如果我們選擇沉默、退讓，表面上是孝順，實際上卻是放任錯誤繼續發生。真正愛父母，不是一味順從，而是願意花力氣、帶著證據與耐心，陪他們看見這個時代的新資訊，讓他們不與世界脫節。",
+        "第三，對國中生而言，家庭是我們練習獨立思考與理性表達的第一個場域。如果我們連面對最親近的家人，都不敢為了自己相信的道理好好發聲，未來面對同儕壓力或社會上的不合理，又怎麼能挺身而出？溝通的重點從來不是沒有情緒，而是願意坦誠相見。因此，我方主張應該據理力爭。謝謝大家！"
+      ]
+    }
+  },
+  {
+    id: "r2",
+    tag: "校園政策題・國中辯論賽最常考",
+    title: "實戰 2：國中校園應不應該全面禁止學生攜帶手機到校？",
+    pro: {
+      side: "正方：應該全面禁止",
+      audio: "audio/debate-round2-pro.mp3",
+      tips: [
+        "<b>政策三步：</b>專注力與霸凌問題嚴重（需求性）→ 帶進校園防不勝防（根屬性）→ 全面禁止最公平且減輕老師負擔（解決力）。",
+        "<b>必備防禦：</b>先主動回應「放學聯絡家長」的替代方案（學務處電話、公共電話、固定接送）。",
+        "<b>質詢武器：</b>反問對方「統一保管若遺失損壞誰賠？學生帶備用機應付檢查，老師每天要當警察嗎？」"
+      ],
+      script: [
+        "主席、各位評審、對方辯友，大家好。我方主張，國中校園應該全面禁止學生攜帶手機到校，理由有三點。",
+        "第一，保護學習專注力，讓校園回歸純粹的學習環境。國中階段正是專注力與基礎學科養成的關鍵時期。根據多項教育研究與校園實務觀察，只要手機就在書包或抽屜裡，即使沒有開機，光是大腦不斷想著「有沒有新訊息」，就會明顯分散注意力。一旦下課十分鐘大家都低頭滑手機，不僅大腦無法真正休息，連同學之間面對面聊天、打球的真實互動都會大幅減少。",
+        "第二，降低校園數位霸凌與隱私外洩的風險。近年來，校園內偷拍同學出糗畫面、未經同意上傳社群媒體的事件層出不窮。這些傷害一旦在網路上擴散，往往難以挽回。如果允許手機進入校園，學校很難在每一個角落做到滴水不漏的監管；唯有一律禁止攜帶，才能從源頭阻斷課間偷拍與即時網路公審的機會。",
+        "第三，減輕第一線教師的管理負擔，做到真正公平。對方可能會主張「到校統一保管就好」，但現實是，手機價格昂貴，統一保管若發生遺失、損壞，責任歸屬往往引發親師糾紛；更有學生會準備「備用機」來應付檢查，讓老師每天疲於奔命當警察。至於放學聯絡家長的需求，完全可以透過學務處電話、公共電話或約定固定接送時間來解決。為了給國中生一個專注、安全、公平的校園，我方主張應該全面禁止攜帶手機到校。謝謝大家！"
+      ]
+    },
+    con: {
+      side: "反方：不應該全面禁止（應採分級管理）",
+      audio: "audio/debate-round2-con.mp3",
+      tips: [
+        "<b>政策策略：</b>猛攻「一刀切的弊害（通勤緊急聯絡）」＋提出「可行替代方案（入校鎖手機櫃，放學領回）」。",
+        "<b>價值拉高：</b>教育目的是培養自律，國中禁止三年，高中反而容易報復性沉迷。",
+        "<b>質詢武器：</b>反問對方「學生搭公車遇到突發狀況，身上沒手機要怎麼即時向家長求援？」"
+      ],
+      script: [
+        "主席、各位評審、對方辯友，大家好。我方反對國中校園「全面禁止」攜帶手機到校。我們同樣重視學習專注與校園安全，但「全面禁止」既不切實際，也錯失了最好的教育機會。",
+        "第一，全面禁止忽略了學生通勤途中的真實安全需求。現在許多國中生需要自己搭公車、捷運上下學，或是放學後要前往補習班。如果遇到臨時停課、天氣突變、公車誤點甚至突發意外，手機就是學生與家長之間最即時的救命聯絡工具。我們不能為了消除校園內的管理麻煩，就讓孩子在上下學的路上暴露在無法求援的風險之中。",
+        "第二，我們完全可以用「入校分級管理」解決分心問題，不需要一刀切。許多學校已經成功實施「手機養機場」制度：早上進教室就統一關機上鎖，直到放學才領回；或者在老師指導的專題課上，作為查資料、掃描學習單的數位工具。這樣一來，上課一樣專心、下課一樣不會偷拍，卻能兼顧放學後的安全聯絡，這才是更聰明、更精準的做法。",
+        "第三，教育的目的是培養自律，而不是靠隔絕來逃避問題。手機已經是現代人不可或缺的工具，國中三年如果只靠高壓禁止，學生根本沒有機會學習「什麼時候該放下手機、如何遵守使用規範」。一旦升上高中或大學失去限制，反而更容易出現報復性沉迷。與其一味禁止，不如在國中階段透過明確規範，教會學生做手機的主人。因此，我方反對全面禁止攜帶手機到校。謝謝大家！"
+      ]
+    }
+  },
+  {
+    id: "r3",
+    tag: "科技與教育題・AI 時代熱門考題",
+    title: "實戰 3：國中生寫作業應不應該被允許使用生成式 AI（如 ChatGPT）？",
+    pro: {
+      side: "正方：應該允許（搭配規範引導）",
+      audio: "audio/debate-round3-pro.mp3",
+      tips: [
+        "<b>核心定位：</b>把 AI 定義為「24 小時免費家教」而非「代寫槍手」，強調用它來問觀念、解卡關。",
+        "<b>防抄襲機制：</b>主動提出「附上 AI 對話紀錄＋標註自己查證與修改處」作為管理方案。",
+        "<b>歷史類比：</b>拿「計算機、搜尋引擎」類比，說明與其禁止讓學生偷用，不如教會正確素養。"
+      ],
+      script: [
+        "主席、各位評審、對方辯友，大家好。面對人工智慧已經深入生活的今天，我方主張：國中生寫作業應該被允許使用生成式 AI。",
+        "首先，AI 能打破教育資源的落差，成為每個學生身邊二十四小時的專屬家教。許多國中生晚上在家寫作業，遇到數學題卡關或英文文法看不懂，家裡不一定有人能教，也不是每個人都能請家教。這時候，生成式 AI 可以一步一步引導解題思路、用生活化的比喻解釋理化觀念，甚至幫學生批改作文的語句通順度。這種即時回饋，能大幅降低學習挫折感，讓學生更願意主動探索。",
+        "其次，禁止不等於能防堵，與其讓學生偷偷使用、直接複製貼上，不如大方納入規範，教會他們正確的「AI 素養」。允許使用，並不是允許抄襲！老師可以要求學生在作業附上與 AI 的對話紀錄，說明自己「問了什麼問題、怎麼查證 AI 的回答、最後加入了哪些自己的想法」。這樣一來，學生反而在寫作業的過程中，學會了提問能力、查證能力與批判思考，這正是未來社會最需要的核心競爭力。",
+        "回顧歷史，從計算機到搜尋引擎，每一次新科技出現，都有人擔心會害學生變笨。但事實證明，學會駕馭工具的人才會走得更遠。因此，我們應該在明確的引導與規範下，允許國中生使用生成式 AI 輔助寫作業。謝謝大家！"
+      ]
+    },
+    con: {
+      side: "反方：不應該允許寫作業時使用",
+      audio: "audio/debate-round3-con.mp3",
+      tips: [
+        "<b>核心比喻：</b>「健身房請機器人舉啞鈴」——作業的目的不是交出完美成品，而是讓大腦長出思考肌肉！",
+        "<b>殺手論點：</b>AI 會有「幻覺（一本正經胡說八道）」，基礎尚未扎實的國中生根本分辨不出真假。",
+        "<b>打臉配套：</b>指出老師每天要改上百份作業，根本沒有時間逐一檢查每個學生的 AI 對話紀錄。"
+      ],
+      script: [
+        "主席、各位評審、對方辯友，大家好。我方並不反對學生認識 AI，但我們堅定主張：國中生在「寫作業」的時候，不應該被允許使用生成式 AI。",
+        "第一，寫作業的真正目的，不是交出一份「完美無瑕的成品」，而是讓大腦經歷「思考、卡關、自己找出解法」的訓練過程，同時讓老師診斷你哪裡還不會。這就像去健身房重訓一樣，如果請機器人幫你把啞鈴舉起來，啞鈴確實舉起來了，但你的肌肉一公克也不會長。國中階段正是建立邏輯推理、閱讀理解與基礎寫作能力的黃金時期，如果一卡關就習慣向 AI 要提示或草稿，思考的耐力會迅速退化，最後變成「離開 AI 就不會寫作、不會思考」的依賴者。",
+        "第二，生成式 AI 具有「幻覺」問題，經常會一本正經地給出錯誤的歷史年代、虛構的資料，甚至算錯數學題。大學生或專家因為有扎實的底子，能一眼看出 AI 寫錯了；但國中生正處於學習基礎知識的階段，根本缺乏足夠的判斷力去查證真偽，反而容易把錯誤觀念背進腦子裡。",
+        "第三，對方說可以要求附上對話紀錄來防抄襲，但在現實教學中，老師每天要批改上百份作業，根本不可能逐一核對每個學生是不是真的有自己思考。為了守住國中生獨立思考的基本功，並讓作業真實反映學習狀況，我方主張寫作業不應該允許使用生成式 AI。謝謝大家！"
+      ]
+    }
+  }
+];
+
+function buildSideCard(sideObj, type, idx){
+  const isPro = type === "pro";
+  const box = document.createElement("article");
+  box.className = "side-box " + type;
+  const plainText = sideObj.script.join("\n\n");
+  const charCount = plainText.replace(/\s+/g, "").length;
+  const uid = `aud-${idx}-${type}`;
+
+  box.innerHTML = `
+    <div class="side-head">
+      <h3 class="side-title">${isPro ? "🔵 " : "🔴 "}${sideObj.side}</h3>
+      <span class="badge ${isPro ? "b-pro" : "b-con"}">約 ${charCount} 字｜2 分鐘需每分鐘約 ${Math.round(charCount / 2)} 字</span>
+    </div>
+    <div class="strategy">
+      <h4>🎯 攻防與質詢建議</h4>
+      <ul>${sideObj.tips.map(t => `<li>${t}</li>`).join("")}</ul>
+    </div>
+    <div class="audio-zone">
+      <div class="audio-top">
+        <span><b>🎙️ 語音範本槽位：</b><code>${sideObj.audio}</code></span>
+        <div class="controls">
+          <button class="btn copy-btn" type="button">📋 複製純講稿給 NeuralReader</button>
+          <label class="btn" style="cursor:pointer">📂 試聽本機 MP3<input class="file-input" type="file" accept="audio/*"></label>
+          <select class="btn speed-sel" aria-label="播放速度">
+            <option value="0.75">0.75x 跟讀</option>
+            <option value="0.85">0.85x 慢速</option>
+            <option value="1" selected>1.0x 原速</option>
+            <option value="1.15">1.15x 實戰</option>
+            <option value="1.25">1.25x 快節奏</option>
+          </select>
+        </div>
+      </div>
+      <audio id="${uid}" controls preload="metadata" src="${sideObj.audio}"></audio>
+      <div class="audio-status" id="${uid}-st">正在檢查 <code>${sideObj.audio}</code> ...</div>
+    </div>
+    <h4>📜 完整申論講稿（內文）</h4>
+    <div class="script-text">${sideObj.script.map(p => `<p>${p}</p>`).join("")}</div>
+  `;
+
+  const audioEl = box.querySelector("audio");
+  const statusEl = box.querySelector(`#${uid}-st`);
+  const copyBtn = box.querySelector(".copy-btn");
+  const fileIn = box.querySelector(".file-input");
+  const speedSel = box.querySelector(".speed-sel");
+
+  audioEl.addEventListener("loadedmetadata", () => {
+    const mins = Math.floor(audioEl.duration / 60);
+    const secs = String(Math.round(audioEl.duration % 60)).padStart(2, "0");
+    statusEl.className = "audio-status ok";
+    statusEl.textContent = `✅ 已自動載入音檔（長度 ${mins}:${secs}），可直接播放跟讀或聽力反駁。語音朗讀比真人比賽快，跟讀建議調 0.75x～0.85x。`;
+  });
+  audioEl.addEventListener("error", () => {
+    audioEl.closest(".audio-zone").style.display = "none"; return;
+    statusEl.className = "audio-status";
+    statusEl.innerHTML = `⏳ 尚未偵測到 <code>${sideObj.audio}</code>。用 NeuralReader 生成後放入 <code>聲音檔案/</code> 資料夾並重整即可，或先按上方「📂 試聽本機 MP3」。`;
+  });
+
+  speedSel.addEventListener("change", () => { audioEl.playbackRate = parseFloat(speedSel.value); });
+
+  fileIn.addEventListener("change", () => {
+    const f = fileIn.files[0];
+    if (!f) return;
+    audioEl.src = URL.createObjectURL(f);
+    audioEl.playbackRate = parseFloat(speedSel.value);
+    statusEl.className = "audio-status ok";
+    statusEl.textContent = `✅ 已載入本機試聽檔：${f.name}`;
+  });
+
+  copyBtn.addEventListener("click", async () => {
+    try {
+      await navigator.clipboard.writeText(plainText);
+      copyBtn.textContent = "✅ 已複製！快去貼進 NeuralReader";
+      copyBtn.classList.add("copied");
+      setTimeout(() => { copyBtn.textContent = "📋 複製純講稿給 NeuralReader"; copyBtn.classList.remove("copied"); }, 2200);
+    } catch {
+      const ta = document.createElement("textarea");
+      ta.value = plainText; document.body.appendChild(ta); ta.select();
+      document.execCommand("copy"); ta.remove();
+      copyBtn.textContent = "✅ 已複製！";
+      setTimeout(() => { copyBtn.textContent = "📋 複製純講稿給 NeuralReader"; }, 2000);
+    }
+  });
+
+  return box;
+}
+
+const MINDMAPS = {
+  r1: {
+    title: "🧠 圖 4｜實戰 1 正反方核心交鋒心智圖（親子觀念衝突）",
+    proLabel: "正方：暫時沉默",
+    conLabel: "反方：據理力爭",
+    proNodes: [
+      ["1. 避免逆反心理", "硬碰硬只會讓父母更防衛"],
+      ["2. 動腦與行動證明", "先降溫，用成果代替吵架"],
+      ["3. 守護珍貴關係", "理解兩代人活在不同時區"]
+    ],
+    conNodes: [
+      ["1. 打破無聲高牆", "閉嘴會讓父母覺得被敷衍"],
+      ["2. 阻止實質傷害", "面對謠言與詐騙不能退讓"],
+      ["3. 練習獨立思辨", "家庭是理性發聲的第一課"]
+    ],
+    clashes: [
+      "戰場 1｜溝通效果：降溫 vs 坦誠",
+      "戰場 2｜風險衡量：傷感情 vs 放任錯",
+      "戰場 3｜關係本質：體諒時差 vs 平等對話"
+    ]
+  },
+  r2: {
+    title: "🧠 圖 5｜實戰 2 正反方核心交鋒心智圖（校園禁止手機）",
+    proLabel: "正方：全面禁止",
+    conLabel: "反方：分級管理",
+    proNodes: [
+      ["1. 保護專注力", "放抽屜也會分心想看訊息"],
+      ["2. 阻斷數位霸凌", "從源頭杜絕課間偷拍公審"],
+      ["3. 減輕教師負擔", "避免備用機與遺失賠償糾紛"]
+    ],
+    conNodes: [
+      ["1. 通勤安全需求", "上下學搭車突發狀況須求援"],
+      ["2. 鎖手機櫃可行", "早鎖晚領即可防分心不極端"],
+      ["3. 培養真正自律", "高壓禁止易導致高中報復沉迷"]
+    ],
+    clashes: [
+      "戰場 1｜專注管理：全面禁 vs 手機櫃",
+      "戰場 2｜安全聯絡：公共電話 vs 隨身求援",
+      "戰場 3｜教育理念：純淨環境 vs 練習自律"
+    ]
+  },
+  r3: {
+    title: "🧠 圖 6｜實戰 3 正反方核心交鋒心智圖（寫作業用 AI）",
+    proLabel: "正方：允許使用",
+    conLabel: "反方：不應允許",
+    proNodes: [
+      ["1. 24H 免費家教", "縮短城鄉與家教資源落差"],
+      ["2. 附對話紀錄防抄", "訓練提問、查證與批判力"],
+      ["3. 順應科技趨勢", "如同計算機，教會駕馭工具"]
+    ],
+    conNodes: [
+      ["1. 思考肌肉萎縮", "代舉啞鈴不會長出自己能力"],
+      ["2. AI 幻覺誤導", "國中生缺乏底子難辨真假"],
+      ["3. 老師無力把關", "每天改百份作業難查對話紀錄"]
+    ],
+    clashes: [
+      "戰場 1｜學習本質：即時解惑 vs 卡關成長",
+      "戰場 2｜資訊風險：練習查證 vs 幻覺誤導",
+      "戰場 3｜實務可行：規範引導 vs 批改過載"
+    ]
+  }
+};
+
+function buildMindmapCard(r){
+  const m = MINDMAPS[r.id];
+  const card = document.createElement("div");
+  card.className = "svg-card";
+  const ys = [88, 166, 244];
+  const proSvg = m.proNodes.map((n, i) => `
+    <path d="M262,${ys[i]+24} C292,${ys[i]+24} 292,${ys[i]+24} 316,${ys[i]+24}" fill="none" stroke="var(--pro)" stroke-width="2" stroke-dasharray="4 3"/>
+    <rect x="16" y="${ys[i]}" width="246" height="50" rx="10" fill="var(--paper)" stroke="var(--pro)" stroke-width="1.8"/>
+    <text x="28" y="${ys[i]+21}" font-size="13" font-weight="700" fill="var(--pro)">${n[0]}</text>
+    <text x="28" y="${ys[i]+40}" font-size="11.5" fill="var(--ink)">${n[1]}</text>
+  `).join("");
+  const conSvg = m.conNodes.map((n, i) => `
+    <path d="M524,${ys[i]+24} C548,${ys[i]+24} 548,${ys[i]+24} 578,${ys[i]+24}" fill="none" stroke="var(--con)" stroke-width="2" stroke-dasharray="4 3"/>
+    <rect x="578" y="${ys[i]}" width="246" height="50" rx="10" fill="var(--paper)" stroke="var(--con)" stroke-width="1.8"/>
+    <text x="590" y="${ys[i]+21}" font-size="13" font-weight="700" fill="var(--con)">${n[0]}</text>
+    <text x="590" y="${ys[i]+40}" font-size="11.5" fill="var(--ink)">${n[1]}</text>
+  `).join("");
+  const clashSvg = m.clashes.map((c, i) => `
+    <rect x="316" y="${ys[i]+6}" width="208" height="38" rx="19" fill="var(--gold-soft)" stroke="var(--gold)" stroke-width="1.6"/>
+    <text x="420" y="${ys[i]+29}" text-anchor="middle" font-size="11.5" font-weight="700" fill="var(--gold)">${c}</text>
+  `).join("");
+
+  card.innerHTML = `
+    <div class="svg-head">
+      <h3>${m.title}</h3>
+      <button class="btn zoom-btn" type="button">🔍 放大看圖</button>
+    </div>
+    <div class="svg-box" data-title="${m.title}">
+      <svg viewBox="0 0 840 310" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="${m.title}">
+        <!-- 頂部陣營標題 -->
+        <rect x="16" y="16" width="246" height="44" rx="12" fill="var(--pro-soft)" stroke="var(--pro)" stroke-width="2"/>
+        <text x="139" y="44" text-anchor="middle" font-size="15" font-weight="700" fill="var(--pro)">🔵 ${m.proLabel}</text>
+
+        <rect x="332" y="18" width="176" height="40" rx="20" fill="var(--accent-soft)" stroke="var(--accent)" stroke-width="2"/>
+        <text x="420" y="43" text-anchor="middle" font-size="14" font-weight="700" fill="var(--accent)">⚔️ 三大勝負交鋒點</text>
+
+        <rect x="578" y="16" width="246" height="44" rx="12" fill="var(--con-soft)" stroke="var(--con)" stroke-width="2"/>
+        <text x="701" y="44" text-anchor="middle" font-size="15" font-weight="700" fill="var(--con)">🔴 ${m.conLabel}</text>
+
+        <!-- 縱向連接主幹 -->
+        <line x1="139" y1="60" x2="139" y2="88" stroke="var(--pro)" stroke-width="2"/>
+        <line x1="701" y1="60" x2="701" y2="88" stroke="var(--con)" stroke-width="2"/>
+        <line x1="420" y1="58" x2="420" y2="290" stroke="var(--gold)" stroke-width="1.5" stroke-dasharray="4 4"/>
+
+        ${proSvg}
+        ${conSvg}
+        ${clashSvg}
+      </svg>
+    </div>
+    <p class="svg-cap">💡 聽下方語音前，先掃 10 秒這張對戰心智圖，聽力抓重點與記筆記會快一倍！</p>
+  `;
+  return card;
+}
+
+ROUNDS.forEach((r, idx) => {
+  const sec = document.getElementById("p-" + r.id);
+  const head = document.createElement("div");
+  head.innerHTML = `<span class="badge b-gold">${r.tag}</span><h2>${r.title}</h2>`;
+  sec.appendChild(head);
+  sec.appendChild(buildMindmapCard(r));
+  sec.appendChild(buildSideCard(r.pro, "pro", idx));
+  sec.appendChild(buildSideCard(r.con, "con", idx));
+});
+
+// 二辯交叉質詢逐字對話稿資料
+const CROSS_DATA = {
+  r1: [
+    {
+      title: "🔵 正方二辯 質詢 反方一辯（目標：攻破「據理力爭只會激發逆反心理」）",
+      qSide: "pro",
+      summary: "⚡ 戰術複盤：正二先用常識讓對方點頭，再扣緊題目『固執己見』逼反方承認『情緒上頭得先緩和』，順勢收網證明暫時沉默的必要性。",
+      turns: [
+        { role: "正二（質詢）", type: "q", tag: "1. 鎖前提", text: "對方辯友您好，您方主張面對固執己見的父母應該據理力爭。請問您承不承認，當一個人情緒上頭、覺得被否定時，往往聽不進別人的道理？" },
+        { role: "反一（答辯）", type: "a", tag: "防守：切割吵架", text: "如果是大吼大叫的吵架當然聽不進去，所以我方強調的是「有禮貌、有根據」的據理力爭。" },
+        { role: "正二（質詢）", type: "q", tag: "2. 切情境", text: "謝謝。那請教您，辯題前提是父母已經「固執己見」了。如果我已經很有禮貌地講過兩次道理，父母還是堅持己見甚至開始生氣，這時候按照您方立場，我是該繼續在餐桌上爭第三次，還是先安靜下來？" },
+        { role: "反一（答辯）", type: "a", tag: "露破綻：讓步緩和", text: "我可以先緩和語氣，換個證據繼續溝通，而不是從此閉嘴不談。" },
+        { role: "正二（質詢）", type: "q", tag: "3. 收網歸謬", text: "喔！您方剛才說「當場講不通就先緩和下來」，這不就是我方說的「先暫時沉默、給情緒降溫」嗎？連您方都承認當下硬爭沒用，那您方反對我方的理由在哪裡？" },
+        { role: "反一（答辯）", type: "a", tag: "拉回立場", text: "我方反對的是放棄表達！緩和不等於沉默，我們還是要堅定讓父母知道我們的立場。" },
+        { role: "正二（定性）", type: "q", tag: "4. 給評審結論", text: "謝謝對方辯友！評審可以看到，反方一邊說要據理力爭，一邊又承認情緒上頭得先緩和——這恰恰證明，面對固執己見的父母，先暫時沉默降溫才是最理性的第一步。" }
+      ]
+    },
+    {
+      title: "🔴 反方二辯 質詢 正方一辯（目標：攻破「沉默築起高牆＋放任實質傷害」）",
+      qSide: "con",
+      summary: "⚡ 戰術複盤：反二先用『有害偏方』逼出正方的底線（實質傷害不能沉默），再順勢把戰場拉到『填志願／人生方向』，證明沉默反而會造成延誤與誤會。",
+      turns: [
+        { role: "反二（質詢）", type: "q", tag: "1. 鎖底線", text: "對方辯友您好，您方說「暫時沉默」後會用行動證明。請問您，如果父母誤信網路偏方，花大錢買來路不明的保健品要天天吃，這時候您方還主張先暫時沉默嗎？" },
+        { role: "正一（答辯）", type: "a", tag: "防守：切割有害", text: "如果是危害健康的詐騙或偏方，那已經不是一般的觀念過時，而是「有害的行為」，我們當然要立刻阻止。" },
+        { role: "反二（質詢）", type: "q", tag: "2. 切情境", text: "好，您方承認「會造成實質傷害就不能沉默」。那請問，如果父母用過時的升學觀念，硬逼喜歡畫畫的國中生放棄美術班、只能填他們指定的科系，這算不算對孩子人生的實質傷害？" },
+        { role: "正一（答辯）", type: "a", tag: "防守：事後溝通", text: "這確實很重要，但當下硬吵只會讓父母更堅持，我方主張先沉默降溫，事後再拿出作品或請老師幫忙溝通。" },
+        { role: "反二（質詢）", type: "q", tag: "3. 收網反擊", text: "所以您方其實也同意「最後還是得據理力爭」，只是拖到事後而已！請問對方辯友，如果孩子每次遇到大事都先低頭沉默，父母是不是會誤以為孩子接受了，等到報完志願才翻臉，反而更傷感情？" },
+        { role: "正一（答辯）", type: "a", tag: "防守：澄清時間", text: "不會等到報完志願，暫時沉默只是避開衝突當下，並不是拖延到無法挽回。" },
+        { role: "反二（定性）", type: "q", tag: "4. 給評審結論", text: "謝謝！但對方始終無法回答，當沉默讓父母誤以為你已經順從時，那道看不見的溝通高牆要怎麼拆掉。" }
+      ]
+    }
+  ],
+  r2: [
+    {
+      title: "🔵 正方二辯 質詢 反方一辯（目標：攻破「手機櫃遺失賠償＋備用機漏洞」）",
+      qSide: "pro",
+      summary: "⚡ 戰術複盤：政策辯論最怕「替代方案執行不了」。正二連續用『兩三萬遺失誰賠』與『交備用機藏真機』兩記重拳，直接打穿手機櫃的可行性。",
+      turns: [
+        { role: "正二（質詢）", type: "q", tag: "1. 鎖責任", text: "對方辯友您好，您方主張用「手機養機場」到校統一上鎖保管。請問您，現在一支智慧型手機動輒兩、三萬元，全班三十支手機鎖在教室櫃子裡，發生遺失或摔壞，請問由誰負責賠償？" },
+        { role: "反一（答辯）", type: "a", tag: "防守：加制度", text: "學校可以制定保管辦法，例如班級加裝監視器、由幹部與導師共同點交上鎖，把風險降到最低。" },
+        { role: "正二（質詢）", type: "q", tag: "2. 切情境（備用機）", text: "謝謝，您方承認仍有風險，而且把保管責任推給了導師和幹部。再請問，如果班上有同學故意交出一支「壞掉的舊手機」應付檢查，把真手機藏在書包裡下課偷拍同學，您方的手機櫃防得住嗎？" },
+        { role: "反一（答辯）", type: "a", tag: "防守：校規處分", text: "任何規定都會有少數人違規，就像全面禁止也一樣有人會偷帶啊，違規就依校規處分。" },
+        { role: "正二（質詢）", type: "q", tag: "3. 收網比較", text: "差很多喔！全面禁止時，在校園裡「只要看到手機」就是違規，老師一眼就能抓到、完全不必每天早晚點交六十次手機，也不用扛幾十萬的賠償責任。為了少數方便讓全校老師當保全，真的合理嗎？" },
+        { role: "反一（答辯）", type: "a", tag: "拉回大判準", text: "上下學的通勤安全不是「少數人的方便」，不能為了怕管理麻煩就犧牲學生安全。" }
+      ]
+    },
+    {
+      title: "🔴 反方二辯 質詢 正方一辯（目標：攻破「通勤緊急求援＋高中報復性沉迷」）",
+      qSide: "con",
+      summary: "⚡ 戰術複盤：反二用『離開學校後的突發危險』破解正方的學務處電話說法，再補上一刀『高中報復性沉迷』，把戰場拉向安全與自律教育。",
+      turns: [
+        { role: "反二（質詢）", type: "q", tag: "1. 鎖現況", text: "對方辯友您好，您方說放學可以改用學務處電話或公共電話聯絡家長。請問您，現在國中校園外面的公車站牌旁，還有多少地方找得到能用的公共電話？" },
+        { role: "正一（答辯）", type: "a", tag: "防守：替代品", text: "學生可以在離開學校前先在學務處打電話確認接送時間，也可以配戴純通話功能的兒童手錶。" },
+        { role: "反二（質詢）", type: "q", tag: "2. 切情境（突發危險）", text: "謝謝。那如果學生搭公車搭到一半，突然遇到暴雨停駛、或是被陌生人尾隨需要即時定位求援，他已經離開學務處了，又不是每個人都另外買了聯絡手錶，這時候沒有手機，請問他怎麼求救？" },
+        { role: "正一（答辯）", type: "a", tag: "露破綻：向路人借", text: "他可以向公車司機、超商店員或路人借電話求助，這並不需要靠全校開放帶智慧型手機來解決。" },
+        { role: "反二（質詢）", type: "q", tag: "3. 收網＋追問自律", text: "遇到陌生人尾隨還要賭身邊剛好有好心路人借電話，聽起來好危險！最後一題：國中三年全面禁止，學生完全沒學過怎麼跟手機自律相處，您方怎麼保證他們升上高中第一天不會報復性沉迷？" },
+        { role: "正一（答辯）", type: "a", tag: "防守：分工", text: "自律可以在家裡由家長陪伴練習，學校的責任是先守住白天八小時的純淨學習環境。" }
+      ]
+    }
+  ],
+  r3: [
+    {
+      title: "🔵 正方二辯 質詢 反方一辯（目標：攻破「禁令在家防不住＋剝奪弱勢免費家教」）",
+      qSide: "pro",
+      summary: "⚡ 戰術複盤：正二抓住『寫作業是在家裡』這個物理事實，逼反方親口承認禁令防不住，進而導出『懲罰乖學生、放任偷抄者』的強大反擊。",
+      turns: [
+        { role: "正二（質詢）", type: "q", tag: "1. 鎖執行面", text: "對方辯友您好，您方主張國中生寫作業不應該被允許使用生成式 AI。請問您，作業是學生「帶回家」寫的，老師不在學生家裡，您方打算怎麼檢查學生有沒有偷偷打開 ChatGPT？" },
+        { role: "反一（答辯）", type: "a", tag: "露破綻：承認防不住", text: "就像以前禁止抄參考書解答一樣，雖然不能百分之百防堵，但訂出規範本身就有約束力，老師也能從段考成績察覺異常。" },
+        { role: "正二（質詢）", type: "q", tag: "2. 切情境（逆向淘汰）", text: "好，您方承認在家其實「防不住」。那結果是什麼？守規矩的學生卡關到半夜沒人問；不守規矩的卻偷偷直接複製貼上，還完全沒人教他們怎麼查證 AI 錯誤！這是不是反而在懲罰乖學生？" },
+        { role: "反一（答辯）", type: "a", tag: "防守：資訊課教", text: "所以我們要在資訊課教 AI 素養，但回家寫各科作業時就是要自己動腦，不能因為有人偷抄就把抄襲合法化。" },
+        { role: "正二（質詢）", type: "q", tag: "3. 收網（教育公平）", text: "請注意，我方主張的是「把 AI 當家教、附對話紀錄與查證」，從沒允許抄襲！請問對方辯友，對於家裡沒錢請家教、晚上作業卡關的弱勢學生，您方一刀切禁止，是不是反而剝奪了他們唯一免費的學習助手？" }
+      ]
+    },
+    {
+      title: "🔴 反方二辯 質詢 正方一辯（目標：攻破「國中生無力辨識幻覺＋老師改不完對話紀錄」）",
+      qSide: "con",
+      summary: "⚡ 戰術複盤：反二用『算數學給評審看（120人×5頁=600頁）』直接把正方的防抄襲配套打成空話，留給三辯結辯時最痛的收割素材！",
+      turns: [
+        { role: "反二（質詢）", type: "q", tag: "1. 鎖能力前提", text: "對方辯友您好，您方主張透過「查證 AI 的回答」來培養批判思考。請問您，如果 AI 寫出一段看似很合理、其實年代和史實都錯的歷史解析，一個剛學這單元的國中生，要靠什麼發現它錯了？" },
+        { role: "正一（答辯）", type: "a", tag: "防守：翻課本查", text: "可以對照課本、講義，或用搜尋引擎交叉比對，這正是查證訓練的一部分。" },
+        { role: "反二（質詢）", type: "q", tag: "2. 切情境（算批改量）", text: "既然本來就要翻課本找答案，何必先被 AI 誤導一輪？再請問，您方說要附 AI 對話紀錄防抄襲，一位國中老師教四個班、一百二十位學生，每人交五頁對話紀錄就是六百頁，您方確定老師改得完嗎？" },
+        { role: "正一（答辯）", type: "a", tag: "露破綻：退守抽查", text: "不需要每份逐字看，老師可以抽查，或者要求學生在作業最後用三句話總結自己學到什麼。" },
+        { role: "反二（定性）", type: "q", tag: "3. 收網重擊", text: "謝謝對方辯友！評審可以看到，一旦變成「抽查」和「寫三句心得」，防抄襲機制立刻破功——因為連那三句心得都可以叫 AI 幫忙寫！這恰恰證明，國中階段允許用 AI 寫作業，只會掏空思考的基本功。" }
+      ]
+    }
+  ]
+};
+
+// 三辯結辯範本資料
+const CLOSING_DATA = {
+  r1: {
+    pro: {
+      side: "正方三辯結辯：暫時沉默",
+      paragraphs: [
+        "主席、各位評審，大家好。聽完整場比賽，雙方其實都深愛父母、都希望家庭更好；今天真正決定勝負的，不是「要不要溝通」，而是面對已經「固執己見」的父母，哪一種做法更能真正化解衝突？",
+        "剛才在質詢中我們已經看見，反方一邊主張要當場據理力爭，一邊卻也承認情緒上頭時根本講不進去。事實很殘酷：當父母覺得被貼上「過時」的標籤時，每一句硬碰硬的反駁，都只會激發逆反心理，讓他們更緊緊抱住舊觀念。至於反方提到的詐騙或危害健康，我們早已清楚切割，那是違法有害，本來就該阻止，並不是今天討論的日常觀念分歧。",
+        "反觀我方主張的「暫時沉默」，是先替發燙的情緒降溫，把力氣從餐桌上的輸贏，轉化為事後的行動證明與溫柔陪伴。",
+        "父母不是落後，只是和我們活在不同的時區。吵贏了道理、卻輸掉了家人的笑容，這絕不是成長的代價。請評審支持正方，選擇溫柔而有智慧的暫時沉默。謝謝大家！"
+      ]
+    },
+    con: {
+      side: "反方三辯結辯：據理力爭",
+      paragraphs: [
+        "主席、各位評審，大家好。正方今天把「暫時沉默」描繪得非常體貼，但請大家冷靜想一想：在真實的家庭裡，沉默真的換來理解了嗎？",
+        "整場比賽下來，正方始終迴避了一個最核心的問題：當你因為覺得父母講不通、選擇閉嘴不談時，父母心裡感受到的不是溫柔，而是「孩子覺得我老了、懶得理我了」。更危險的是，剛才正方承認只要涉及人生重大選擇或實質傷害，最後還是得靠據理力爭來溝通——既然遲早要面對，為什麼要等到誤會越積越深、甚至無法挽回才開口？",
+        "我方主張的「據理力爭」，從來不是沒禮貌的吼叫，而是願意把父母當成平等的大人，帶著耐心與證據，一次次陪他們看見新世界，同時也鍛鍊國中生獨立發聲的勇氣。",
+        "真正的愛，不是用表面的和平掩蓋距離，而是願意為了重要的人多費一點口舌。請評審支持反方，讓我們勇敢、溫柔地據理力爭。謝謝大家！"
+      ]
+    }
+  },
+  r2: {
+    pro: {
+      side: "正方三辯結辯：全面禁止",
+      paragraphs: [
+        "主席、各位評審，大家好。今天這場政策辯論，雙方都希望國中生能專心學習、平安上下學，真正的分歧在於：「入校鎖手機櫃」到底行不行得通？",
+        "剛才質詢已經把反方方案的漏洞攤在陽光下：全校上千支動輒兩三萬元的手機，每天早晚點交，遺失損壞由誰賠償？學生交出備用機、藏真手機在下課偷拍同學，老師又該怎麼防？反方一句「違規就記過」，等於讓第一線教師每天當保全，卻依然守不住校園隱私與學習專注力。",
+        "反觀我方的「全面禁止」，規則最清楚、執行最公平，從源頭杜絕課間分心與數位霸凌；而反方最擔心的放學聯絡問題，透過學務處電話、固定接送約定或純通話聯絡手錶，完全就能安全解決，根本不需要把具備上網與拍照功能的智慧型手機帶進教室。",
+        "國中三年，是打好專注力與人際互動的黃金時期。把下課十分鐘還給操場與真實的笑聲，而不是冰冷的螢幕。請評審支持正方，全面禁止攜帶手機到校。謝謝大家！"
+      ]
+    },
+    con: {
+      side: "反方三辯結辯：分級管理",
+      paragraphs: [
+        "主席、各位評審，大家好。正方今天不斷放大管理手機的麻煩，但請評審問一個最根本的問題：我們能為了省去學校的管理麻煩，就拿學生上下學的安全與未來的自律能力來交換嗎？",
+        "剛才我們看到，面對學生放學搭公車遇到突發狀況、甚至被尾隨需要即時求救時，正方只能說「向路人借電話」或「另買兒童手錶」——這不僅不切實際，更暴露了「一刀切」的冷漠。同時，正方把所有違規的責任都推給手機本身，卻忽略了許多學校早已透過手機櫃加上明確獎懲，成功做到上課專心、放學安全兩全其美。",
+        "更重要的是，教育不是溫室裡的隔絕。如果國中三年只靠全面禁止把手機藏起來，孩子永遠學不會「在誘惑面前按下暫停鍵」，等到升上高中全面解禁，只會迎來更嚴重的報復性沉迷。",
+        "好的教育，不是替孩子把世界上的誘惑全部清空，而是教會他們怎麼與科技共處。請評審支持反方，用分級管理取代全面禁止。謝謝大家！"
+      ]
+    }
+  },
+  r3: {
+    pro: {
+      side: "正方三辯結辯：允許使用",
+      paragraphs: [
+        "主席、各位評審，大家好。聽完今天正反雙方的交鋒，請大家先記住一個最關鍵的事實：AI 已經在每個人的手機裡了，今天不是在決定「AI 存不存在」，而是在決定「我們要把學生推向偷偷亂用，還是帶進陽光下正確引導」？",
+        "剛才反方在質詢中親口承認，作業帶回家寫，禁止其實根本防不住。結果就是：家裡沒錢請家教、晚上寫作業卡關的學生失去了唯一免費的學習助手；而不守規矩的人繼續偷偷複製貼上，連怎麼分辨 AI 幻覺都沒機會學。",
+        "反觀我方主張在規範下允許使用：把 AI 當作蘇格拉底式的提問家教，要求學生標註提問過程、對照課本查證真偽、再寫出自己的觀點。這不但縮小了城鄉與家庭的資源落差，更讓學生在國中階段就提早練出 AI 時代最值錢的提問力與查證力。",
+        "當年計算機出現時，沒有人靠禁止計算機變得更聰明；今天面對 AI 也一樣。與其害怕工具，不如教會孩子駕馭工具。請評審支持正方！謝謝大家！"
+      ]
+    },
+    con: {
+      side: "反方三辯結辯：不應允許",
+      paragraphs: [
+        "主席、各位評審，大家好。正方今天一直把 AI 說成完美的免費家教，還指責我方害怕科技。但請評審看清楚，我方從不反對在資訊課認識 AI，我們反對的是在「寫作業」這個打基礎的時刻交出思考權！",
+        "剛才質詢已經戳破了正方最美好的想像：第一，國中生正處於學習基本功的階段，面對 AI 一本正經的錯誤幻覺，根本缺乏足夠知識去分辨，最後反而把錯的觀念背進腦子；第二，正方引以為傲的「附對話紀錄防抄襲」，在一位老師每天要改上百份作業的現實下，被迫縮水成抽查和三句心得——而連心得都能叫 AI 代寫，規範形同虛設。",
+        "寫作業就像進健身房重訓，卡關時的掙扎與思考，才是大腦長出肌肉的唯一方式。把啞鈴交給機器人舉，帳面上的作業交出來了，孩子真正的能力卻被掏空了。",
+        "只有先打好獨立思考的基本功，未來才配得上駕馭更強大的 AI。為了守住國中生最珍貴的思考肌肉，請評審堅定支持反方！謝謝大家！"
+      ]
+    }
+  }
+};
+
+async function copyTextWithFeedback(text, btn, defaultLabel){
+  try {
+    await navigator.clipboard.writeText(text);
+    btn.textContent = "✅ 已複製！";
+    btn.classList.add("copied");
+    setTimeout(() => { btn.textContent = defaultLabel; btn.classList.remove("copied"); }, 2000);
+  } catch {
+    const ta = document.createElement("textarea");
+    ta.value = text; document.body.appendChild(ta); ta.select();
+    document.execCommand("copy"); ta.remove();
+    btn.textContent = "✅ 已複製！";
+    setTimeout(() => { btn.textContent = defaultLabel; }, 2000);
+  }
+}
+
+function createAudioZone(audioPath, plainText, copyLabel){
+  const zone = document.createElement("div");
+  zone.className = "audio-zone";
+  zone.innerHTML = `
+    <div class="audio-top">
+      <span><b>🎙️ 語音範本槽位：</b><code>${audioPath}</code></span>
+      <div class="controls">
+        <button class="btn copy-btn" type="button">${copyLabel}</button>
+        <label class="btn" style="cursor:pointer">📂 試聽本機 MP3<input class="file-input" type="file" accept="audio/*"></label>
+        <select class="btn speed-sel" aria-label="播放速度">
+          <option value="0.75">0.75x 跟讀</option>
+            <option value="0.85">0.85x 慢速</option>
+          <option value="1" selected>1.0x 原速</option>
+          <option value="1.15">1.15x 實戰</option>
+          <option value="1.25">1.25x 快節奏</option>
+        </select>
+      </div>
+    </div>
+    <audio controls preload="metadata" src="${audioPath}"></audio>
+    <div class="audio-status">正在檢查 <code>${audioPath}</code> ...</div>
+  `;
+  const audioEl = zone.querySelector("audio");
+  const statusEl = zone.querySelector(".audio-status");
+  const copyBtn = zone.querySelector(".copy-btn");
+  const fileIn = zone.querySelector(".file-input");
+  const speedSel = zone.querySelector(".speed-sel");
+
+  audioEl.addEventListener("loadedmetadata", () => {
+    const mins = Math.floor(audioEl.duration / 60);
+    const secs = String(Math.round(audioEl.duration % 60)).padStart(2, "0");
+    statusEl.className = "audio-status ok";
+    statusEl.textContent = `✅ 已自動載入音檔（長度 ${mins}:${secs}），可直接播放練習。語音朗讀比真人比賽快，跟讀建議調 0.75x～0.85x。`;
+  });
+  audioEl.addEventListener("error", () => {
+    audioEl.closest(".audio-zone").style.display = "none"; return;
+    statusEl.className = "audio-status";
+    statusEl.innerHTML = `⏳ 尚未偵測到 <code>${audioPath}</code>。用 NeuralReader 生成後依檔名放入 <code>聲音檔案/</code> 並重整即可，或先按「📂 試聽本機 MP3」。`;
+  });
+  speedSel.addEventListener("change", () => { audioEl.playbackRate = parseFloat(speedSel.value); });
+  fileIn.addEventListener("change", () => {
+    const f = fileIn.files[0];
+    if (!f) return;
+    audioEl.src = URL.createObjectURL(f);
+    audioEl.playbackRate = parseFloat(speedSel.value);
+    statusEl.className = "audio-status ok";
+    statusEl.textContent = `✅ 已載入本機試聽檔：${f.name}`;
+  });
+  copyBtn.addEventListener("click", () => copyTextWithFeedback(plainText, copyBtn, copyLabel));
+  return zone;
+}
+
+function renderCross(cid){
+  const box = document.getElementById("crossContainer");
+  box.innerHTML = "";
+  const num = cid.replace("r", "");
+  (CROSS_DATA[cid] || []).forEach(g => {
+    const card = document.createElement("div");
+    card.className = "card";
+    const audioPath = `audio/debate-cross${num}-${g.qSide}.mp3`;
+    const plainDialog = g.turns.map(t => `${t.role}：${t.text}`).join("\n\n");
+    const msgs = g.turns.map(t => {
+      const cls = t.type === "q"
+        ? (g.qSide === "con" ? "msg q con-q" : "msg q")
+        : (g.qSide === "con" ? "msg a pro-a" : "msg a");
+      return `<div class="${cls}"><div class="msg-role"><span>${t.role}</span><span class="tac-tag">${t.tag}</span></div><div>${t.text}</div></div>`;
+    }).join("");
+    const h3 = document.createElement("h3");
+    h3.textContent = g.title;
+    card.appendChild(h3);
+    card.appendChild(createAudioZone(audioPath, plainDialog, "📋 複製純對話稿給 NeuralReader"));
+    const body = document.createElement("div");
+    body.innerHTML = `<div class="chat-wrap">${msgs}</div><div class="clash-note tac-note">${g.summary}</div>`;
+    card.appendChild(body);
+    box.appendChild(card);
+  });
+}
+
+function renderClosing(cid){
+  const box = document.getElementById("closeContainer");
+  box.innerHTML = "";
+  const pair = CLOSING_DATA[cid];
+  if (!pair) return;
+  const num = cid.replace("r", "");
+  [["pro", pair.pro], ["con", pair.con]].forEach(([type, obj]) => {
+    const isPro = type === "pro";
+    const plain = obj.paragraphs.join("\n\n");
+    const chars = plain.replace(/\s+/g, "").length;
+    const audioPath = `audio/debate-close${num}-${type}.mp3`;
+    const art = document.createElement("article");
+    art.className = "side-box " + type;
+    const head = document.createElement("div");
+    head.className = "side-head";
+    head.innerHTML = `
+      <h3 class="side-title">${isPro ? "🔵 " : "🔴 "}${obj.side}</h3>
+      <span class="badge ${isPro ? "b-pro" : "b-con"}">約 ${chars} 字｜1:30 需每分鐘約 ${Math.round(chars / 1.5)} 字</span>
+    `;
+    art.appendChild(head);
+    art.appendChild(createAudioZone(audioPath, plain, "📋 複製純講稿給 NeuralReader"));
+    const scriptDiv = document.createElement("div");
+    scriptDiv.className = "script-text";
+    scriptDiv.innerHTML = obj.paragraphs.map(p => `<p>${p}</p>`).join("");
+    art.appendChild(scriptDiv);
+    box.appendChild(art);
+  });
+}
+
+document.querySelectorAll("#crossTabs button").forEach(b => {
+  b.addEventListener("click", () => {
+    document.querySelectorAll("#crossTabs button").forEach(x => x.classList.remove("on"));
+    b.classList.add("on");
+    renderCross(b.dataset.cid);
+  });
+});
+document.getElementById("toggleTacticsBtn").addEventListener("click", function(){
+  const p = document.getElementById("p-cross");
+  const hidden = p.classList.toggle("hide-tactics");
+  this.textContent = hidden ? "👁️ 顯示戰術標註" : "🙈 隱藏戰術標註";
+});
+document.querySelectorAll("#closeTabs button").forEach(b => {
+  b.addEventListener("click", () => {
+    document.querySelectorAll("#closeTabs button").forEach(x => x.classList.remove("on"));
+    b.classList.add("on");
+    renderClosing(b.dataset.cid);
+  });
+});
+document.getElementById("copySkeletonBtn").addEventListener("click", function(){
+  copyTextWithFeedback(document.getElementById("skeletonText").textContent.trim(), this, "📋 複製萬用骨架");
+});
+renderCross("r1");
+renderClosing("r1");
+
+// SVG 放大檢視器
+const svgModal = document.getElementById("svgModal");
+const svgModalBody = document.getElementById("svgModalBody");
+const svgModalTitle = document.getElementById("svgModalTitle");
+function openSvgModal(box){
+  const svg = box.querySelector("svg");
+  if (!svg) return;
+  svgModalTitle.textContent = box.dataset.title || "圖表檢視";
+  svgModalBody.innerHTML = "";
+  svgModalBody.appendChild(svg.cloneNode(true));
+  svgModal.classList.add("on");
+  document.body.style.overflow = "hidden";
+}
+function closeSvgModal(){
+  svgModal.classList.remove("on");
+  document.body.style.overflow = "";
+}
+document.querySelectorAll(".svg-card").forEach(card => {
+  const box = card.querySelector(".svg-box");
+  const zbtn = card.querySelector(".zoom-btn");
+  if (box) box.addEventListener("click", () => openSvgModal(box));
+  if (zbtn) zbtn.addEventListener("click", () => openSvgModal(box));
+});
+document.getElementById("svgModalClose").addEventListener("click", closeSvgModal);
+svgModal.addEventListener("click", e => { if (e.target === svgModal) closeSvgModal(); });
+document.addEventListener("keydown", e => { if (e.key === "Escape" && svgModal.classList.contains("on")) closeSvgModal(); });
+
+// Tabs
+const tabs = [...document.querySelectorAll("nav.tabs button")];
+function showTab(id){
+  tabs.forEach(b => {
+    b.setAttribute("aria-selected", b.dataset.tab === id);
+    if (b.dataset.tab === id) b.scrollIntoView({block: "nearest", inline: "center"});  // 手機：選中的分頁捲到看得見
+  });
+  document.querySelectorAll(".panel").forEach(p => p.classList.toggle("on", p.id === "p-" + id));
+  try { localStorage.setItem("debate-tab", id); } catch {}
+}
+tabs.forEach(b => b.addEventListener("click", () => { showTab(b.dataset.tab); window.scrollTo({top: 0}); }));
+try {
+  const saved = localStorage.getItem("debate-tab");
+  if (saved && tabs.some(b => b.dataset.tab === saved)) showTab(saved);
+} catch {}
+
+// Theme
+const themeBtn = document.getElementById("themeBtn");
+function applyTheme(t){
+  document.documentElement.dataset.theme = t;
+  themeBtn.textContent = t === "dark" ? "☀️ 淺色模式" : "🌙 深色模式";
+  try { localStorage.setItem("debate-theme", t); } catch {}
+}
+themeBtn.addEventListener("click", () => applyTheme(document.documentElement.dataset.theme === "dark" ? "light" : "dark"));
+try {
+  const st = localStorage.getItem("debate-theme");
+  if (st) applyTheme(st);
+} catch {}
+
+// Debate Timer
+let baseSec = 120, remSec = 120, timerId = null;
+const disp = document.getElementById("timerDisplay");
+const hint = document.getElementById("timerHint");
+
+function beep(freq, dur){
+  try {
+    const ctx = new (window.AudioContext || window.webkitAudioContext)();
+    const osc = ctx.createOscillator(), gain = ctx.createGain();
+    osc.type = "sine"; osc.frequency.value = freq;
+    gain.gain.setValueAtTime(0.2, ctx.currentTime);
+    gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + dur);
+    osc.connect(gain); gain.connect(ctx.destination);
+    osc.start(); osc.stop(ctx.currentTime + dur);
+  } catch {}
+}
+
+function renderTimer(){
+  const m = String(Math.floor(Math.max(0, remSec) / 60)).padStart(2, "0");
+  const s = String(Math.max(0, remSec) % 60).padStart(2, "0");
+  disp.textContent = `${m}:${s}`;
+  disp.className = "timer-display" + (remSec === 0 ? " over" : remSec <= 30 ? " warn" : "");
+}
+
+document.querySelectorAll(".presets button").forEach(b => {
+  b.addEventListener("click", () => {
+    clearInterval(timerId); timerId = null;
+    document.querySelectorAll(".presets button").forEach(x => x.classList.remove("on"));
+    b.classList.add("on");
+    baseSec = remSec = parseInt(b.dataset.sec, 10);
+    hint.textContent = "已切換時間，按下開始即可計時。";
+    renderTimer();
+  });
+});
+
+document.getElementById("tStart").addEventListener("click", () => {
+  if (timerId) return;
+  if (remSec <= 0) remSec = baseSec;
+  hint.textContent = "計時中！保持眼神交流與穩定語速。";
+  timerId = setInterval(() => {
+    remSec--;
+    renderTimer();
+    if (remSec === 30) { beep(660, 0.25); hint.textContent = "⚠️ 剩餘 30 秒，請準備收尾！"; }
+    if (remSec <= 0) {
+      clearInterval(timerId); timerId = null;
+      beep(880, 0.6);
+      hint.textContent = "🔔 時間到！請立即說「謝謝大家」。";
+    }
+  }, 1000);
+});
+
+document.getElementById("tPause").addEventListener("click", () => {
+  clearInterval(timerId); timerId = null;
+  hint.textContent = "已暫停。";
+});
+
+document.getElementById("tReset").addEventListener("click", () => {
+  clearInterval(timerId); timerId = null;
+  remSec = baseSec;
+  hint.textContent = "已重設，隨時可以重新開始。";
+  renderTimer();
+});
+</script>
+</body>
+</html>
