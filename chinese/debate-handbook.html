@@ -368,7 +368,7 @@ footer{margin-top:36px;padding-top:16px;border-top:1px solid var(--line);color:v
           <text x="733" y="220" text-anchor="middle" font-size="11" fill="var(--muted)">→ 誰解決方案更可行？</text>
         </svg>
       </div>
-      <p class="svg-cap">💡 聽 NeuralReader 音檔時，拿一張 A4 紙照這四欄畫，只寫 4～6 字關鍵詞＋箭頭，不要抄整句！</p>
+      <p class="svg-cap">💡 聽朗讀時，拿一張 A4 紙照這四欄畫，只寫 4～6 字關鍵詞＋箭頭，不要抄整句！</p>
     </div>
 
     <h2>二、四週備賽練習藍圖（每週 3 次，每次 45–60 分鐘）</h2>
@@ -384,10 +384,10 @@ footer{margin-top:36px;padding-top:16px;border-top:1px solid var(--line);color:v
       </div>
       <div class="step-card">
         <div class="step-num">WEEK 2｜聽力筆記與質詢反駁</div>
-        <h3>NeuralReader 單人對打法</h3>
+        <h3>朗讀單人對打法</h3>
         <ul>
           <li>把 A4 紙直分成四欄（正方立論｜反方反擊｜正方防守｜總結），練 <b>Flowing 關鍵字筆記</b>。</li>
-          <li>播放本頁的「正方音檔」，一邊記筆記，播完馬上計時 1 分 30 秒口頭反駁。</li>
+          <li>按正方講稿的「▶ 朗讀」，一邊記筆記，播完馬上計時 1 分 30 秒口頭反駁。</li>
           <li>練習「三連問質詢」：確認前提 → 舉反例 → 收網歸謬。</li>
         </ul>
       </div>
@@ -396,7 +396,7 @@ footer{margin-top:36px;padding-top:16px;border-top:1px solid var(--line);color:v
         <h3>打造 2 分鐘黃金節奏</h3>
         <ul>
           <li>比賽語速參考：每分鐘約 <b>220～260 字</b>（2 分鐘約 440～520 字）。本手冊申論稿約 500～560 字，是偏快的完整版；講不完時先刪舉例句，保留 AREL 主幹。</li>
-          <li><b>三遍法</b>：第 1 遍跟音檔抓換氣 → 第 2 遍只看 3 個關鍵詞脫稿講 → 第 3 遍錄音抓口頭禪。</li>
+          <li><b>三遍法</b>：第 1 遍跟朗讀抓換氣 → 第 2 遍只看 3 個關鍵詞脫稿講 → 第 3 遍錄音抓口頭禪。</li>
           <li>結尾 15 秒放慢語速、眼神直視評審，留下記憶點。</li>
         </ul>
       </div>
@@ -409,19 +409,6 @@ footer{margin-top:36px;padding-top:16px;border-top:1px solid var(--line);color:v
           <li>每次練完做 3 問複盤：最有力的一句？卡住的地方？下次怎麼修？</li>
         </ul>
       </div>
-    </div>
-
-    <div class="card">
-      <h3>📂 NeuralReader 聲音檔案命名對照表</h3>
-      <p class="muted">將 NeuralReader 生成的 MP3 放進 <code>800-課外延伸/辯論節目/聲音檔案/</code>，建議正方與反方選不同人聲，聽起來更有真實交鋒感！</p>
-      <table>
-        <thead><tr><th>實戰場次</th><th>辯題</th><th>正方檔名</th><th>反方檔名</th></tr></thead>
-        <tbody>
-          <tr><td>實戰 1</td><td>父母觀念過時又固執己見：暫時沉默 vs 據理力爭</td><td><code>round1-pro.mp3</code></td><td><code>round1-con.mp3</code></td></tr>
-          <tr><td>實戰 2</td><td>國中校園應不應該全面禁止攜帶手機到校？</td><td><code>round2-pro.mp3</code></td><td><code>round2-con.mp3</code></td></tr>
-          <tr><td>實戰 3</td><td>國中生寫作業應不應該被允許使用生成式 AI？</td><td><code>round3-pro.mp3</code></td><td><code>round3-con.mp3</code></td></tr>
-        </tbody>
-      </table>
     </div>
   </section>
 
@@ -823,7 +810,7 @@ footer{margin-top:36px;padding-top:16px;border-top:1px solid var(--line);color:v
 最後想請評審思考，「【一句有溫度的比喻或金句】」。因此，請評審堅定支持我方立場，謝謝大家！</div>
     </div>
 
-    <h3>🎙️ 三場實戰正反方三辯結辯完整範本（可一鍵複製給 NeuralReader）</h3>
+    <h3>🎙️ 三場實戰正反方三辯結辯完整範本</h3>
     <div class="sub-tabs" id="closeTabs">
       <button class="on" data-cid="r1">🥊 實戰 1：親子觀念</button>
       <button data-cid="r2">📱 實戰 2：校園手機</button>
@@ -884,7 +871,7 @@ const ROUNDS = [
     title: "實戰 1：面對父母觀念過時又固執己見，國中生該「暫時沉默」還是「據理力爭」？",
     pro: {
       side: "正方：應該選擇「暫時沉默」",
-      audio: "audio/debate-round1-pro.mp3",
+      audio: "tts",
       tips: [
         "<b>定義防守：</b>強調「暫時沉默」是在衝突當下按暫停鍵，絕非冷暴力，事後改用行動與成果證明。",
         "<b>核心判準：</b>親子互動的目標是「促成理解與保護關係」，不是在餐桌上吵贏。",
@@ -899,7 +886,7 @@ const ROUNDS = [
     },
     con: {
       side: "反方：應該選擇「據理力爭」",
-      audio: "audio/debate-round1-con.mp3",
+      audio: "tts",
       tips: [
         "<b>定義防守：</b>強調「據理力爭」是有禮貌、有根據地堅持說真話，絕非大吼大叫。",
         "<b>核心判準：</b>真正的尊重是平等對話，且不能放任有害或錯誤的觀念繼續傷人。",
@@ -919,7 +906,7 @@ const ROUNDS = [
     title: "實戰 2：國中校園應不應該全面禁止學生攜帶手機到校？",
     pro: {
       side: "正方：應該全面禁止",
-      audio: "audio/debate-round2-pro.mp3",
+      audio: "tts",
       tips: [
         "<b>政策三步：</b>專注力與霸凌問題嚴重（需求性）→ 帶進校園防不勝防（根屬性）→ 全面禁止最公平且減輕老師負擔（解決力）。",
         "<b>必備防禦：</b>先主動回應「放學聯絡家長」的替代方案（學務處電話、公共電話、固定接送）。",
@@ -934,7 +921,7 @@ const ROUNDS = [
     },
     con: {
       side: "反方：不應該全面禁止（應採分級管理）",
-      audio: "audio/debate-round2-con.mp3",
+      audio: "tts",
       tips: [
         "<b>政策策略：</b>猛攻「一刀切的弊害（通勤緊急聯絡）」＋提出「可行替代方案（入校鎖手機櫃，放學領回）」。",
         "<b>價值拉高：</b>教育目的是培養自律，國中禁止三年，高中反而容易報復性沉迷。",
@@ -954,7 +941,7 @@ const ROUNDS = [
     title: "實戰 3：國中生寫作業應不應該被允許使用生成式 AI（如 ChatGPT）？",
     pro: {
       side: "正方：應該允許（搭配規範引導）",
-      audio: "audio/debate-round3-pro.mp3",
+      audio: "tts",
       tips: [
         "<b>核心定位：</b>把 AI 定義為「24 小時免費家教」而非「代寫槍手」，強調用它來問觀念、解卡關。",
         "<b>防抄襲機制：</b>主動提出「附上 AI 對話紀錄＋標註自己查證與修改處」作為管理方案。",
@@ -969,7 +956,7 @@ const ROUNDS = [
     },
     con: {
       side: "反方：不應該允許寫作業時使用",
-      audio: "audio/debate-round3-con.mp3",
+      audio: "tts",
       tips: [
         "<b>核心比喻：</b>「健身房請機器人舉啞鈴」——作業的目的不是交出完美成品，而是讓大腦長出思考肌肉！",
         "<b>殺手論點：</b>AI 會有「幻覺（一本正經胡說八道）」，基礎尚未扎實的國中生根本分辨不出真假。",
@@ -1017,7 +1004,7 @@ function buildSideCard(sideObj, type, idx){
           </select>
         </div>
       </div>
-      <audio id="${uid}" controls preload="metadata" src="${sideObj.audio}"></audio>
+      <audio data-tts></audio>
       <div class="audio-status" id="${uid}-st">正在檢查 <code>${sideObj.audio}</code> ...</div>
     </div>
     <h4>📜 完整申論講稿（內文）</h4>
@@ -1383,7 +1370,7 @@ function createAudioZone(audioPath, plainText, copyLabel){
         </select>
       </div>
     </div>
-    <audio controls preload="metadata" src="${audioPath}"></audio>
+    <audio data-tts></audio>
     <div class="audio-status">正在檢查 <code>${audioPath}</code> ...</div>
   `;
   const audioEl = zone.querySelector("audio");
@@ -1423,7 +1410,7 @@ function renderCross(cid){
   (CROSS_DATA[cid] || []).forEach(g => {
     const card = document.createElement("div");
     card.className = "card";
-    const audioPath = `audio/debate-cross${num}-${g.qSide}.mp3`;
+    const audioPath = "tts";
     const plainDialog = g.turns.map(t => `${t.role}：${t.text}`).join("\n\n");
     const msgs = g.turns.map(t => {
       const cls = t.type === "q"
@@ -1452,7 +1439,7 @@ function renderClosing(cid){
     const isPro = type === "pro";
     const plain = obj.paragraphs.join("\n\n");
     const chars = plain.replace(/\s+/g, "").length;
-    const audioPath = `audio/debate-close${num}-${type}.mp3`;
+    const audioPath = "tts";
     const art = document.createElement("article");
     art.className = "side-box " + type;
     const head = document.createElement("div");
@@ -1615,5 +1602,7 @@ document.getElementById("tReset").addEventListener("click", () => {
   renderTimer();
 });
 </script>
+<script>window.TTS_CFG={lang:"zh-TW",replace:".audio-zone",rate:1,text:function(c){var b=c.closest(".side-box,.card"),s=b.querySelectorAll(".script-text p");if(s.length)return s;return Array.prototype.map.call(b.querySelectorAll(".msg"),function(m){return m.querySelector(".msg-role span").textContent+"："+m.lastElementChild.textContent})}};</script>
+<script src="../assets/tts.js"></script>
 </body>
 </html>

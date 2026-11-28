@@ -101,17 +101,14 @@
   </header>
 
   <div class="audio-card">
-    <div class="label">🔊 聽力版（AI 朗讀，先盲聽一次再往下看）</div>
-    <audio controls preload="none">
-      <source src="" type="audio/mpeg">
-      你的瀏覽器不支援音訊播放。
-    </audio>
+    <div class="label">🔊 聽力版（裝置語音朗讀，先盲聽一次再往下看）</div>
+    <audio data-tts></audio>
   </div>
 
   <div class="howto">
     <strong>怎麼玩</strong>
     <ol>
-      <li>先盲聽音檔一次（不要看下面的字），猜猜發生了什麼事。</li>
+      <li>先按「▶ 朗讀」盲聽一次（不要看下面的字），猜猜發生了什麼事。</li>
       <li>再往下滑，邊看圖邊讀英文；看不懂可以點「看中文」。</li>
       <li>讀完整篇後，做最下面的 3 題閱讀理解，答對答錯會馬上告訴你。</li>
       <li>挑一段，照「英文怎麼學」第三招「抄寫」：念一遍 → 邊寫邊念抄一遍 → 再念一遍。</li>
@@ -256,5 +253,7 @@ function toggleZh(btn){
 })();
 
 </script>
+<script>window.TTS_CFG={lang:"en-US",rate:0.9,text:function(){return document.querySelectorAll(".segment p.en")}};</script>
+<script src="../assets/tts.js"></script>
 </body>
 </html>

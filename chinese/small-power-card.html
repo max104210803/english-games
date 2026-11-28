@@ -261,21 +261,21 @@
       </div>
       <details class="essay" open>
         <summary><span>範文 01</span>萊恩挖井：一個人的行動，感動更多人</summary>
-        <p class="essay-audio" >🔈 聽範文朗讀<audio controls preload="none" src="audio/small-power-01.mp3"></audio></p>
+        <p class="essay-audio" >🔈 聽範文朗讀<audio data-tts></audio></p>
         <p>世界上有許多年紀小的孩子，用自己的力量為世界點一盞燈。他們成功的共同因素，是<mark>先看見別人的需要</mark>，再<mark>勇敢的跨出第一步</mark>；遇到困難也不放棄，還會<mark>邀請更多人一起參與</mark>。</p>
         <p>最讓我佩服的是加拿大的萊恩。他知道非洲的村落沒有乾淨的水，就決定為村民開挖全新的水井。村民有了乾淨的水可以喝，死亡的人數降低了，許多人也被他感動，紛紛捐款響應。<mark>我也可以</mark>從身邊做起，例如珍惜每一滴水，刷牙時關上水龍頭，並且提醒家人一起節約用水。</p>
         <p>萊恩讓我明白，一個人的行動雖然小，卻能感動更多人一起幫忙。<mark>只要願意開始，小小的力量也能把世界照亮。</mark></p>
       </details>
       <details class="essay">
         <summary><span>範文 02</span>南郭國小：替別人發聲，也是一種勇氣</summary>
-        <p class="essay-audio" >🔈 聽範文朗讀<audio controls preload="none" src="audio/small-power-02.mp3"></audio></p>
+        <p class="essay-audio" >🔈 聽範文朗讀<audio data-tts></audio></p>
         <p>照亮世界的孩子，都有一雙<mark>願意觀察的眼睛</mark>。他們注意到別人的不方便，不只是同情，而是<mark>想辦法行動</mark>，並且<mark>堅持到底</mark>。</p>
         <p>彰化南郭國小的學生，讓我印象最深刻。他們發現東南亞的移工在火車站遇到語言不通的困難，於是向鐵路局請願，幫助移工克服語言的障礙，最後促成彰化車站成為全國第一座移工友善車站。<mark>我也可以</mark>多留意身邊需要幫助的人。例如有新同學轉來，還不熟悉校園，我<mark>一</mark>發現，<mark>就</mark>主動帶他認識環境。</p>
         <p>替別人發聲，也是一種勇氣。<mark>只要多點觀察，多點付諸實行的勇氣，我們也能讓世界變得更溫暖。</mark></p>
       </details>
       <details class="essay">
         <summary><span>範文 03</span>瑪莎：方法行不通，就換一個方法</summary>
-        <p class="essay-audio" >🔈 聽範文朗讀<audio controls preload="none" src="audio/small-power-03.mp3"></audio></p>
+        <p class="essay-audio" >🔈 聽範文朗讀<audio data-tts></audio></p>
         <p>小小的孩子也能改變世界，關鍵在於<mark>不怕困難、願意想辦法</mark>。當第一個方法行不通時，他們會<mark>換一個方法，繼續努力</mark>。</p>
         <p>英國的瑪莎讓我很佩服。九歲的她覺得學校的午餐吃不飽，也不夠營養，向學校反映，卻沒有被重視。她沒有放棄，而是每天在部落格上傳午餐的照片，讓大家看見問題。後來，學校的午餐開始改變，她還成立網站募款，幫助貧困地區的孩子吃到健康的午餐。<mark>我也可以</mark>學習她，遇到問題時不只抱怨，而是用適當的方法，把問題清楚的告訴大人。</p>
         <p>瑪莎告訴我們，改變世界不一定要等到長大。<mark>只要用心觀察、勇敢表達，再加上堅持，小小的力量也能帶來大大的改變。</mark></p>
@@ -739,5 +739,7 @@
     });
     renderPerson(0);
   </script>
+<script>window.TTS_CFG={lang:"zh-TW",rate:1,text:function(c){return c.closest("details.essay").querySelectorAll("p:not(.essay-audio)")}};</script>
+<script src="../assets/tts.js"></script>
 </body>
 </html>

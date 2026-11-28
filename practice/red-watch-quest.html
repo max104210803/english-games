@@ -171,7 +171,7 @@ footer a{color:var(--blue);text-decoration:none}
 <div class="card story" id="story">
   <details open>
   <summary>📖 先讀故事：The Red Watch（藍色粗體是本課單字；闖關時忘了可以回來看）</summary>
-    <div class="listen"><span class="small">🔊 聽故事朗讀（約 1 分 30 秒，AI 朗讀）：先聽一次，再跟著讀</span><audio controls preload="none" src="audio/red-watch.mp3"></audio></div>
+    <div class="listen"><span class="small">🔊 聽故事朗讀（用裝置內建語音朗讀）：先聽一次，再跟著讀</span><audio data-tts></audio></div>
     <p class="en">Last spring, the town asked kids to choose new play equipment for the park: a water slide or a climbing wall. The climbing wall got the most <b>votes</b>. Now it stood in the middle of the park, tall and bright.</p>
     <p class="en">On Saturday, Lily and her best friend Max raced to the top. &quot;I win! I'm the <b>champion</b>!&quot; Lily shouted, because she reached the top first. Then she saw something shiny next to her foot. It was a red smartwatch, the newest kind that could play games and take photos.</p>
     <p class="en">&quot;Finders keepers!&quot; Lily said. &quot;I found it, so it's mine now.&quot;</p>
@@ -1210,5 +1210,7 @@ $("resetBtn").onclick = function(){
 })();
 </script>
 <!-- /en-speak -->
+<script>window.TTS_CFG={lang:"en-US",rate:0.9,text:function(c){return c.closest("details").querySelectorAll("p.en")}};</script>
+<script src="../assets/tts.js"></script>
 </body>
 </html>

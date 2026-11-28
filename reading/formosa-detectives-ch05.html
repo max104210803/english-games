@@ -101,17 +101,14 @@
   </header>
 
   <div class="audio-card">
-    <div class="label">🔊 聽力版（AI 朗讀，先盲聽一次再往下看）</div>
-    <audio controls preload="none">
-      <source src="audio/formosa-detectives-ch05.mp3" type="audio/mpeg">
-      你的瀏覽器不支援音訊播放。
-    </audio>
+    <div class="label">🔊 聽力版（裝置語音朗讀，先盲聽一次再往下看）</div>
+    <audio data-tts></audio>
   </div>
 
   <div class="howto">
     <strong>怎麼玩</strong>
     <ol>
-      <li>先盲聽音檔一次（不要看下面的字），用中文說出 Tim 今天去了哪裡、發現了什麼。</li>
+      <li>先按「▶ 朗讀」盲聽一次（不要看下面的字），用中文說出 Tim 今天去了哪裡、發現了什麼。</li>
       <li>再往下滑，邊看圖邊讀英文；黃色的字是社會課的重點名詞，看不懂可以點「看中文」。</li>
       <li>讀完整篇後，做最下面的 4 題閱讀理解，同時複習社會；答對答錯會馬上告訴你。</li>
       <li>最後用「換你寫」的句框，寫自己的句子。</li>
@@ -296,5 +293,7 @@ function toggleZh(btn){
 })();
 
 </script>
+<script>window.TTS_CFG={lang:"en-US",rate:0.9,text:function(){return document.querySelectorAll(".segment p.en")}};</script>
+<script src="../assets/tts.js"></script>
 </body>
 </html>

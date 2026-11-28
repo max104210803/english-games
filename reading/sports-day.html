@@ -520,16 +520,13 @@
 
   <div class="audio-card">
     <div class="label">🔊 聽力版（原檔朗讀，先盲聽一次再往下讀）</div>
-    <audio controls preload="none">
-      <source src="" type="audio/mpeg">
-      您的瀏覽器不支援 HTML5 音訊播放。
-    </audio>
+    <audio data-tts></audio>
   </div>
 
   <div class="howto">
     <strong>📖 怎麼使用本互動網頁：</strong>
     <ol>
-      <li><strong>先盲聽音檔一次</strong>：不看文章，猜猜看這支隊伍最後能否在 5 美元預算內完成挑戰並獲獎。</li>
+      <li><strong>先按「▶ 朗讀」盲聽一次</strong>：不看文章，猜猜看這支隊伍最後能否在 5 美元預算內完成挑戰並獲獎。</li>
       <li><strong>分段閱讀英文</strong>：黃底標示（<span style="background:var(--mark-bg);color:var(--star);padding:1px 4px;border-radius:4px;font-weight:600;">語塊</span>）為會考模考考點，點擊按鈕可隨時切換中文對照。</li>
       <li><strong>即時閱讀理解</strong>：完成 3 題會考素養題，點選即時看對錯與原文依據。</li>
       <li><strong>換你寫寫看</strong>：先完成 3 句句框暖身，再到「寫具體挑戰」自由創作，透視鏡會即時標出你用到的寫作技巧！</li>
@@ -802,7 +799,7 @@
   </div>
 
   <footer>
-    短文為原創校園記敘文（會考第 1–2 冊複習加深加廣素材）；配圖為原創生圖；音檔為 AI 朗讀。<br>
+    短文為原創校園記敘文（會考第 1–2 冊複習加深加廣素材）；配圖為原創生圖；朗讀用裝置內建語音。<br>
     <a href="../index.html" style="color:inherit">← 回學習小站</a>
   </footer>
 
@@ -1093,5 +1090,7 @@ function toggleZh(btn) {
   state.redraw();
 })();
 </script>
+<script>window.TTS_CFG={lang:"en-US",rate:0.9,text:function(){return document.querySelectorAll(".segment p.en")}};</script>
+<script src="../assets/tts.js"></script>
 </body>
 </html>

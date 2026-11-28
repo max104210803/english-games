@@ -171,7 +171,7 @@ footer a{color:var(--blue);text-decoration:none}
 <div class="card story" id="story">
   <details open>
   <summary>📖 先讀故事：The New Kid（藍色粗體是本課單字；闖關時忘了可以回來看）</summary>
-    <div class="listen"><span class="small">🔊 聽故事朗讀（約 1 分 25 秒，AI 朗讀）：先聽一次，再跟著讀</span><audio controls preload="none" src="audio/new-kid.mp3"></audio></div>
+    <div class="listen"><span class="small">🔊 聽故事朗讀（用裝置內建語音朗讀）：先聽一次，再跟著讀</span><audio data-tts></audio></div>
     <p class="en">Jay couldn't wait for the soccer club to start. He could not be <b>patient</b> because he loved chasing the ball across the field. On calm, <b>peaceful</b> Sunday mornings, he practiced in the park. He used his <b>imagination</b> to picture a big game, and then he kicked the ball as hard as he could.</p>
     <p class="en">On the first day, Jay said hello to everyone. He liked to <b>interact</b> and chat with his teammates. Then he saw a new boy named Ken. Ken <b>entertained</b> some kids by keeping the ball in the air with his knees. The kids clapped and laughed, but Jay was not <b>amused</b>.</p>
     <p class="en">Coach Wu blew his whistle. &quot;Line up for races!&quot; Jay felt so nervous that he had butterflies in his stomach. He had always been the fastest runner on the team. He ran hard, but he saw Ken getting ahead of him. Jay tried his best, but he couldn't match Ken. Ken won.</p>
@@ -1206,5 +1206,7 @@ $("resetBtn").onclick = function(){
 })();
 </script>
 <!-- /en-speak -->
+<script>window.TTS_CFG={lang:"en-US",rate:0.9,text:function(c){return c.closest("details").querySelectorAll("p.en")}};</script>
+<script src="../assets/tts.js"></script>
 </body>
 </html>
